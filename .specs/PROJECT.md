@@ -19,7 +19,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Navigation | Expo Router ~57.0.25 (file-based, `typedRoutes`) | `package.json`, `app.json` |
 | Compiler | React Compiler enabled | `app.json` |
 | Package manager | npm | `package-lock.json` |
-| Database (planned) | Realm, local only | PROJECT-SPEC §3, not installed |
+| Database | Realm (`realm`, `@realm/react`), local only; requires development build | PROJECT-SPEC §3; `src/db/` |
 | Tests (planned) | Jest + React Native Testing Library | PROJECT-SPEC §3, not installed |
 
 ## Repository Structure

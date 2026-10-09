@@ -5,10 +5,13 @@ import {
   PlusJakartaSans_800ExtraBold,
   useFonts,
 } from "@expo-google-fonts/plus-jakarta-sans";
+import { RealmProvider } from "@realm/react";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { Text } from "react-native";
 
+import { RealmErrorBoundary, realmConfig } from "@/db";
 import { useTheme } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -30,11 +33,18 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    />
+    <RealmErrorBoundary>
+      <RealmProvider
+        {...realmConfig}
+        fallback={() => <Text>Abrindo banco de dados…</Text>}
+      >
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.background },
+          }}
+        />
+      </RealmProvider>
+    </RealmErrorBoundary>
   );
 }
