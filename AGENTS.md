@@ -39,3 +39,27 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## Specs & Spec-Driven Development
+
+This project is **spec-driven**. Never write code for a feature or bug fix before it has gone through the `adaptive-spec-driven` skill.
+
+### Source documents (read before any task)
+
+| Document | Purpose |
+| --- | --- |
+| [PROJECT-SPEC.md](PROJECT-SPEC.md) | Source of truth for product scope, requirements and milestones. Every feature starts here. |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Current architecture: modules, data flow, persistence. |
+| [.specs/PROJECT.md](.specs/PROJECT.md) | Stack, structure, conventions and quality commands. |
+| [.specs/STATE.md](.specs/STATE.md) | Project decisions and the handoff snapshot (current feature, next step). |
+| `.specs/features/<feature>/` | Per-feature `spec.md`, `plan.md`, and `validation.md` (when risk requires). |
+| [design/](design/) | Screen designs (light/dark) and style guide. UI must match them. |
+
+### Mandatory workflow
+
+1. **Always invoke the `adaptive-spec-driven` skill** for any feature, change, bug fix, or question about project status. Do not skip it, even for small changes.
+2. Follow the loop: Discover (classify risk LOW/MEDIUM/HIGH/CRITICAL) → Specify → Plan → Execute → Verify. Risk sets the depth of each phase; it never removes a phase.
+3. Specs are the source of truth for behavior. If reality contradicts a spec, raise a spec amendment instead of diverging silently.
+4. A task is done only when its tests exist and its gate command exits 0. Never weaken or skip tests to get green.
+5. Respect approval checkpoints for the risk level. Do not `git push`, deploy, or run irreversible actions without an explicit go-ahead.
+6. Keep `.specs/STATE.md` updated at the end of each session (handoff).
