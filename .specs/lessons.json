@@ -1,0 +1,8 @@
+{
+  "promote_threshold": 2,
+  "window_days": 60,
+  "quarantine_threshold": 2,
+  "schema": 1,
+  "next_id": 1,
+  "lessons": []
+}
