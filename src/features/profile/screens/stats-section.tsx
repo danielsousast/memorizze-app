@@ -32,7 +32,7 @@ function Tile({ value, label, accessibilityLabel, highlighted }: TileProps) {
     >
       <View style={styles.value}>
         {highlighted ? <Icon name="flame" size={24} color={colors.accent} /> : null}
-        <Text style={[typography.display, { color: valueColor }]}>{value}</Text>
+        <Text style={[typography.display, styles.valueText, { color: valueColor }]}>{value}</Text>
       </View>
       <Text
         style={[typography.caption, { color: highlighted ? colors.accentInk : colors.text2 }]}
@@ -87,5 +87,6 @@ const styles = StyleSheet.create({
     borderRadius: radii.studyCard,
     borderWidth: 1,
   },
+  valueText: { fontSize: 28, lineHeight: 34 },
   value: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
 });

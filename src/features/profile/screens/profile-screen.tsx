@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+
+import type { Edge } from "react-native-safe-area-context";
 
 import { GoalProgress } from "@/components/goal-progress";
 import { Icon } from "@/components/icon";
@@ -16,6 +18,8 @@ import {
 import type { ProfileStats } from "../interfaces";
 import { StatsSection } from "./stats-section";
 import { useProfileScreen } from "./use-profile-screen";
+
+const TOP_EDGE: Edge[] = ["top"];
 
 function StepButton({
   label,
@@ -81,106 +85,115 @@ export function ProfileScreen() {
   } = useProfileScreen();
 
   return (
-    <Screen testID="profile-screen" style={styles.body}>
-      <Text
-        accessibilityRole="header"
-        style={[typography.title, { color: colors.text }]}
-      >
-        Perfil
-      </Text>
-      {profile ? (
-        <>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`Editar nome, ${profile.name}`}
-            onPress={editName}
-            style={styles.identity}
-          >
-            <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
-              <Text style={[typography.title, { color: colors.onAccent }]}>
-                {profile.name.charAt(0).toLocaleUpperCase("pt-BR")}
-              </Text>
-            </View>
-            <View style={styles.identityText}>
-              <Text
-                numberOfLines={1}
-                style={[typography.section, { color: colors.text }]}
-              >
-                {profile.name}
-              </Text>
-              <Text style={[typography.body, { color: colors.text2 }]}>
-                {`Estudando desde ${formatMonthYear(profile.createdAt)}`}
-              </Text>
-            </View>
-          </Pressable>
-          <View
-            style={[
-              styles.card,
-              { backgroundColor: colors.surface, borderColor: colors.border },
-            ]}
-          >
-            <View style={styles.goalTop}>
-              <View>
-                <Text style={[typography.button, { color: colors.text }]}>
-                  Meta diária
-                </Text>
-                <Text style={[typography.caption, { color: colors.text2 }]}>
-                  revisões por dia
+    <Screen testID="profile-screen" edges={TOP_EDGE}>
+      <ScrollView contentContainerStyle={styles.body}>
+        <Text
+          accessibilityRole="header"
+          style={[typography.title, { color: colors.text }]}
+        >
+          Perfil
+        </Text>
+        {profile ? (
+          <>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Editar nome, ${profile.name}`}
+              onPress={editName}
+              style={styles.identity}
+            >
+              <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
+                <Text style={[typography.title, { color: colors.onAccent }]}>
+                  {profile.name.charAt(0).toLocaleUpperCase("pt-BR")}
                 </Text>
               </View>
-              <View style={styles.stepper}>
-                <StepButton
-                  label="Diminuir meta"
-                  icon="minus"
-                  disabled={!canDecrease}
-                  onPress={decrease}
-                />
+              <View style={styles.identityText}>
                 <Text
-                  accessibilityLabel={`Meta diária, ${profile.dailyGoal} revisões por dia`}
+                  numberOfLines={1}
+                  style={[typography.section, { color: colors.text }]}
+                >
+                  {profile.name}
+                </Text>
+                <Text style={[typography.body, { color: colors.text2 }]}>
+                  {`Estudando desde ${formatMonthYear(profile.createdAt)}`}
+                </Text>
+              </View>
+            </Pressable>
+            <View
+              style={[
+                styles.card,
+                { backgroundColor: colors.surface, borderColor: colors.border },
+              ]}
+            >
+              <View style={styles.goalTop}>
+                <View>
+                  <Text style={[typography.button, { color: colors.text }]}>
+                    Meta diária
+                  </Text>
+                  <Text style={[typography.caption, { color: colors.text2 }]}>
+                    revisões por dia
+                  </Text>
+                </View>
+                <View style={styles.stepper}>
+                  <StepButton
+                    label="Diminuir meta"
+                    icon="minus"
+                    disabled={!canDecrease}
+                    onPress={decrease}
+                  />
+                  <Text
+                    accessibilityLabel={`Meta diária, ${profile.dailyGoal} revisões por dia`}
+                    style={[
+                      typography.section,
+                      styles.value,
+                      { color: colors.text },
+                    ]}
+                  >
+                    {profile.dailyGoal}
+                  </Text>
+                  <StepButton
+                    label="Aumentar meta"
+                    icon="plus"
+                    disabled={!canIncrease}
+                    onPress={increase}
+                  />
+                </View>
+              </View>
+              {error ? (
+                <Text
+                  accessibilityRole="alert"
                   style={[
-                    typography.section,
-                    styles.value,
-                    { color: colors.text },
+                    typography.caption,
+                    { color: colors.grade.again.text },
                   ]}
                 >
-                  {profile.dailyGoal}
+                  {error}
                 </Text>
-                <StepButton
-                  label="Aumentar meta"
-                  icon="plus"
-                  disabled={!canIncrease}
-                  onPress={increase}
-                />
-              </View>
+              ) : null}
+              <GoalProgress
+                done={reviewsToday}
+                goal={profile.dailyGoal}
+                label="Revisões hoje"
+                suffix=""
+              />
             </View>
-            {error ? (
-              <Text
-                accessibilityRole="alert"
-                style={[typography.caption, { color: colors.grade.again.text }]}
-              >
-                {error}
-              </Text>
-            ) : null}
-            <GoalProgress
-              done={reviewsToday}
-              goal={profile.dailyGoal}
-              label="Revisões hoje"
-              suffix=""
+            <StatsBlock
+              stats={stats}
+              failed={statsError}
+              dailyGoal={profile.dailyGoal}
             />
-          </View>
-          <StatsBlock
-            stats={stats}
-            failed={statsError}
-            dailyGoal={profile.dailyGoal}
-          />
-        </>
-      ) : null}
+          </>
+        ) : null}
+      </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  body: { paddingHorizontal: screenMargin, gap: spacing.xl },
+  body: {
+    paddingHorizontal: screenMargin,
+    paddingBottom: spacing.xl,
+    gap: spacing.xl,
+  },
   identity: { flexDirection: "row", alignItems: "center", gap: spacing.lg },
   avatar: {
     width: sizes.fab + spacing.xl,

@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, type ViewProps } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { type Edge, SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/theme";
 
-type Props = ViewProps & { children: ReactNode; keyboardAvoiding?: boolean };
+type Props = ViewProps & { children: ReactNode; keyboardAvoiding?: boolean; edges?: Edge[] };
 
-export function Screen({ children, keyboardAvoiding = false, style, ...rest }: Props) {
+export function Screen({ children, keyboardAvoiding = false, edges, style, ...rest }: Props) {
   const { colors } = useTheme();
   const body = keyboardAvoiding ? (
     <KeyboardAvoidingView
@@ -19,7 +19,7 @@ export function Screen({ children, keyboardAvoiding = false, style, ...rest }: P
     children
   );
   return (
-    <SafeAreaView style={[styles.flex, { backgroundColor: colors.background }, style]} {...rest}>
+    <SafeAreaView edges={edges} style={[styles.flex, { backgroundColor: colors.background }, style]} {...rest}>
       {body}
     </SafeAreaView>
   );

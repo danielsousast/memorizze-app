@@ -46,7 +46,7 @@ export function StreakCard({ children }: { children?: ReactNode }) {
           <Icon name="flame" size={24} color={streak > 0 ? colors.accent : colors.text2} />
         </View>
         <View style={styles.topText}>
-          <Text style={[typography.title, { color: colors.text }]}>
+          <Text style={[typography.title, styles.title, { color: colors.text }]}>
             {streakTitle(streak)}
           </Text>
           <Text style={[typography.caption, { color: colors.text2 }]}>
@@ -78,4 +78,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   topText: { flex: 1 },
+  title: { fontSize: 26, lineHeight: 32 },
 });

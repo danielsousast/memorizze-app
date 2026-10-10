@@ -13,8 +13,8 @@ export const screenMargin = spacing.xl;
 export const radii = {
   icon: 14,
   button: 18,
-  card: 20,
-  studyCard: 32,
+  card: 14,
+  studyCard: 20,
   pill: 999,
 } as const;
 
