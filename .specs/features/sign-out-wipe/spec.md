@@ -1,0 +1,70 @@
+# Sign Out and Wipe — Spec
+
+**Status**: Approved
+**Date**: 2026-10-10
+
+## Problem
+
+O app não tem conta. Quem quer recomeçar ou entregar o aparelho não tem como apagar baralhos, cartões e histórico. O design 7/7b pede o botão Sair no Perfil com confirmação.
+
+## Scope
+
+### In scope
+
+- Botão `Sair` e nota no fim do Perfil; `ConfirmDialog` destrutivo (7b) com contagens reais.
+- Apagar todo o Realm numa transação e voltar à Boas-vindas (AD-004).
+
+### Out of scope
+
+| Item | Reason |
+| --- | --- |
+| Linha "Fazer backup antes" do diálogo | Depende da F6 (backup) |
+| Apagar preferências e tema | Não existem até a F5 |
+
+## Risk Assessment
+
+| Factor | Rating | Evidence |
+| --- | --- | --- |
+| ambiguity | low | Design 7b define textos e botões |
+| criticality | medium | Perde todos os dados do usuário |
+| blast_radius | low | Um método de repositório, um hook, uma tela |
+| novelty | low | Mesmos padrões de overlay e repositório |
+| irreversibility | high | `deleteAll` não tem desfazer |
+| integrations | none | Sem rede nem módulo nativo |
+| state | low | Estado local do diálogo |
+| auth | none | Perfil local, sem conta |
+| concurrency | none | Usuário único |
+| migrations | none | Sem mudança de schema |
+| security | low | Apaga dados locais; sem segredo |
+| data_integrity | medium | Tudo ou nada numa transação |
+
+**Declared level**: HIGH
+**Override**: a irreversibilidade é a própria função pedida, só atinge dados locais do próprio dono e passa por confirmação explícita com contagens; o app não tem conta nem dado remoto, então o dano fica limitado ao aparelho e à escolha deliberada do usuário.
+
+## Acceptance Criteria
+
+### P1 — Sair
+
+- **SOUT-01** — WHEN o usuário toca em `Sair` no Perfil THEN o app SHALL abrir o `ConfirmDialog` destrutivo, ícone `sign-out`, título `Sair e apagar dados?`, botões `Apagar e sair` e `Cancelar`.
+- **SOUT-02** — A mensagem SHALL ser `O Memorizze não tem conta. Sair apaga seus N baralhos, M cartões e todo o histórico deste aparelho.` com as contagens reais (singular quando 1).
+- **SOUT-03** — WHEN o usuário confirma THEN o app SHALL apagar Profile, Deck, Card e ReviewLog e mostrar a Boas-vindas.
+- **SOUT-05** — WHEN o usuário cancela THEN nada é apagado e o Perfil continua aberto.
+
+## Failure & Edge Behavior
+
+- **SOUT-04** — IF apagar falha THEN nada é apagado (transação única), o diálogo fecha e um toast mostra `Não foi possível apagar os dados.`
+
+Other dimensions: input bounds N/A; idempotency N/A porque apagar o vazio é inofensivo; auth N/A porque perfil local; concurrency N/A porque usuário único; observability N/A porque app offline.
+
+## Assumptions & Open Questions
+
+| Assumption / decision | Chosen default | Rationale | Confirmed |
+| --- | --- | --- | --- |
+| Backup antes de sair | Fora até a F6 | Sem F6 não há o que oferecer | yes |
+| Texto do toast de erro | `Não foi possível apagar os dados.` | Proposto no chat | yes |
+
+**Open questions**: none
+
+## Amendments
+
+none
