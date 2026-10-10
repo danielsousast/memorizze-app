@@ -158,4 +158,39 @@ describe("profile repository", () => {
       expect.objectContaining({ code: "PROFILE_NOT_FOUND" }),
     );
   });
+
+  it("CONTRACT stats returns streaks, accuracy, week and stages for known data", () => {
+    const repository = createProfileRepository(realm, () => now);
+    // streak: 8, 9, 10 (current 3); older run of 2 days (longest stays 3)
+    seedLogs([new Date(2026, 9, 10, 9), new Date(2026, 9, 10, 10), new Date(2026, 9, 9, 9), new Date(2026, 9, 8, 9)]);
+    seedLogs([new Date(2026, 9, 10, 11)], 0);
+    seedLogs([new Date(2026, 8, 20, 9), new Date(2026, 8, 21, 9)], 0);
+    realm.write(() => {
+      const base = { front: "f", back: "b", dueDate: now, createdAt: now };
+      realm.create(Card, base);
+      realm.create(Card, { ...base, repetitions: 1, intervalDays: 3 });
+      realm.create(Card, { ...base, repetitions: 4, intervalDays: 30 });
+      realm.create(Card, { ...base, repetitions: 4, intervalDays: 30 });
+    });
+
+    expect(repository.stats()).toEqual({
+      currentStreak: 3,
+      longestStreak: 3,
+      accuracy7: 80,
+      accuracy30: 57,
+      week: [0, 0, 0, 0, 1, 1, 3],
+      stages: { new: 1, learning: 1, mature: 2 },
+    });
+  });
+
+  it("CONTRACT stats on an empty Realm returns zeros and null accuracy", () => {
+    expect(createProfileRepository(realm, () => now).stats()).toEqual({
+      currentStreak: 0,
+      longestStreak: 0,
+      accuracy7: null,
+      accuracy30: null,
+      week: [0, 0, 0, 0, 0, 0, 0],
+      stages: { new: 0, learning: 0, mature: 0 },
+    });
+  });
 });

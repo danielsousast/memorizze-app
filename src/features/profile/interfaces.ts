@@ -12,9 +12,19 @@ export type ProfileErrorCode =
 
 export type ProfileInput = { name?: string; dailyGoal?: number };
 
+export type ProfileStats = {
+  currentStreak: number;
+  longestStreak: number;
+  accuracy7: number | null;
+  accuracy30: number | null;
+  week: number[];
+  stages: { new: number; learning: number; mature: number };
+};
+
 export type ProfileRepository = {
   get(): Profile | null;
   create(name: string): Profile;
   update(input: ProfileInput): Profile;
   countReviewsToday(): number;
+  stats(): ProfileStats;
 };
