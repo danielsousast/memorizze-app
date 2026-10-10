@@ -22,10 +22,19 @@
 - **Date**: 2026-10-09
 - **Status**: active
 
+### AD-003
+- **Decision**: Telas vivem em `src/features/<feature>/screens/<nome>-screen.tsx`; as rotas em `src/app/` só leem params e renderizam a tela. UI compartilhada fica em `src/components/`.
+- **Reason**: PROJECT-SPEC §9 ("telas + hooks" por feature); AGENTS.md mantém `src/app/` só com rotas e testes fora dele.
+- **Trade-off**: Telas que usam duas features importam o barrel público da outra (`@/features/cards`).
+- **Scope**: `src/features/**/screens/`, `src/app/**`, `src/components/`
+- **Source**: `.specs/features/deck-card-screens/plan.md`
+- **Date**: 2026-10-09
+- **Status**: active
+
 ## Handoff
-- **Feature**: deck-card-crud — T1–T8 e F1–F6 feitas; Verify PASS no round 4 (verificador independente, 20/20 mutantes mortos)
-- **Where**: feature completa e com commits locais em `main`; nada foi enviado ao remoto. Lição L-001 registrada como candidata
-- **Next step**: decidir sobre `git push` (exige aprovação explícita) e iniciar a próxima feature do PROJECT-SPEC.md (telas de baralho/cartão ou M3 study)
+- **Feature**: deck-card-screens (HIGH) — telas Início, Baralho, Form de baralho e Editor de cartão; fecha o M2
+- **Where**: spec aprovado (com A-01); plan.md em Draft, validado (10 tasks, 4 waves), aguardando aprovação. deck-card-crud completa, commits locais em `main` sem push
+- **Next step**: aprovar o plano, depois Execute pela Wave 1 (T1 ∥ T3)
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-09
