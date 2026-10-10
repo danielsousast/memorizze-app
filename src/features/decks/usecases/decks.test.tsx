@@ -120,7 +120,7 @@ describe("deck hooks", () => {
     await act(async () => {
       await result.current.create.mutateAsync({ name: "Inglês" });
     });
-    expect(result.current.create.isSuccess).toBe(true);
+    await waitFor(() => expect(result.current.create.isSuccess).toBe(true));
     await unmount();
   });
 

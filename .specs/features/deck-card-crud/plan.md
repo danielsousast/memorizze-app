@@ -347,7 +347,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC HK-03 · integration — mesmo teste, estável em execuções repetidas
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### F5 — Hooks de cartão rodam offline
 
