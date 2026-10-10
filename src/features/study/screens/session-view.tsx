@@ -1,5 +1,6 @@
+import { Stack, router } from "expo-router";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, BackHandler, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Button } from "@/components/button";
 import { Icon } from "@/components/icon";
@@ -27,6 +28,13 @@ export function sessionReducer(
     : skipCurrent(state);
 }
 
+function confirmExit() {
+  Alert.alert("Sair da sessão?", "Seu progresso já foi salvo.", [
+    { text: "Continuar", style: "cancel" },
+    { text: "Sair", style: "destructive", onPress: () => router.back() },
+  ]);
+}
+
 const grades: Grade[] = [0, 1, 2, 3];
 const gradeTone = ["again", "hard", "good", "easy"] as const;
 
@@ -51,6 +59,17 @@ export function SessionView({ cards }: Props) {
       dispatch({ type: "skip" });
     }
   }, [card, stored]);
+
+  // EXT-03: the Android back button asks for confirmation, only while studying.
+  const studying = card !== undefined;
+  useEffect(() => {
+    if (!studying) return;
+    const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+      confirmExit();
+      return true;
+    });
+    return () => subscription.remove();
+  }, [studying]);
 
   function onAnswer(grade: Grade) {
     if (busy.current || !card) return;
@@ -82,6 +101,7 @@ export function SessionView({ cards }: Props) {
     const n = state.completed;
     return (
       <View style={styles.root}>
+        <Stack.Screen options={{ gestureEnabled: true }} />
         <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
           Sessão concluída
         </Text>
@@ -94,12 +114,13 @@ export function SessionView({ cards }: Props) {
 
   return (
     <View style={styles.root}>
+      <Stack.Screen options={{ gestureEnabled: false }} />
       <View style={styles.top}>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Sair da sessão"
           hitSlop={8}
-          onPress={() => {}}
+          onPress={confirmExit}
           style={styles.close}
         >
           <Icon name="close" size={22} color={colors.text} />

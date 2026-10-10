@@ -5,6 +5,7 @@ import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
 
 import { useStudyQueue } from "../index";
+import { EmptyView } from "./empty-view";
 import { SessionView } from "./session-view";
 
 type Props = { deckId?: string };
@@ -27,8 +28,13 @@ export function StudyScreen({ deckId }: Props) {
       </Screen>
     );
   }
-  // Empty queue (phase `empty`) arrives in T10.
-  if (queue.length === 0) return <Screen testID="study-screen">{null}</Screen>;
+  if (queue.length === 0) {
+    return (
+      <Screen testID="study-screen">
+        <EmptyView deckId={deckId} />
+      </Screen>
+    );
+  }
   return (
     <Screen testID="study-screen">
       <SessionView cards={queue} />

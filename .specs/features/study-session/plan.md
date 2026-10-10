@@ -305,7 +305,7 @@ Mutações sugeridas ao verificador:
   - SPEC EXT-03 · screen — handler capturado de `BackHandler.addEventListener` retorna `true` e abre o mesmo alerta; após desmontar, o listener foi removido
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T10 — Fila vazia mostra Nada para revisar
 
@@ -322,7 +322,7 @@ Mutações sugeridas ao verificador:
   - SPEC THM-01 · screen — esquema escuro → fundo `darkColors.background`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T11 — Fim da fila mostra o Resumo
 
