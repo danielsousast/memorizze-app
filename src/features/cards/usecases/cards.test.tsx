@@ -1,3 +1,4 @@
+import { onlineManager } from "@tanstack/react-query";
 import { act, waitFor } from "@testing-library/react-native";
 import Realm from "realm";
 
@@ -29,6 +30,7 @@ describe("card hooks", () => {
   });
 
   afterEach(() => {
+    onlineManager.setOnline(true);
     realm.close();
   });
 
@@ -142,6 +144,29 @@ describe("card hooks", () => {
 
     await waitFor(() => expect(result.current.item.data).toBeNull());
     expect(kept.front).toBe("a");
+    await unmount();
+  });
+
+  it("HK-03 runs card reads and writes while offline", async () => {
+    onlineManager.setOnline(false);
+    const { result, unmount } = await renderReady();
+    expect(result.current.list.fetchStatus).not.toBe("paused");
+    expect(result.current.item.fetchStatus).not.toBe("paused");
+
+    let createdId = "";
+    await act(async () => {
+      createdId = (
+        await result.current.create.mutateAsync({ deckId, input: { front: "c", back: "d" } })
+      ).id;
+      await result.current.update.mutateAsync({ id: cardId, input: { front: "z" } });
+      await result.current.remove.mutateAsync(createdId);
+    });
+
+    await waitFor(() => {
+      const { create, update, remove } = result.current;
+      expect([create, update, remove].every((m) => m.isSuccess)).toBe(true);
+    });
+    expect(realm.objects(Card).map((c) => c.front)).toEqual(["z"]);
     await unmount();
   });
 
