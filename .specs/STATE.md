@@ -23,8 +23,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: deck-card-crud — concluída (T1–T8 feitas; Verify PASS HIGH, verificação pelo autor com reset de contexto)
-- **Next step**: telas Início, Baralho e Editor de cartão (M2) sobre os hooks de `@/features/decks` e `@/features/cards`
+- **Feature**: deck-card-crud — T1–T8 e F1–F5 feitas; Verify FAIL no round 3/3 (verificador independente), escalado ao usuário
+- **Where**: único gap é HK-03 dos hooks de baralho (`useDeck`, `useUpdateDeck`, `useDeleteDeck` sem teste offline; 3 mutantes `networkMode: "online"` sobreviveram). Ver `validation.md`
+- **Next step**: usuário decide sobre F6 (estender o teste HK-03 de baralhos, padrão de F5) + round 4 de verificação
 - **Open amendments**: none
-- **Blockers**: nenhum
+- **Blockers**: limite de 3 rounds de fix → re-verify atingido
 - **Updated**: 2026-10-09
