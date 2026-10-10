@@ -22,16 +22,13 @@ export function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.body}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Perfil"
+          accessibilityLabel="Ajustes"
           onPress={settings.goBack}
           style={styles.back}
         >
           <Icon name="chevron-left" size={20} color={colors.accentInk} />
-          <Text style={[typography.button, { color: colors.accentInk }]}>Perfil</Text>
+          <Text style={[typography.button, { color: colors.accentInk }]}>Ajustes</Text>
         </Pressable>
-        <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
-          Ajustes
-        </Text>
 
         <View style={styles.section}>
           <Text style={[typography.label, styles.sectionLabel, { color: colors.text2 }]}>
