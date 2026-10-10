@@ -33,8 +33,8 @@
 
 ## Handoff
 - **Feature**: deck-card-screens (HIGH) — fechada em 2026-10-10; telas Início, Baralho, Form de baralho e Editor de cartão (M2 em código)
-- **Where**: verificada (PASS, rodada 2, verificador independente, 52/52 ACs, 11/11 mutantes mortos, 179 testes). Commits locais em `main`, sem push. UAT em dispositivo adiado (ver validation.md → UAT)
-- **Next step**: UAT em development build (iOS e Android) quando houver; push/PR só com go-ahead explícito; então M3 (sessão de estudo)
+- **Where**: verificada (PASS, rodada 2, verificador independente, 52/52 ACs, 11/11 mutantes mortos, 179 testes). Commits locais em `main`, sem push. UAT em dispositivo aprovado pelo usuário em 2026-10-10 (validation.md → UAT)
+- **Next step**: M3 (sessão de estudo); push só com go-ahead explícito
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-10

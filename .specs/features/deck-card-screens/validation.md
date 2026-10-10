@@ -111,7 +111,7 @@ Not required at HIGH.
 
 ## UAT
 
-Not run at close (2026-10-10). The feature was closed on the user's instruction with UAT deferred: it needs a development build on iOS and Android. Items to check there: focus on `Frente` after `Salvar e criar outro` (EDT-03), `Nome` autofocus (DFM-01), back gesture on the modals (DFM-04, EDT-06), modal presentation, native `Alert` look (DECK-09, DECK-10, EDT-05), keyboard avoidance, 44pt in real layout, and visual match with `design/` in light and dark. Any issue found goes in as a new fix task.
+Run by the user on a development build (2026-10-10), after the close: "testei e está ok". Result: PASS, no issues reported. The user did not itemize the checks, so the list below records what was in scope, not per-item results: focus on `Frente` (EDT-03), `Nome` autofocus (DFM-01), back gesture on the modals, modal presentation, native `Alert` look, keyboard avoidance, 44pt in real layout, visual match with `design/`.
 
 ## Change Review
 
