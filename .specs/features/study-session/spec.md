@@ -1,6 +1,6 @@
 # Sessão de estudo — Spec
 
-**Status**: Draft
+**Status**: Verified (PASS, UAT pending)
 **Date**: 2026-10-10
 
 ## Problem

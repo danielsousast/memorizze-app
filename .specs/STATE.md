@@ -32,9 +32,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: deck-card-screens (HIGH) — fechada em 2026-10-10; telas Início, Baralho, Form de baralho e Editor de cartão (M2 em código)
-- **Where**: verificada (PASS, rodada 2, verificador independente, 52/52 ACs, 11/11 mutantes mortos, 179 testes). Commits locais em `main`, sem push. UAT em dispositivo aprovado pelo usuário em 2026-10-10 (validation.md → UAT)
-- **Next step**: M3 (sessão de estudo); push só com go-ahead explícito
-- **Open amendments**: none
+- **Feature**: study-session (HIGH) — M3 implementado em 2026-10-10; sessão de estudo, Nada para revisar e Resumo
+- **Where**: verificada (PASS, verificador independente, 51/51 ACs, 7/7 mutantes mortos, 283 testes). Commits locais em `main`, sem push. UAT em dispositivo pendente: deslizar para voltar desativado na sessão (iOS) e visual contra os PNGs 5a/5b/6/8, claro e escuro
+- **Next step**: UAT em development build; depois M4 (perfil, streak e meta na Início); push só com go-ahead explícito
+- **Open amendments**: none (SUM-03 corrigido para 89% em 2026-10-10)
 - **Blockers**: none
 - **Updated**: 2026-10-10

@@ -2,18 +2,18 @@
 
 ## Current Architecture
 
-Expo app with the data layer for decks and cards and the screens that use it: Home, Deck, Deck form and Card editor. Tab bar, study session and profile are not built yet.
+Expo app with the data layer for decks and cards and the screens that use it: Home, Deck, Deck form, Card editor and the study session (session, empty state, summary). Tab bar and profile are not built yet.
 
 | Part | Path | Contents |
 | --- | --- | --- |
 | Root layout | `src/app/_layout.tsx` | `RealmErrorBoundary` → `RealmProvider` → `QueryClientProvider` → Expo Router `Stack` |
-| Routes | `src/app/` | Thin files that read params and render a screen: `index`, `decks/[deckId]/index`, and four modals (`decks/new`, `decks/[deckId]/edit`, `decks/[deckId]/cards/new`, `cards/[cardId]/edit`), declared with `presentation: "modal"` in the root `Stack` |
+| Routes | `src/app/` | Thin files that read params and render a screen: `index`, `decks/[deckId]/index`, `study` and `decks/[deckId]/study` (study session), and four modals (`decks/new`, `decks/[deckId]/edit`, `decks/[deckId]/cards/new`, `cards/[cardId]/edit`), declared with `presentation: "modal"` in the root `Stack` |
 | Screens | `src/features/<feature>/screens/` | One `<name>-screen.tsx` per screen ([AD-003](.specs/STATE.md#ad-003)); they use only the public hooks of `@/features/*` |
 | Shared UI | `src/components/` | `Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon` (`expo-symbols`), `Screen`, `NotFound`; one file each, theme tokens, accessibility role and label, touch target ≥ 44 |
 | Database | `src/db/` | Realm schemas (Profile, Deck, Card, ReviewLog), `realmConfig`, `RealmErrorBoundary` |
 | Query client | `src/lib/query-client.ts` | `createQueryClient()`: `networkMode: "always"`, `retry: false`, `staleTime: Infinity` |
-| Domain | `src/domain/` | Pure, no Realm or React: `errors.ts` (`AppError<C>` with a typed `code`), `dates.ts` (end of local day, `isDue`, long pt-BR date), `stage.ts` (`new` / `learning` / `mature`), `text.ts` (initials, plural, accent-insensitive search) |
-| Features | `src/features/decks/`, `src/features/cards/` | Repositories and React Query hooks (see [Feature modules](#feature-modules)) |
+| Domain | `src/domain/` | Pure, no Realm or React: `errors.ts` (`AppError<C>` with a typed `code`), `dates.ts` (end of local day, `isDue`, long pt-BR date), `stage.ts` (`new` / `learning` / `mature`), `text.ts` (initials, plural, accent-insensitive search); `schedule.ts` (SM-2, interval label), `streak.ts` (current streak), `session.ts` (in-memory session progress); `dates.ts` also has `startOfLocalDay` and `addLocalDays` |
+| Features | `src/features/decks/`, `src/features/cards/`, `src/features/study/` | Repositories and React Query hooks (see [Feature modules](#feature-modules)) |
 | Path alias | `tsconfig.json` | `@/*` → `./src/*`, `@/assets/*` → `./assets/*` |
 | Compiler | `app.json` | `typedRoutes` and `reactCompiler` experiments on |
 
@@ -64,8 +64,15 @@ export function useCreateDeck() {
 | Delete deck (cascades to its cards) | `["decks"]`, `["cards"]` |
 | Create or delete card (changes `cardCount`) | `["cards"]`, `["decks"]` |
 | Edit card | `["cards"]` |
+| Answer a card (updates the card, creates a `ReviewLog`) | `["cards"]`, `["decks"]`, `["study"]` |
 
 `ReviewLog` is never touched by deck or card operations. It survives the deletion of its card or deck.
+
+## Study session
+
+`study` ([study-session spec](.specs/features/study-session/spec.md)) reads the due queue and writes answers. `repository.answer` applies `schedule()` and creates the `ReviewLog` in one `realm.write`; the deck of a card comes from the backlink (`linkingObjects(Deck, "cards")`), so the schema has no `deck` field on `Card`.
+
+The queue is a snapshot: `study` queries use `gcTime: 0` so each session opens with a fresh read, and `StudyScreen` keeps the first read in state so later invalidations do not change the queue mid-session (QUE-02). One route per scope (`/study`, `/decks/<id>/study`) switches phase: loading, not found, empty, studying, summary. The summary replaces the session in the same route, so going back leaves it.
 
 ## Planned Architecture
 
