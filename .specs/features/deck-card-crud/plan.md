@@ -2,7 +2,7 @@
 
 **Spec**: [spec.md](spec.md)
 **Risk**: HIGH (from spec)
-**Status**: Done
+**Status**: Approved
 
 ## Approach
 
@@ -296,6 +296,46 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
 - **Gate**: full
 - **Status**: [x] done
 
+### F1 — Update de baralho preserva descrição omitida (A-01)
+
+- **Covers**: DCK-04
+- **Depends on**: none
+- **Risk**: inherit
+- **Touches**: `src/features/decks/repository.ts`, `src/features/decks/repository.test.ts`
+- **Change**: `update` só grava `description` quando informada; `""` remove.
+- **Tests**:
+  - SPEC DCK-04 · integration — baralho com descrição "d" → `update(id, { name: "B" })` → `description: "d"`; `update(id, { name: "B", description: "" })` → `description` ausente
+- **Done when**: tests above pass; quick gate green
+- **Gate**: quick
+- **Status**: [ ] pending
+
+### F2 — Hooks de cartão mantêm leituras após escrita rejeitada
+
+- **Covers**: HK-06
+- **Depends on**: none
+- **Risk**: inherit
+- **Touches**: `src/features/cards/usecases/cards.test.tsx`
+- **Change**: só teste.
+- **Tests**:
+  - SPEC HK-06 · integration — `useCreateCard` e `useUpdateCard` rejeitados → `decks.data`, `list.data` e `item.data` com a mesma referência de antes
+- **Done when**: tests above pass; quick gate green
+- **Gate**: quick
+- **Status**: [ ] pending
+
+### F3 — ARC-03 barra imports relativos e tem teste (A-02)
+
+- **Covers**: ARC-03
+- **Depends on**: none
+- **Risk**: inherit
+- **Touches**: `eslint.config.js`, `src/features/architecture.test.ts`
+- **Change**: padrões de lint para caminhos relativos até `db`; teste que varre imports de `src/features/**` fora de repository/adapters/testes.
+- **Tests**:
+  - SPEC ARC-03 · unit — nenhum import proibido (`realm`, `@realm/*`, `@/db`, caminho relativo terminando em `db` ou `db/...`) fora dos arquivos isentos
+  - SPEC ARC-03 · lint — mutação manual com `../../../db` e `../../db/schemas` → lint falha
+- **Done when**: tests above pass; full gate green
+- **Gate**: full
+- **Status**: [ ] pending
+
 ## Execution Waves
 
 - **Wave 1**: T1 ∥ T2
@@ -303,6 +343,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
 - **Wave 3**: T5 ∥ T6
 - **Wave 4**: T7
 - **Wave 5**: T8
+- **Fix round 1**: F1 ∥ F2 ∥ F3
 
 ## Deferred
 

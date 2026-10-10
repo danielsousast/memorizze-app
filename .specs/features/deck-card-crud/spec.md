@@ -53,7 +53,7 @@ Os schemas Realm existem (feature `realm-schemas`), mas nada lê ou grava baralh
 - **DCK-01** — WHEN um baralho é criado com `name` e `description` opcional THEN o sistema SHALL gravá-lo com `name` sem espaços nas pontas, `createdAt` = instante da criação e 0 cartões, e devolver o baralho criado.
 - **DCK-02** — A listagem de baralhos SHALL devolver todos os baralhos em ordem de `createdAt` crescente, cada um com `cardCount` = número de cartões.
 - **DCK-03** — Obter baralho por id: id existente → o baralho; id inexistente → `null`.
-- **DCK-04** — WHEN um baralho é atualizado com novo `name` e/ou `description` THEN o sistema SHALL gravar os novos valores, com `name` sem espaços nas pontas, sem alterar `createdAt` nem os cartões.
+- **DCK-04** *(A-01)* — WHEN um baralho é atualizado com novo `name` e/ou `description` THEN o sistema SHALL gravar os novos valores, com `name` sem espaços nas pontas, sem alterar `createdAt` nem os cartões. `description` omitida mantém a atual; `description: ""` remove a descrição.
 - **DCK-05** — WHEN um baralho é excluído THEN o sistema SHALL apagar o baralho e todos os seus cartões.
 - **DCK-09** — Após excluir um baralho, os cartões de outros baralhos e todos os `ReviewLog` continuam no banco, inalterados.
 
@@ -85,7 +85,7 @@ Os schemas Realm existem (feature `realm-schemas`), mas nada lê ou grava baralh
 - **ARC-01** — Cada feature vive em `src/features/<feature>/` com: `interfaces.ts` (tipos e contrato do repositório), `repository.ts` (único acesso ao Realm), `adapters.ts` quando há conversão de dados, e `usecases/` com um hook por arquivo.
 - **ARC-05** — Uma feature com um único caso de uso tem esse hook na raiz da feature, sem pasta `usecases/`.
 - **ARC-02** — Cada hook de caso de uso faz exatamente uma chamada React Query (`useQuery` ou `useMutation`), e a função dessa chamada invoca exatamente um método do repositório.
-- **ARC-03** — Dentro de `src/features/`, só `repository.ts` e `adapters.ts` SHALL importar `realm`, `@realm/react` ou `@/db`.
+- **ARC-03** *(A-02)* — Dentro de `src/features/`, só `repository.ts`, `adapters.ts` e arquivos de teste (`*.test.ts(x)`) SHALL importar `realm`, `@realm/react` ou `src/db`, por qualquer caminho (alias ou relativo).
 - **ARC-04** — O padrão de ARC-01..03 SHALL estar descrito em ARCHITECTURE.md e registrado como decisão `AD-001` em `.specs/STATE.md`.
 
 ## Failure & Edge Behavior
@@ -119,3 +119,23 @@ Other dimensions: idempotency N/A because a submissão duplicada de baralho cai 
 | Nomes das features | `src/features/decks/` e `src/features/cards/` | Planejado em ARCHITECTURE.md | yes |
 
 **Open questions**: none
+
+## Amendments
+
+### A-01 — Update de baralho sem `description` mantém a descrição
+- **Type**: behavior-change
+- **Discovered in**: Verify (verificador independente, mutante M14)
+- **Change**: DCK-04 define que `description` omitida mantém a atual e `description: ""` a remove.
+- **Reason**: "name e/ou description" não definia o caso omitido; o código apagava a descrição, risco de perda de dado em telas que editam só o nome.
+- **Affected**: DCK-04 (modified)
+- **Risk impact**: none
+- **Status**: approved (usuário, 2026-10-09)
+
+### A-02 — ARC-03 isenta testes e cobre imports relativos
+- **Type**: clarification
+- **Discovered in**: Verify (verificador independente, sondas L2/L6)
+- **Change**: ARC-03 isenta `*.test.ts(x)` (testes precisam do Realm em memória) e vale para qualquer caminho até `src/db`, inclusive relativo.
+- **Reason**: o spec não citava testes, e a regra de lint deixava passar `../../db`.
+- **Affected**: ARC-03 (modified)
+- **Risk impact**: none
+- **Status**: approved (usuário, 2026-10-09)
