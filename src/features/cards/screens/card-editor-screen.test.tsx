@@ -1,11 +1,12 @@
 import { act, fireEvent, screen, waitFor } from "expo-router/testing-library";
-import { Text } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { Alert, Text } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
 import { cardStage, stageLabel } from "@/domain/stage";
 import { useCards } from "@/features/cards";
+import { createRandom } from "@/testing/random";
 import { openTestRealm } from "@/testing/realm";
 import { renderRouterWithProviders } from "@/testing/router";
 
@@ -196,5 +197,213 @@ describe("CardEditorScreen (create)", () => {
     expect(rendered).toHavePathname(url());
     expect(screen.getByLabelText("Frente").props.value).toBe("a");
     await rendered.unmount();
+  });
+});
+
+function EditCardRoute() {
+  const { cardId } = useLocalSearchParams<{ cardId: string }>();
+  return <CardEditorScreen cardId={cardId} />;
+}
+
+// Stub for the deck detail route (T6 builds the real one): lists every card front.
+function DeckListStub() {
+  const { deckId } = useLocalSearchParams<{ deckId: string }>();
+  const { data } = useCards(deckId);
+  return (
+    <>
+      <Text>deck-stub</Text>
+      {(data ?? []).map((c) => (
+        <Text key={c.id}>{`row:${c.front}`}</Text>
+      ))}
+    </>
+  );
+}
+
+const editRoutes = {
+  "decks/[deckId]/index": DeckListStub,
+  "cards/[cardId]/edit": EditCardRoute,
+};
+
+describe("CardEditorScreen (edit)", () => {
+  let realm: Realm;
+  let deckId: string;
+  let cardId: string;
+  const due = new Date(2026, 9, 20, 0, 0, 0, 0);
+
+  beforeEach(() => {
+    realm = openTestRealm(models);
+    const deck = realm.write(() =>
+      realm.create(Deck, { name: "Inglês", createdAt: new Date(), cards: [] }),
+    );
+    deckId = deck._id.toHexString();
+    const card = realm.write(() => {
+      const c = realm.create(Card, {
+        front: "forget",
+        back: "esquecer",
+        easeFactor: 1.9,
+        intervalDays: 6,
+        repetitions: 3,
+        lapses: 1,
+        dueDate: due,
+        createdAt: new Date(),
+      });
+      deck.cards.push(c);
+      return c;
+    });
+    cardId = card._id.toHexString();
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+    realm.close();
+  });
+
+  const editUrl = () => `/cards/${cardId}/edit`;
+  const stored = () => realm.objectForPrimaryKey(Card, new Realm.BSON.ObjectId(cardId));
+  // Opens the deck first so the Editor is a real modal on top of it.
+  const openEditor = async () => {
+    const rendered = await renderRouterWithProviders(editRoutes, realm, `/decks/${deckId}`);
+    await screen.findByText("deck-stub");
+    await act(async () => {
+      router.push(editUrl() as never);
+    });
+    await screen.findByText("Editar cartão");
+    return rendered;
+  };
+  const fill = async (front: string, back: string) => {
+    await fireEvent.changeText(screen.getByLabelText("Frente"), front);
+    await fireEvent.changeText(screen.getByLabelText("Verso"), back);
+  };
+  const press = (name: string) => fireEvent.press(screen.getByRole("button", { name }));
+
+  it("EDT-04 shows the prefilled edit form and Salvar updates the text and closes", async () => {
+    const rendered = await openEditor();
+    expect(rendered).toHavePathname(editUrl());
+    expect(screen.getByLabelText("Frente").props.value).toBe("forget");
+    expect(screen.getByLabelText("Verso").props.value).toBe("esquecer");
+    expect(screen.getByRole("button", { name: "Excluir cartão" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Salvar e criar outro" })).toBeNull();
+
+    await fireEvent.changeText(screen.getByLabelText("Verso"), "esquecer de algo");
+    await press("Salvar");
+    await waitFor(() => expect(rendered).toHavePathname(`/decks/${deckId}`));
+    expect(stored()?.back).toBe("esquecer de algo");
+    expect(stored()?.front).toBe("forget");
+    await rendered.unmount();
+  });
+
+  it("EDT-05 Excluir cartão asks for confirmation; Excluir removes the card and closes", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    const rendered = await openEditor();
+    await press("Excluir cartão");
+    expect(alert).toHaveBeenCalledTimes(1);
+    const [title, , buttons] = alert.mock.calls[0];
+    expect(title).toBe("Excluir cartão?");
+    expect(buttons?.map((b) => [b.text, b.style])).toEqual([
+      ["Cancelar", "cancel"],
+      ["Excluir", "destructive"],
+    ]);
+
+    await act(async () => {
+      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
+    });
+    await waitFor(() => expect(rendered).toHavePathname(`/decks/${deckId}`));
+    expect(stored()).toBeNull();
+    await waitFor(() => expect(screen.queryByText("row:forget")).toBeNull());
+    expect(screen.queryByText("Cartão não encontrado")).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("EDT-05 Cancelar in the confirmation leaves the card intact", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    const rendered = await openEditor();
+    await press("Excluir cartão");
+    const buttons = alert.mock.calls[0][2];
+    await act(async () => {
+      buttons?.find((b) => b.text === "Cancelar")?.onPress?.();
+    });
+    expect(stored()).not.toBeNull();
+    expect(rendered).toHavePathname(editUrl());
+    await rendered.unmount();
+  });
+
+  it("EDT-05 no NotFound flash while a successful delete closes the Editor", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    const rendered = await openEditor();
+    await press("Excluir cartão");
+    const buttons = alert.mock.calls[0][2];
+    // Keep the Editor mounted after the delete so any flash would be observable.
+    jest.spyOn(router, "back").mockImplementation(() => {});
+    await act(async () => {
+      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
+    });
+    await waitFor(() => expect(stored()).toBeNull());
+    expect(screen.queryByText("Cartão não encontrado")).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("EDT-08 Salvar and Excluir cartão are disabled while the delete is pending", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    const rendered = await openEditor();
+    await press("Excluir cartão");
+    const buttons = alert.mock.calls[0][2];
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    jest.spyOn(rendered.queryClient, "invalidateQueries").mockReturnValue(gate);
+    await act(async () => {
+      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
+    });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled());
+    expect(screen.getByRole("button", { name: "Excluir cartão" })).toBeDisabled();
+    await act(async () => release());
+    await waitFor(() => expect(rendered).toHavePathname(`/decks/${deckId}`));
+    await rendered.unmount();
+  });
+
+  it("EDT-09 unknown card shows Cartão não encontrado with Voltar", async () => {
+    const rendered = await renderRouterWithProviders(
+      editRoutes,
+      realm,
+      "/cards/000000000000000000000000/edit",
+    );
+    expect(await screen.findByText("Cartão não encontrado")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Voltar" })).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it("INV-01 20 random edits through the Editor never change the scheduling fields", async () => {
+    const random = createRandom(20261009);
+    const words = ["alfa", "beta", "gama", "olá\nmundo", "ção", "x", "  espaço  ", "z9"];
+    const text = () =>
+      Array.from({ length: 1 + Math.floor(random.next() * 4) }, () => random.pick(words)).join(" ");
+    const scheduling = () => {
+      const c = stored()!;
+      return {
+        easeFactor: c.easeFactor,
+        intervalDays: c.intervalDays,
+        repetitions: c.repetitions,
+        lapses: c.lapses,
+        dueDate: c.dueDate.getTime(),
+      };
+    };
+    const expected = {
+      easeFactor: 1.9,
+      intervalDays: 6,
+      repetitions: 3,
+      lapses: 1,
+      dueDate: due.getTime(),
+    };
+    expect(scheduling()).toEqual(expected);
+
+    for (let i = 0; i < 20; i++) {
+      const rendered = await openEditor();
+      const front = `${text()}-${i}`;
+      const back = `${text()}-${i}`;
+      await fill(front, back);
+      await press("Salvar");
+      await waitFor(() => expect(rendered).toHavePathname(`/decks/${deckId}`));
+      expect(stored()?.front).toBe(front.trim());
+      expect(scheduling()).toEqual(expected);
+      await rendered.unmount();
+    }
   });
 });

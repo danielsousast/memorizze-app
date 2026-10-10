@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useRef, useState } from "react";
-import { ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
 
 import { Button } from "@/components/button";
 import { DeckIcon } from "@/components/deck-icon";
@@ -12,9 +12,10 @@ import { AppError } from "@/domain/errors";
 import { useDeck } from "@/features/decks";
 import { radii, screenMargin, spacing, typography, useTheme } from "@/theme";
 
-import { useCreateCard } from "@/features/cards";
+import { useCard, useCreateCard, useDeleteCard, useUpdateCard } from "@/features/cards";
+import type { Card } from "@/features/cards";
 
-type Props = { deckId: string };
+type Props = { deckId: string } | { cardId: string };
 
 type FieldErrors = { front?: string; back?: string };
 
@@ -25,10 +26,12 @@ function closeEditor(fallbackHref: string) {
   else router.replace(fallbackHref as never);
 }
 
-// Create mode. T9 adds edit mode here (a `cardId` prop, `useCard`/`useUpdateCard`/
-// `useDeleteCard`, title `Editar cartão`, `Excluir cartão`) by branching in this
-// component and reusing CardEditorForm.
-export function CardEditorScreen({ deckId }: Props) {
+export function CardEditorScreen(props: Props) {
+  if ("cardId" in props) return <EditCard cardId={props.cardId} />;
+  return <CreateCard deckId={props.deckId} />;
+}
+
+function CreateCard({ deckId }: { deckId: string }) {
   const deck = useDeck(deckId);
 
   if (deck.isPending) {
@@ -46,6 +49,115 @@ export function CardEditorScreen({ deckId }: Props) {
     );
   }
   return <CreateCardForm deckId={deckId} deckName={deck.data.name} />;
+}
+
+function toFieldErrors(error: unknown): { errors?: FieldErrors; formError?: string } {
+  if (error instanceof AppError && error.code === "CARD_FRONT_EMPTY") {
+    return { errors: { front: "Escreva a frente do cartão." } };
+  }
+  if (error instanceof AppError && error.code === "CARD_BACK_EMPTY") {
+    return { errors: { back: "Escreva o verso do cartão." } };
+  }
+  return { formError: GENERIC_ERROR };
+}
+
+// Edit mode: the card carries no deck reference, so the deck chip is omitted and
+// closing falls back to Início when there is nothing to go back to.
+function EditCard({ cardId }: { cardId: string }) {
+  const card = useCard(cardId);
+  const remove = useDeleteCard();
+
+  // After a successful delete the card query refetches to null; do not flash NotFound.
+  if (card.isPending || remove.isSuccess) {
+    return <Screen>{null}</Screen>;
+  }
+  if (card.data === null || card.data === undefined) {
+    return (
+      <Screen>
+        <NotFound
+          title="Cartão não encontrado"
+          actionLabel="Voltar"
+          onAction={() => closeEditor("/")}
+        />
+      </Screen>
+    );
+  }
+  return <EditCardForm card={card.data} remove={remove} />;
+}
+
+function EditCardForm({
+  card,
+  remove,
+}: {
+  card: Card;
+  remove: ReturnType<typeof useDeleteCard>;
+}) {
+  const update = useUpdateCard();
+  const [front, setFront] = useState(card.front);
+  const [back, setBack] = useState(card.back);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string | undefined>();
+  const busy = useRef(false);
+
+  function save() {
+    if (busy.current) return;
+    busy.current = true;
+    setErrors({});
+    setFormError(undefined);
+    update.mutate(
+      { id: card.id, input: { front, back } },
+      {
+        onSuccess: () => closeEditor("/"),
+        onError: (error) => {
+          const mapped = toFieldErrors(error);
+          setErrors(mapped.errors ?? {});
+          setFormError(mapped.formError);
+        },
+        onSettled: () => {
+          busy.current = false;
+        },
+      },
+    );
+  }
+
+  function confirmDelete() {
+    if (busy.current) return;
+    Alert.alert("Excluir cartão?", undefined, [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Excluir",
+        style: "destructive",
+        onPress: () => {
+          if (busy.current) return;
+          busy.current = true;
+          setFormError(undefined);
+          remove.mutate(card.id, {
+            onSuccess: () => closeEditor("/"),
+            onError: () => setFormError("Não foi possível excluir. Tente de novo."),
+            onSettled: () => {
+              busy.current = false;
+            },
+          });
+        },
+      },
+    ]);
+  }
+
+  return (
+    <CardEditorForm
+      title="Editar cartão"
+      front={front}
+      back={back}
+      onFrontChange={setFront}
+      onBackChange={setBack}
+      errors={errors}
+      formError={formError}
+      pending={update.isPending || remove.isPending}
+      onCancel={() => closeEditor("/")}
+      onSave={save}
+      onDelete={confirmDelete}
+    />
+  );
 }
 
 function CreateCardForm({ deckId, deckName }: { deckId: string; deckName: string }) {
@@ -75,13 +187,9 @@ function CreateCardForm({ deckId, deckName }: { deckId: string; deckName: string
           }
         },
         onError: (error) => {
-          if (error instanceof AppError && error.code === "CARD_FRONT_EMPTY") {
-            setErrors({ front: "Escreva a frente do cartão." });
-          } else if (error instanceof AppError && error.code === "CARD_BACK_EMPTY") {
-            setErrors({ back: "Escreva o verso do cartão." });
-          } else {
-            setFormError(GENERIC_ERROR);
-          }
+          const mapped = toFieldErrors(error);
+          setErrors(mapped.errors ?? {});
+          setFormError(mapped.formError);
         },
         onSettled: () => {
           busy.current = false;
@@ -111,12 +219,13 @@ function CreateCardForm({ deckId, deckName }: { deckId: string; deckName: string
 
 type FormProps = {
   title: string;
-  deckName: string;
+  /** Omit to hide the deck chip (edit mode). */
+  deckName?: string;
   front: string;
   back: string;
   onFrontChange: (text: string) => void;
   onBackChange: (text: string) => void;
-  frontRef: React.Ref<TextInput>;
+  frontRef?: React.Ref<TextInput>;
   errors: FieldErrors;
   formError?: string;
   pending: boolean;
@@ -124,6 +233,8 @@ type FormProps = {
   onSave: () => void;
   /** Omit to hide `Salvar e criar outro` (edit mode). */
   onSaveAnother?: () => void;
+  /** Provide to show `Excluir cartão` (edit mode). */
+  onDelete?: () => void;
 };
 
 function CardEditorForm(props: FormProps) {
@@ -141,10 +252,12 @@ function CardEditorForm(props: FormProps) {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.content}
       >
-        <View style={[styles.deckChip, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <DeckIcon name={props.deckName} />
-          <Text style={[typography.button, { color: colors.text }]}>{props.deckName}</Text>
-        </View>
+        {props.deckName ? (
+          <View style={[styles.deckChip, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <DeckIcon name={props.deckName} />
+            <Text style={[typography.button, { color: colors.text }]}>{props.deckName}</Text>
+          </View>
+        ) : null}
         <TextField
           label="Frente"
           hint="Pergunta ou termo"
@@ -182,6 +295,14 @@ function CardEditorForm(props: FormProps) {
             label="Salvar e criar outro"
             variant="text"
             onPress={props.onSaveAnother}
+            disabled={props.pending}
+          />
+        ) : null}
+        {props.onDelete ? (
+          <Button
+            label="Excluir cartão"
+            variant="danger"
+            onPress={props.onDelete}
             disabled={props.pending}
           />
         ) : null}
