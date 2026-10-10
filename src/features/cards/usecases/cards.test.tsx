@@ -158,4 +158,29 @@ describe("card hooks", () => {
     expect(result.current.create.error?.code).toBe("CARD_FRONT_EMPTY");
     await unmount();
   });
+
+  it("HK-06 keeps the mounted data after a rejected card write", async () => {
+    const { result, unmount } = await renderReady();
+    const before = {
+      decks: result.current.decks.data,
+      list: result.current.list.data,
+      item: result.current.item.data,
+    };
+
+    await act(async () => {
+      await result.current.create
+        .mutateAsync({ deckId, input: { front: "", back: "b" } })
+        .catch(() => {});
+      await result.current.update
+        .mutateAsync({ id: cardId, input: { back: " " } })
+        .catch(() => {});
+    });
+
+    await waitFor(() => expect(result.current.update.isError).toBe(true));
+    expect(result.current.create.isError).toBe(true);
+    expect(result.current.decks.data).toBe(before.decks);
+    expect(result.current.list.data).toBe(before.list);
+    expect(result.current.item.data).toBe(before.item);
+    await unmount();
+  });
 });

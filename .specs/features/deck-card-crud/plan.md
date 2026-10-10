@@ -320,7 +320,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC HK-06 · integration — `useCreateCard` e `useUpdateCard` rejeitados → `decks.data`, `list.data` e `item.data` com a mesma referência de antes
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### F3 — ARC-03 barra imports relativos e tem teste (A-02)
 
