@@ -37,7 +37,7 @@ export function StudyScreen({ deckId }: Props) {
   }
   return (
     <Screen testID="study-screen">
-      <SessionView cards={queue} />
+      <SessionView cards={queue} deckId={deckId} />
     </Screen>
   );
 }

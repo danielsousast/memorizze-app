@@ -344,7 +344,7 @@ Mutações sugeridas ao verificador:
   - SPEC THM-01 · screen — esquema escuro → fundo `darkColors.background`
 - **Done when**: tests above pass; full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

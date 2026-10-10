@@ -12,6 +12,7 @@ import { useCard } from "@/features/cards";
 
 import type { StudyCard } from "../interfaces";
 import { useAnswerCard } from "../usecases/use-answer-card";
+import { SummaryView } from "./summary-view";
 
 const SAVE_ERROR = "Não foi possível salvar a resposta. Tente de novo.";
 
@@ -38,9 +39,9 @@ function confirmExit() {
 const grades: Grade[] = [0, 1, 2, 3];
 const gradeTone = ["again", "hard", "good", "easy"] as const;
 
-type Props = { cards: StudyCard[] };
+type Props = { cards: StudyCard[]; deckId?: string };
 
-export function SessionView({ cards }: Props) {
+export function SessionView({ cards, deckId }: Props) {
   const { colors } = useTheme();
   // The queue is a snapshot: started once from the first read (QUE-02).
   const [state, dispatch] = useReducer(sessionReducer, cards, (initial) => startSession(initial, new Date()));
@@ -96,19 +97,13 @@ export function SessionView({ cards }: Props) {
     return grades.map((g) => intervalLabel(schedule(card, g, now).intervalDays));
   }, [card]);
 
-  // Placeholder for the summary phase; T11 replaces it.
+  // ANS-05: the summary replaces the session in the same route.
   if (!card) {
-    const n = state.completed;
     return (
-      <View style={styles.root}>
+      <>
         <Stack.Screen options={{ gestureEnabled: true }} />
-        <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
-          Sessão concluída
-        </Text>
-        <Text style={[typography.button, { color: colors.text2 }]}>
-          {`${n} ${n === 1 ? "cartão revisto" : "cartões revistos"}`}
-        </Text>
-      </View>
+        <SummaryView state={state} deckId={deckId} />
+      </>
     );
   }
 
