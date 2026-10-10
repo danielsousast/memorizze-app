@@ -296,7 +296,7 @@ Mutações sugeridas ao verificador:
   - SPEC ERR-01 · tela — repositório lança erro genérico → `Não foi possível salvar. Tente de novo.`, modal aberto, nome antigo no Realm
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T10 — Stepper muda a meta e a Início acompanha
 

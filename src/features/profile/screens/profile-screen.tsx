@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { GoalProgress } from "@/components/goal-progress";
@@ -33,6 +34,7 @@ export function ProfileScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Editar nome, ${profile.name}`}
+            onPress={() => router.push("/edit-name")}
             style={styles.identity}
           >
             <View style={[styles.avatar, { backgroundColor: colors.accent }]}>

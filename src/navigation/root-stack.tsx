@@ -29,6 +29,7 @@ export function RootStack() {
         <Stack.Screen name="decks/[deckId]/edit" options={{ presentation: "modal" }} />
         <Stack.Screen name="decks/[deckId]/cards/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="cards/[cardId]/edit" options={{ presentation: "modal" }} />
+        <Stack.Screen name="edit-name" options={{ presentation: "modal" }} />
       </Stack.Protected>
     </Stack>
   );

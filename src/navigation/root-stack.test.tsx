@@ -36,6 +36,7 @@ const routes = {
   "decks/[deckId]/edit": stub("Editar"),
   "decks/[deckId]/cards/new": stub("Novo cartão"),
   "cards/[cardId]/edit": stub("Editar cartão"),
+  "edit-name": stub("Editar nome"),
 };
 
 describe("RootStack", () => {
