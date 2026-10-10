@@ -8,8 +8,8 @@ describe("DeckIcon", () => {
     expect(screen.getByText("IN")).toBeTruthy();
   });
 
-  it("shows the first letters of the first two words", async () => {
+  it("shows the first two letters of the first word (INI-01)", async () => {
     await render(<DeckIcon name="Java Script" />);
-    expect(screen.getByText("JS")).toBeTruthy();
+    expect(screen.getByText("JA")).toBeTruthy();
   });
 });
