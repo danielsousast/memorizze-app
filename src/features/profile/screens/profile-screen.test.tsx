@@ -225,28 +225,12 @@ describe("ProfileScreen", () => {
     await empty.unmount();
   });
 
-  it("ACC-01 ACC-02 show the accuracy per window", async () => {
+  it("ACC-01 the accuracy tiles are not shown (user decision, 84da58d)", async () => {
     seed(20, 0);
     logs(87, 2);
-    logs(13, 0);
     const rendered = await open();
-    expect(await screen.findByLabelText("Acerto 7 dias, 87%")).toBeTruthy();
-    expect(screen.getByLabelText("Acerto 30 dias, 87%")).toBeTruthy();
-    await rendered.unmount();
-    realm.write(() => realm.delete(realm.objects(ReviewLog)));
-    logs(84, 2, 20);
-    logs(16, 0, 20);
-    const older = await open();
-    expect(await screen.findByLabelText("Acerto 30 dias, 84%")).toBeTruthy();
-    expect(screen.getByText("84%")).toBeTruthy();
-    await older.unmount();
-  });
-
-  it("ACC-04 shows a dash without reviews", async () => {
-    seed(20, 0);
-    const rendered = await open();
-    expect(await screen.findByLabelText("Acerto 7 dias, —")).toBeTruthy();
-    expect(screen.getByLabelText("Acerto 30 dias, —")).toBeTruthy();
+    await screen.findByText("Maior sequência");
+    expect(screen.queryByLabelText(/^Acerto/)).toBeNull();
     await rendered.unmount();
   });
 
@@ -275,7 +259,6 @@ describe("ProfileScreen", () => {
     logs(4, 2);
     await fireEvent.press(await screen.findByLabelText(/^Perfil, tab/));
     expect(await screen.findByLabelText("Sequência atual, 1 dia")).toBeTruthy();
-    expect(screen.getByLabelText("Acerto 7 dias, 100%")).toBeTruthy();
     await rendered.unmount();
   });
 

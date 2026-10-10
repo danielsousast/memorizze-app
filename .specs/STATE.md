@@ -70,7 +70,7 @@
 ## Handoff
 - **Feature**: study-onboarding-and-exit (F4, MEDIUM) — T1–T3 feitas, `npm run ci` sai 0 (504 testes), lint limpo, 5 mutações detectadas, commitada. Revisão do diff pelo autor; UAT em dispositivo pendente (folha 5c, diálogo de saída, migração Realm 2→3)
 - **Where**: `src/features/study/screens/{how-to-answer-sheet.tsx,use-study-session.ts,session-view.tsx}`, `Profile.studyTutorialSeen` (`src/db/schemas/profile.ts`, schemaVersion 3), `src/features/profile/`
-- **Next step**: F9 `profile-redesign` (LOW). F8 feita: ícones redesenhados em SVG-like a partir da prancha (iOS claro/escuro/tingido, Android adaptativo/monocromático); UAT visual em dispositivo exige `expo prebuild`/dev build; F2 segue bloqueada pelas decisões 1–5. Rodar o skill `adaptive-spec-driven` primeiro
+- **Next step**: F2/F5/F6/F7 bloqueadas pelas decisões 1–5; responder o usuário. F9 e F8 feitas: ícones redesenhados em SVG-like a partir da prancha (iOS claro/escuro/tingido, Android adaptativo/monocromático); UAT visual em dispositivo exige `expo prebuild`/dev build; F2 segue bloqueada pelas decisões 1–5. Rodar o skill `adaptive-spec-driven` primeiro
 - **Roteiro** (análise de `design/`, novos PNGs 3b, 3c, 3d, 5c, 7b, 9, 10, Componentes 2, ícone do app):
   - F2 `deck-menu-and-delete` (MEDIUM): menu 3c em `BottomSheet` (Adicionar cartão, Redefinir progresso, Excluir baralho); excluir 3d em `ConfirmDialog`; toast "Baralho excluído"; novo método de repositório e hook `useResetDeckProgress`. Troca o `Alert` de `use-deck-screen.ts`
   - F3 `deck-all-cards` (MEDIUM, FEITA): rota `decks/[deckId]/cards/index.tsx` (3b) com busca; Baralho (3) mostra só os 5 primeiros + "Ver todos >"; excluir cartão do editor passa a `ConfirmDialog`; checar 1.000 cartões
@@ -79,7 +79,7 @@
   - F6 `backup-restore` (HIGH): tela 10; `src/domain/backup.ts` (serializar, validar, versionar), exportar JSON (`expo-file-system` + `expo-sharing`), importar (`expo-document-picker`) substituindo tudo numa transação; data do último backup
   - F7 `sign-out-wipe` (HIGH): botão Sair no Perfil + dialog 7b com atalho "Fazer backup antes" (depende de F6); apaga Realm, preferências e cache; volta à Boas-vindas (AD-004)
   - F8 `app-branding` (LOW, FEITA): ícone novo (iOS claro/escuro/tingido, Android adaptativo) em `app.json` e `assets/`; splash
-  - F9 `profile-redesign` (LOW): conferir Perfil (rolagem completa) vs. código: engrenagem, linha "meta 30" no gráfico, rótulo de data
+  - F9 `profile-redesign` (LOW, FEITA 2026-10-10, sem mudança de código): "meta 30" e rótulo "Estudando desde março de 2026" já conferem; a engrenagem falta e só faz sentido com a rota `/settings` (F5), então entra em F5. Tiles de acerto removidos por decisão do usuário; `accuracy7`/`accuracy30` seguem em `repository.ts`/`interfaces.ts` sem uso na UI (sinalizado, não removido)
 - **Decisões pendentes do usuário** (bloqueiam F2, F5, F6, F7):
   1. Backup/importação, lembrete (notificação local), tema escolhido e "novos por dia" entram no MVP? Exige emenda em PROJECT-SPEC §2 e §13
   2. Toast de exclusão de baralho mantém "Desfazer" (adia a exclusão 4 s) ou fica só o "Não dá para desfazer" do diálogo 3d? Os designs se contradizem

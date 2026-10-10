@@ -24,16 +24,16 @@ describe("WelcomeScreen", () => {
   const open = () => renderRouterWithProviders(routes, realm, "/welcome");
   const profiles = () => realm.objects(Profile);
 
-  it("WEL-01 shows brand, copy, badges, field and button; illustration is hidden", async () => {
+  it("WEL-01 shows brand, copy, field and button; illustration is hidden", async () => {
     const rendered = await open();
     expect(screen.getByText("Memorizze")).toBeTruthy();
     expect(screen.getByText("Lembre mais, estudando menos.")).toBeTruthy();
     expect(
       screen.getByText("Flashcards com repetição espaçada. Poucos minutos por dia, no seu ritmo."),
     ).toBeTruthy();
-    expect(screen.getByText("100% offline")).toBeTruthy();
-    expect(screen.getByText("Sem login")).toBeTruthy();
-    expect(screen.getByText("Dados só no aparelho")).toBeTruthy();
+    expect(screen.queryByText("100% offline")).toBeNull();
+    expect(screen.queryByText("Sem login")).toBeNull();
+    expect(screen.queryByText("Dados só no aparelho")).toBeNull();
     expect(screen.getByLabelText("Como podemos te chamar?")).toBeTruthy();
     expect(screen.getByPlaceholderText("Seu nome ou apelido")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Começar" })).toBeTruthy();
