@@ -15,6 +15,10 @@ export function tomorrowSummaryLabel(count: number | undefined): string {
   return `Amanhã: ${plural(count, "cartão", "cartões")} para revisar`;
 }
 
+export function signOutMessage(decks: number, cards: number): string {
+  return `O Memorizze não tem conta. Sair apaga seus ${plural(decks, "baralho", "baralhos")}, ${plural(cards, "cartão", "cartões")} e todo o histórico deste aparelho.`;
+}
+
 export function studyTimeLabel(minutes: number): string {
   if (minutes === 0) return "< 1 min de estudo";
   return `${minutes} min de estudo`;

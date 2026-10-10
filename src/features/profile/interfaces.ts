@@ -22,10 +22,14 @@ export type ProfileStats = {
   stages: { new: number; learning: number; mature: number };
 };
 
+export type DataCounts = { decks: number; cards: number };
+
 export type ProfileRepository = {
   get(): Profile | null;
   create(name: string): Profile;
   update(input: ProfileInput): Profile;
   countReviewsToday(): number;
   stats(): ProfileStats;
+  dataCounts(): DataCounts;
+  wipe(): void;
 };

@@ -5,6 +5,7 @@ import { Stack } from "expo-router";
 import type { ComponentType, ReactElement } from "react";
 import type Realm from "realm";
 
+import { ToastProvider } from "@/components/toast-provider";
 import { createQueryClient } from "@/lib/query-client";
 
 type Routes = Record<string, ComponentType | (() => ReactElement | null)>;
@@ -35,7 +36,9 @@ export async function renderRouterWithProviders(
     return (
       <QueryClientProvider client={queryClient}>
         <RealmProvider realm={realm}>
-          {Navigator ? <Navigator /> : <Stack screenOptions={{ headerShown: false }} />}
+          <ToastProvider>
+            {Navigator ? <Navigator /> : <Stack screenOptions={{ headerShown: false }} />}
+          </ToastProvider>
         </RealmProvider>
       </QueryClientProvider>
     );

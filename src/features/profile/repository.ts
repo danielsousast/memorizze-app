@@ -1,7 +1,7 @@
 import { useRealm } from "@realm/react";
 import Realm from "realm";
 
-import { Card, Profile as ProfileObject, ReviewLog } from "@/db";
+import { Card, Deck, Profile as ProfileObject, ReviewLog } from "@/db";
 import { addLocalDays, startOfLocalDay } from "@/domain/dates";
 import { AppError } from "@/domain/errors";
 import { accuracy, dailyCounts, stageCounts } from "@/domain/stats";
@@ -78,6 +78,15 @@ export function createProfileRepository(
         week: dailyCounts(dates, at, 7),
         stages: stageCounts([...realm.objects(Card)]),
       };
+    },
+
+    dataCounts() {
+      return { decks: realm.objects(Deck).length, cards: realm.objects(Card).length };
+    },
+
+    // One transaction: it either erases everything or nothing (SOUT-04).
+    wipe() {
+      realm.write(() => realm.deleteAll());
     },
   };
 }

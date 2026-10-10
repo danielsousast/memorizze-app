@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import type { Edge } from "react-native-safe-area-context";
 
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { GoalProgress } from "@/components/goal-progress";
 import { Icon } from "@/components/icon";
 import { Screen } from "@/components/screen";
@@ -83,6 +84,11 @@ export function ProfileScreen() {
     increase,
     editName,
     openSettings,
+    signOutOpen,
+    signOutMessage,
+    requestSignOut,
+    cancelSignOut,
+    confirmSignOut,
   } = useProfileScreen();
 
   return (
@@ -192,8 +198,37 @@ export function ProfileScreen() {
               failed={statsError}
               dailyGoal={profile.dailyGoal}
             />
+            <View style={styles.signOut}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Sair"
+                onPress={requestSignOut}
+                style={[
+                  styles.signOutButton,
+                  { backgroundColor: colors.surface, borderColor: colors.border },
+                ]}
+              >
+                <Icon name="sign-out" color={colors.grade.again.text} />
+                <Text style={[typography.button, { color: colors.grade.again.text }]}>
+                  Sair
+                </Text>
+              </Pressable>
+              <Text style={[typography.caption, styles.signOutNote, { color: colors.text2 }]}>
+                Apaga seus baralhos e progresso deste aparelho.
+              </Text>
+            </View>
           </>
         ) : null}
+        <ConfirmDialog
+          visible={signOutOpen}
+          icon="sign-out"
+          tone="destructive"
+          title="Sair e apagar dados?"
+          message={signOutMessage}
+          confirmLabel="Apagar e sair"
+          onConfirm={confirmSignOut}
+          onCancel={cancelSignOut}
+        />
       </ScrollView>
     </Screen>
   );
@@ -217,6 +252,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  signOut: { gap: spacing.md },
+  signOutButton: {
+    minHeight: sizes.button,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    borderRadius: radii.studyCard,
+    borderWidth: 1,
+  },
+  signOutNote: { textAlign: "center" },
   identity: { flexDirection: "row", alignItems: "center", gap: spacing.lg },
   avatar: {
     width: sizes.fab + spacing.xl,

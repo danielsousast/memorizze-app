@@ -1,13 +1,19 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 
+import { useToast } from "@/components/toast-provider";
 import { canStep, stepGoal } from "@/domain/goal";
+import { signOutMessage } from "@/domain/labels";
 
+import { useDataCounts } from "../usecases/use-data-counts";
 import { useProfile } from "../usecases/use-profile";
 import { useReviewsToday } from "../usecases/use-reviews-today";
+import { useSignOut } from "../usecases/use-sign-out";
 import { useStats } from "../usecases/use-stats";
 import { useUpdateProfile } from "../usecases/use-update-profile";
 import { GENERIC_ERROR } from "./name-errors";
+
+const SIGN_OUT_ERROR = "Não foi possível apagar os dados.";
 
 function editName() {
   router.push("/edit-name");
@@ -23,6 +29,11 @@ export function useProfileScreen() {
   const { refetch: refetchReviews } = reviewsQuery;
   const statsQuery = useStats();
   const { refetch: refetchStats } = statsQuery;
+  const countsQuery = useDataCounts();
+  const { refetch: refetchCounts } = countsQuery;
+  const signOut = useSignOut();
+  const toast = useToast();
+  const [signOutOpen, setSignOutOpen] = useState(false);
   const update = useUpdateProfile();
   const [error, setError] = useState<string>();
   const busy = useRef(false);
@@ -32,7 +43,8 @@ export function useProfileScreen() {
     useCallback(() => {
       void refetchReviews();
       void refetchStats();
-    }, [refetchReviews, refetchStats]),
+      void refetchCounts();
+    }, [refetchReviews, refetchStats, refetchCounts]),
   );
 
   const step = useCallback(
@@ -54,6 +66,14 @@ export function useProfileScreen() {
   const decrease = useCallback(() => step(-1), [step]);
   const increase = useCallback(() => step(1), [step]);
 
+  const requestSignOut = useCallback(() => setSignOutOpen(true), []);
+  const cancelSignOut = useCallback(() => setSignOutOpen(false), []);
+  // The dialog is a Modal and covers the toast, so it closes before the wipe starts.
+  const confirmSignOut = useCallback(() => {
+    setSignOutOpen(false);
+    signOut.mutate(undefined, { onError: () => toast.show({ message: SIGN_OUT_ERROR }) });
+  }, [signOut, toast]);
+
   return {
     profile,
     reviewsToday,
@@ -66,5 +86,10 @@ export function useProfileScreen() {
     increase,
     editName,
     openSettings,
+    signOutOpen,
+    signOutMessage: signOutMessage(countsQuery.data?.decks ?? 0, countsQuery.data?.cards ?? 0),
+    requestSignOut,
+    cancelSignOut,
+    confirmSignOut,
   };
 }

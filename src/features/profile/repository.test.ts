@@ -215,4 +215,44 @@ describe("profile repository study tutorial flag", () => {
     expect(repository.update({ studyTutorialSeen: true }).studyTutorialSeen).toBe(true);
     expect(repository.update({ name: "Bia" }).studyTutorialSeen).toBe(true);
   });
+
+  describe("sign out", () => {
+    function seedAll() {
+      const at = new Date(2026, 9, 10);
+      realm.write(() => {
+        realm.create(Profile, { name: "Ana", dailyGoal: 20, createdAt: at });
+        const deck = realm.create(Deck, { name: "D", createdAt: at });
+        realm.create(Card, { front: "f", back: "b", dueDate: at, createdAt: at });
+        realm.create(ReviewLog, {
+          cardId: new Realm.BSON.ObjectId(),
+          deckId: deck._id,
+          grade: 2,
+          reviewedAt: at,
+        });
+      });
+    }
+
+    it("SOUT-02 dataCounts counts decks and cards", () => {
+      const repository = createProfileRepository(realm, () => now);
+      expect(repository.dataCounts()).toEqual({ decks: 0, cards: 0 });
+      seedAll();
+      expect(repository.dataCounts()).toEqual({ decks: 1, cards: 1 });
+    });
+
+    it("SOUT-03 wipe erases profile, decks, cards and logs", () => {
+      seedAll();
+      createProfileRepository(realm, () => now).wipe();
+      for (const model of models) expect(realm.objects(model).length).toBe(0);
+    });
+
+    it("SOUT-04 a failed wipe leaves the data intact", () => {
+      seedAll();
+      jest.spyOn(realm, "deleteAll").mockImplementation(() => {
+        throw new Error("boom");
+      });
+      expect(() => createProfileRepository(realm, () => now).wipe()).toThrow("boom");
+      expect(realm.objects(Profile).length).toBe(1);
+      expect(realm.objects(Card).length).toBe(1);
+    });
+  });
 });

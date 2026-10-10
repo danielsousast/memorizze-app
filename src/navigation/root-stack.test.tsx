@@ -134,4 +134,61 @@ describe("RootStack", () => {
     expect(await screen.findByText(label)).toBeTruthy();
     await rendered.unmount();
   });
+
+  describe("sign out", () => {
+    const signOutButton = () => screen.findByRole("button", { name: "Sair" });
+
+    it("SOUT-01 SOUT-02 shows the confirmation with the real counts", async () => {
+      addProfile();
+      realm.write(() => {
+        realm.create(Deck, { name: "D", createdAt: new Date() });
+        realm.create(Card, { front: "f", back: "b", dueDate: new Date(), createdAt: new Date() });
+      });
+      const rendered = await open("/profile");
+      await fireEvent.press(await signOutButton());
+      expect(await screen.findByText("Sair e apagar dados?")).toBeTruthy();
+      expect(screen.getByText(/seus 1 baralho, 1 cartão e todo o histórico/)).toBeTruthy();
+      await rendered.unmount();
+    });
+
+    it("SOUT-05 cancel keeps the data", async () => {
+      addProfile();
+      const rendered = await open("/profile");
+      await fireEvent.press(await signOutButton());
+      await fireEvent.press(await screen.findByRole("button", { name: "Cancelar" }));
+      expect(realm.objects(Profile).length).toBe(1);
+      expect(rendered).toHavePathname("/profile");
+      await rendered.unmount();
+    });
+
+    it("SOUT-03 confirming wipes everything and returns to the welcome screen", async () => {
+      addProfile();
+      realm.write(() => {
+        realm.create(Deck, { name: "D", createdAt: new Date() });
+      });
+      const rendered = await open("/profile");
+      await fireEvent.press(await signOutButton());
+      await fireEvent.press(await screen.findByRole("button", { name: "Apagar e sair" }));
+      expect(await screen.findByText("Começar")).toBeTruthy();
+      expect(rendered).toHavePathname("/welcome");
+      expect(realm.objects(Profile).length).toBe(0);
+      expect(realm.objects(Deck).length).toBe(0);
+      await rendered.unmount();
+    });
+
+    it("SOUT-04 a failed wipe keeps the data and shows a toast", async () => {
+      addProfile();
+      jest.spyOn(realm, "deleteAll").mockImplementation(() => {
+        throw new Error("boom");
+      });
+      const rendered = await open("/profile");
+      await fireEvent.press(await signOutButton());
+      await fireEvent.press(await screen.findByRole("button", { name: "Apagar e sair" }));
+      expect(await screen.findByText("Não foi possível apagar os dados.")).toBeTruthy();
+      expect(screen.queryByText("Sair e apagar dados?")).toBeNull();
+      expect(realm.objects(Profile).length).toBe(1);
+      expect(rendered).toHavePathname("/profile");
+      await rendered.unmount();
+    });
+  });
 });
