@@ -3,6 +3,7 @@ import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, BackHandler, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Button } from "@/components/button";
+import { FlipCard } from "@/components/flip-card";
 import { Icon } from "@/components/icon";
 import { gradeLabel, intervalLabel, schedule, type Grade } from "@/domain/schedule";
 import { answerSession, skipCurrent, startSession, type SessionState } from "@/domain/session";
@@ -143,26 +144,16 @@ export function SessionView({ cards, deckId }: Props) {
         {card.deckName}
       </Text>
 
-      <Pressable
+      <FlipCard
         testID="study-card"
-        accessibilityRole="button"
         accessibilityLabel="Virar cartão"
+        flipped={revealed}
         disabled={revealed}
         onPress={reveal}
         style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      >
-        <Text style={[typography.label, { color: colors.text2 }]}>FRENTE</Text>
-        {revealed ? (
+        front={
           <>
-            <Text style={[typography.section, styles.center, { color: colors.text2 }]}>
-              {card.front}
-            </Text>
-            <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <Text style={[typography.label, { color: colors.accentInk }]}>VERSO</Text>
-            <Text style={[typography.title, styles.center, { color: colors.text }]}>{card.back}</Text>
-          </>
-        ) : (
-          <>
+            <Text style={[typography.label, { color: colors.text2 }]}>FRENTE</Text>
             <View style={styles.middle}>
               <Text style={[typography.card, styles.center, { color: colors.text }]}>
                 {card.front}
@@ -172,8 +163,19 @@ export function SessionView({ cards, deckId }: Props) {
               Toque para ver a resposta
             </Text>
           </>
-        )}
-      </Pressable>
+        }
+        back={
+          <>
+            <Text style={[typography.label, { color: colors.text2 }]}>FRENTE</Text>
+            <Text style={[typography.section, styles.center, { color: colors.text2 }]}>
+              {card.front}
+            </Text>
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <Text style={[typography.label, { color: colors.accentInk }]}>VERSO</Text>
+            <Text style={[typography.title, styles.center, { color: colors.text }]}>{card.back}</Text>
+          </>
+        }
+      />
 
       <View style={styles.bottom}>
         {revealed ? (
