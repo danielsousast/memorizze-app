@@ -10,7 +10,7 @@ import { openTestRealm } from "@/testing/realm";
 import { renderRouterWithProviders } from "@/testing/router";
 import { darkColors } from "@/theme";
 
-import IndexRoute from "../../../app/index";
+import IndexRoute from "../../../app/(tabs)/index";
 
 jest.mock("react-native/Libraries/Utilities/useColorScheme", () => ({
   default: jest.fn(),

@@ -1,3 +1,4 @@
+import { Slot } from "expo-router";
 import { screen } from "expo-router/testing-library";
 import { Text } from "react-native";
 import Realm from "realm";
@@ -30,6 +31,23 @@ describe("renderRouterWithProviders", () => {
     const rendered = await renderRouterWithProviders({ index: DeckCount }, realm);
     expect(await screen.findByText("count:2")).toBeTruthy();
     expect(rendered).toHavePathname("/");
+    await rendered.unmount();
+  });
+
+  it("renders the given navigator instead of the default Stack", async () => {
+    function Custom() {
+      return (
+        <>
+          <Text>custom-navigator</Text>
+          <Slot />
+        </>
+      );
+    }
+    const rendered = await renderRouterWithProviders({ index: DeckCount }, realm, "/", {
+      navigator: Custom,
+    });
+    expect(await screen.findByText("custom-navigator")).toBeTruthy();
+    expect(await screen.findByText("count:0")).toBeTruthy();
     await rendered.unmount();
   });
 });

@@ -217,7 +217,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · unit — `router.test.tsx` verde sem `navigator` (Stack padrão)
 - **Done when**: tests above pass; full gate green (toca o layout raiz)
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T5 — Barra de abas Início e Perfil só nas telas principais
 

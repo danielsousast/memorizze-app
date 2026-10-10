@@ -13,13 +13,16 @@ type Routes = Record<string, ComponentType | (() => ReactElement | null)>;
  * Renders file-system-like `routes` with real Expo Router navigation, an in-memory
  * Realm and a test QueryClient. Pass `_layout`-less route maps; a root layout with
  * providers and a `Stack` is injected. Assert navigation with
- * `expect(rendered).toHavePathname(...)` (not on the global `screen`).
+ * `expect(rendered).toHavePathname(...)` (not on the global `screen`). `options.navigator`
+ * replaces the default `Stack` (entry tests pass `RootStack`).
  */
 export async function renderRouterWithProviders(
   routes: Routes,
   realm: Realm,
   initialUrl = "/",
+  options: { navigator?: ComponentType } = {},
 ) {
+  const Navigator = options.navigator;
   const queryClient = createQueryClient();
   // gcTime: Infinity keeps React Query from scheduling timers that hold Jest open.
   const { queries, mutations } = queryClient.getDefaultOptions();
@@ -32,7 +35,7 @@ export async function renderRouterWithProviders(
     return (
       <QueryClientProvider client={queryClient}>
         <RealmProvider realm={realm}>
-          <Stack screenOptions={{ headerShown: false }} />
+          {Navigator ? <Navigator /> : <Stack screenOptions={{ headerShown: false }} />}
         </RealmProvider>
       </QueryClientProvider>
     );
