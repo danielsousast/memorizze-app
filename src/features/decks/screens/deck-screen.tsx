@@ -1,7 +1,9 @@
 import { FlatList, type ListRenderItemInfo, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
+import { BottomSheet } from "@/components/bottom-sheet";
 import { Button } from "@/components/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Fab } from "@/components/fab";
 import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
@@ -101,15 +103,26 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
           <Icon name="chevron-left" size={20} color={colors.accentInk} />
           <Text style={[typography.button, { color: colors.accentInk }]}>Início</Text>
         </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Opções do baralho"
-          onPress={screen.openOptions}
-          hitSlop={8}
-          style={styles.more}
-        >
-          <Icon name="more" size={24} color={colors.text} />
-        </Pressable>
+        <View style={styles.actions}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Editar baralho"
+            onPress={screen.editDeck}
+            hitSlop={8}
+            style={styles.more}
+          >
+            <Icon name="pencil" size={22} color={colors.text} />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Opções do baralho"
+            onPress={screen.openMenu}
+            hitSlop={8}
+            style={styles.more}
+          >
+            <Icon name="more" size={24} color={colors.text} />
+          </Pressable>
+        </View>
       </View>
       <FlatList
         data={screen.rows}
@@ -129,6 +142,23 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
       <View style={styles.fab}>
         <Fab label="Adicionar cartão" onPress={screen.addCard} />
       </View>
+      <BottomSheet
+        visible={screen.menuOpen}
+        title={deck.name}
+        subtitle={screen.sheetSubtitle}
+        actions={screen.sheetActions}
+        onClose={screen.closeMenu}
+      />
+      <ConfirmDialog
+        visible={screen.deleteOpen}
+        icon="trash"
+        tone="destructive"
+        title="Excluir baralho?"
+        message={screen.deleteMessage}
+        confirmLabel="Excluir baralho"
+        onConfirm={screen.confirmDelete}
+        onCancel={screen.cancelDelete}
+      />
     </Screen>
   );
 }
@@ -147,6 +177,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     minHeight: sizes.minTouch,
   },
+  actions: { flexDirection: "row", alignItems: "center" },
   more: {
     minHeight: sizes.minTouch,
     minWidth: sizes.minTouch,

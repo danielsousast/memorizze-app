@@ -1,14 +1,20 @@
 import { router } from "expo-router";
-import { useCallback } from "react";
-import { Alert } from "react-native";
+import { useCallback, useMemo, useState } from "react";
 
+import type { SheetAction } from "@/components/bottom-sheet";
+import { useToast } from "@/components/toast-provider";
 import { PREVIEW_LIMIT, newestFirst, previewCards } from "@/domain/cards-list";
 import { plural } from "@/domain/text";
 import { cardStage } from "@/domain/stage";
 import { useCards } from "@/features/cards";
-import type { Deck, useDeleteDeck } from "@/features/decks";
+import { useResetDeckProgress, type Deck, type useDeleteDeck } from "@/features/decks";
 
-import { deleteDeckMessage } from "./deck-messages";
+import { deckSheetSubtitle, deleteDeckMessage } from "./deck-messages";
+
+const RESET_DONE = "Progresso redefinido";
+const RESET_ERROR = "Não foi possível redefinir o progresso";
+const DELETE_DONE = "Baralho excluído";
+const DELETE_ERROR = "Não foi possível excluir o baralho";
 
 export function goHome() {
   router.dismissTo("/");
@@ -16,6 +22,10 @@ export function goHome() {
 
 export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDeck>) {
   const { data: cards } = useCards(deck.id);
+  const reset = useResetDeckProgress();
+  const toast = useToast();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const all = cards ? newestFirst(cards) : undefined;
   const rows = cards ? previewCards(cards) : [];
   const showAll = (cards?.length ?? 0) > PREVIEW_LIMIT;
@@ -23,24 +33,54 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
   const studyLabel =
     deck.dueCount > 0 ? `Estudar · ${plural(deck.dueCount, "cartão", "cartões")}` : "Estudar";
 
-  const deleteDeck = useCallback(() => {
-    remove.mutate(deck.id, { onSuccess: goHome });
-  }, [remove, deck.id]);
+  const openMenu = useCallback(() => setMenuOpen(true), []);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const cancelDelete = useCallback(() => setDeleteOpen(false), []);
 
+  const addCard = useCallback(() => {
+    router.push(`/decks/${deck.id}/cards/new`);
+  }, [deck.id]);
+
+  const editDeck = useCallback(() => {
+    router.push(`/decks/${deck.id}/edit`);
+  }, [deck.id]);
+
+  const resetProgress = useCallback(() => {
+    reset.mutate(deck.id, {
+      onSuccess: () => toast.show({ message: RESET_DONE }),
+      onError: () => toast.show({ message: RESET_ERROR }),
+    });
+  }, [reset, deck.id, toast]);
+
+  const askDelete = useCallback(() => setDeleteOpen(true), []);
+
+  // The dialog is a Modal and covers the toast, so it closes before the delete starts.
   const confirmDelete = useCallback(() => {
-    Alert.alert(`Excluir “${deck.name}”?`, deleteDeckMessage(deck.cardCount), [
-      { text: "Cancelar", style: "cancel" },
-      { text: "Excluir", style: "destructive", onPress: deleteDeck },
-    ]);
-  }, [deck.name, deck.cardCount, deleteDeck]);
+    setDeleteOpen(false);
+    remove.mutate(deck.id, {
+      onSuccess: () => {
+        toast.show({ message: DELETE_DONE });
+        goHome();
+      },
+      onError: () => toast.show({ message: DELETE_ERROR }),
+    });
+  }, [remove, deck.id, toast]);
 
-  const openOptions = useCallback(() => {
-    Alert.alert(deck.name, undefined, [
-      { text: "Editar baralho", onPress: () => router.push(`/decks/${deck.id}/edit`) },
-      { text: "Excluir baralho", style: "destructive", onPress: confirmDelete },
-      { text: "Cancelar", style: "cancel" },
-    ]);
-  }, [deck.name, deck.id, confirmDelete]);
+  const sheetActions = useMemo<SheetAction[]>(
+    () => [
+      { label: "Adicionar cartão", icon: "plus", onPress: addCard },
+      {
+        label: "Redefinir progresso",
+        subtitle: "Todos os cartões voltam a ser novos",
+        icon: "reset",
+        onPress: resetProgress,
+      },
+      { label: "Excluir baralho", icon: "trash", destructive: true, onPress: askDelete },
+    ],
+    [addCard, resetProgress, askDelete],
+  );
+  const sheetSubtitle = deckSheetSubtitle(deck.cardCount, deck.dueCount);
+  const deleteMessage = deleteDeckMessage(deck.name, deck.cardCount);
 
   const study = useCallback(() => {
     router.push(`/decks/${deck.id}/study`);
@@ -48,10 +88,6 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
 
   const seeAll = useCallback(() => {
     router.push(`/decks/${deck.id}/cards`);
-  }, [deck.id]);
-
-  const addCard = useCallback(() => {
-    router.push(`/decks/${deck.id}/cards/new`);
   }, [deck.id]);
 
   return {
@@ -63,7 +99,16 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
     studyLabel,
     study,
     addCard,
-    openOptions,
+    editDeck,
+    menuOpen,
+    openMenu,
+    closeMenu,
+    sheetActions,
+    sheetSubtitle,
+    deleteOpen,
+    deleteMessage,
+    confirmDelete,
+    cancelDelete,
     goHome,
   };
 }

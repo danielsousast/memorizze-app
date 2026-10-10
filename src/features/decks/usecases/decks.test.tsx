@@ -1,6 +1,6 @@
 import { onlineManager } from "@tanstack/react-query";
 import { act, waitFor } from "@testing-library/react-native";
-import Realm from "realm";
+import Realm, { BSON } from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
 import {
@@ -8,6 +8,7 @@ import {
   useDeck,
   useDecks,
   useDeleteDeck,
+  useResetDeckProgress,
   useUpdateDeck,
 } from "@/features/decks";
 import { createDeckRepository } from "@/features/decks/repository";
@@ -36,6 +37,7 @@ describe("deck hooks", () => {
         create: useCreateDeck(),
         update: useUpdateDeck(),
         remove: useDeleteDeck(),
+        reset: useResetDeckProgress(),
       }),
       realm,
     );
@@ -150,6 +152,30 @@ describe("deck hooks", () => {
     await waitFor(() => expect(result.current.create.isError).toBe(true));
     expect(result.current.create.error?.code).toBe("DECK_NAME_EMPTY");
     expect(result.current.list.data).toBe(before);
+    await unmount();
+  });
+
+  it("RST-02 refreshes the deck due count after a reset", async () => {
+    const seeded = createDeckRepository(realm).create({ name: "Inglês" });
+    realm.write(() => {
+      const deck = realm.objectForPrimaryKey(Deck, new BSON.ObjectId(seeded.id))!;
+      deck.cards.push(
+        realm.create(Card, {
+          front: "f",
+          back: "b",
+          dueDate: new Date(Date.now() + 30 * 86_400_000),
+          createdAt: new Date(),
+        }),
+      );
+    });
+    const { result, unmount } = await renderDeckHooks(seeded.id);
+    await waitFor(() => expect(result.current.item.data?.dueCount).toBe(0));
+
+    await act(async () => {
+      await result.current.reset.mutateAsync(seeded.id);
+    });
+
+    await waitFor(() => expect(result.current.item.data?.dueCount).toBe(1));
     await unmount();
   });
 });

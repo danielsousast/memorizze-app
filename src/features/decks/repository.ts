@@ -85,6 +85,21 @@ export function createDeckRepository(
         realm.delete(deck);
       });
     },
+
+    // Scheduling only: content and ReviewLog stay (RST-01).
+    resetProgress(id) {
+      const deck = existing(id);
+      const at = now();
+      realm.write(() => {
+        for (const card of deck.cards) {
+          card.easeFactor = 2.5;
+          card.intervalDays = 0;
+          card.repetitions = 0;
+          card.lapses = 0;
+          card.dueDate = at;
+        }
+      });
+    },
   };
 }
 

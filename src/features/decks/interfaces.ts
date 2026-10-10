@@ -20,4 +20,5 @@ export type DeckRepository = {
   create(input: DeckInput): Deck;
   update(id: string, input: DeckInput): Deck;
   remove(id: string): void;
+  resetProgress(id: string): void;
 };

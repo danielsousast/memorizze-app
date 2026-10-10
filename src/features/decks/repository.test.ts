@@ -283,4 +283,50 @@ describe("deck repository", () => {
 
     expect(removed).toBeGreaterThan(10);
   });
+
+  it("RST-01 resets scheduling only, for that deck's cards", () => {
+    const repository = createDeckRepository(realm, () => at(60));
+    const deck = repository.create({ name: "Inglês" });
+    const other = repository.create({ name: "Física" });
+    const [id] = seedCards(deck.id, 1);
+    const [otherId] = seedCards(other.id, 1);
+    realm.write(() => {
+      for (const key of [id, otherId]) {
+        const card = realm.objectForPrimaryKey(Card, new BSON.ObjectId(key))!;
+        card.easeFactor = 1.8;
+        card.intervalDays = 9;
+        card.repetitions = 4;
+        card.lapses = 2;
+        card.dueDate = at(9999);
+      }
+      realm.create(ReviewLog, {
+        cardId: new BSON.ObjectId(id),
+        deckId: new BSON.ObjectId(deck.id),
+        grade: 3,
+        reviewedAt: t0,
+      });
+    });
+
+    repository.resetProgress(deck.id);
+
+    const card = realm.objectForPrimaryKey(Card, new BSON.ObjectId(id))!;
+    expect([card.easeFactor, card.intervalDays, card.repetitions, card.lapses]).toEqual([
+      2.5, 0, 0, 0,
+    ]);
+    expect(card.dueDate).toEqual(at(60));
+    expect([card.front, card.back, card.createdAt]).toEqual(["f0", "b0", t0]);
+    expect(realm.objects(ReviewLog)).toHaveLength(1);
+    const kept = realm.objectForPrimaryKey(Card, new BSON.ObjectId(otherId))!;
+    expect([kept.easeFactor, kept.intervalDays, kept.dueDate]).toEqual([1.8, 9, at(9999)]);
+  });
+
+  it("RST-03 resets an empty deck and rejects a missing one", () => {
+    const repository = createDeckRepository(realm, () => t0);
+    const deck = repository.create({ name: "Vazio" });
+
+    expect(() => repository.resetProgress(deck.id)).not.toThrow();
+    expect(() => repository.resetProgress(new BSON.ObjectId().toHexString())).toThrow(
+      expect.objectContaining({ code: "DECK_NOT_FOUND" }),
+    );
+  });
 });
