@@ -37,6 +37,9 @@ const routes = {
   "decks/[deckId]/cards/new": stub("Novo cartão"),
   "cards/[cardId]/edit": stub("Editar cartão"),
   "edit-name": stub("Editar nome"),
+  study: stub("Estudo"),
+  "decks/[deckId]/index": stub("Baralho"),
+  "decks/[deckId]/study": stub("Estudo do baralho"),
 };
 
 describe("RootStack", () => {
@@ -107,6 +110,28 @@ describe("RootStack", () => {
       }
     });
     await waitFor(() => expect(screen.queryByText("Começar")).toBeNull());
+    await rendered.unmount();
+  });
+
+  it.each([
+    ["/study", "Estudo"],
+    ["/decks/abc", "Baralho"],
+    ["/decks/abc/study", "Estudo do baralho"],
+  ])("without a profile, a deep link to %s opens the welcome screen instead", async (url, label) => {
+    const rendered = await open(url);
+    expect(await screen.findByText("Começar")).toBeTruthy();
+    expect(screen.queryByText(label)).toBeNull();
+    await rendered.unmount();
+  });
+
+  it.each([
+    ["/study", "Estudo"],
+    ["/decks/abc", "Baralho"],
+    ["/decks/abc/study", "Estudo do baralho"],
+  ])("with a profile, %s still renders", async (url, label) => {
+    addProfile();
+    const rendered = await open(url);
+    expect(await screen.findByText(label)).toBeTruthy();
     await rendered.unmount();
   });
 });

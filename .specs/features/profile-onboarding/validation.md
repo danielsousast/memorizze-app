@@ -116,7 +116,7 @@ Remaining for a development build (cannot be done by code reading or jest):
 ## Gaps & Fix Tasks
 
 1. **F1 (major, test) — FIXED in repository.test.ts (mutant re-run killed it)** — REV-01/REV-02 upper bound: mutant `<` → `<=` on the tomorrow bound survives. Add a case with a log at tomorrow 00:00 (10/10 → 11/10 00:00) expecting it uncounted in `src/features/profile/repository.test.ts` (next to line ~88).
-2. **F2 (minor, spec/design)** — Unguarded auto-registered routes (`study`, `decks/[deckId]`, `decks/[deckId]/study`) reachable without a profile via push/deep link (`src/navigation/root-stack.tsx:24-34`). Decide by amendment: protect them or accept.
+2. **F2 (minor, spec/design) — FIXED: the three routes are declared inside `Stack.Protected`; root-stack.test.tsx covers deep links with and without a profile** — Unguarded auto-registered routes (`study`, `decks/[deckId]`, `decks/[deckId]/study`) reachable without a profile via push/deep link (`src/navigation/root-stack.tsx:24-34`). Decide by amendment: protect them or accept.
 3. **F3 (minor, test)** — A11Y-01 only asserted for `Começar`; no size/role assertion for steppers, profile header, `Salvar`, tab items.
 4. **F4 (minor, test)** — WEL-04 message `Use no máximo 30 caracteres.` and ERR path via UI not asserted for the too-long case (`src/features/profile/screens/name-errors.ts`); HOM-03 icon variants and TAB-02 on Resumo/modals unasserted.
 

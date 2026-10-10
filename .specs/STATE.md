@@ -41,9 +41,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: profile-onboarding (HIGH) — 10/10 tasks implementadas e commitadas em `main` (local, sem push). Verificação independente: PASS-WITH-GAPS (`validation.md`); gate completo verde (363 testes, tsc, lint)
+- **Feature**: profile-onboarding (HIGH) — 10/10 tasks implementadas e commitadas em `main` (local, sem push). Verificação independente: PASS-WITH-GAPS (`validation.md`); F2 corrigido (rotas `study`, `decks/[deckId]`, `decks/[deckId]/study` dentro do guard); gate completo verde (369 testes, tsc, lint)
 - **Where**: design aprovado pelo usuário (2026-10-10). Falta UAT em development build: barra de abas real, voltar no iOS/Android depois de `Começar`, teclado na Boas-vindas. M3 study-session segue com UAT pendente. `profile-stats` (segunda metade do M4) ainda não especificado
-- **Next step**: F2 — rotas `study`, `decks/[deckId]` e `decks/[deckId]/study` fora do guard do `RootStack` (deep link abre sem perfil); proteger via spec amendment ou aceitar. Depois UAT restante; push só com go-ahead explícito
-- **Open amendments**: none (F2 é o próximo passo)
+- **Next step**: especificar `profile-stats` (MEDIUM; RF5 + RF6 na aba Perfil). UAT restante em development build; push só com go-ahead explícito
+- **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-10

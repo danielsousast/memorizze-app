@@ -25,6 +25,9 @@ export function RootStack() {
       </Stack.Protected>
       <Stack.Protected guard={!!profile}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="study" />
+        <Stack.Screen name="decks/[deckId]/index" />
+        <Stack.Screen name="decks/[deckId]/study" />
         <Stack.Screen name="decks/new" options={{ presentation: "modal" }} />
         <Stack.Screen name="decks/[deckId]/edit" options={{ presentation: "modal" }} />
         <Stack.Screen name="decks/[deckId]/cards/new" options={{ presentation: "modal" }} />
