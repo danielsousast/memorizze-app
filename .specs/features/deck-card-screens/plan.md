@@ -269,7 +269,7 @@ Mutações sugeridas ao verificador:
   - SPEC THM-01 · screen — esquema escuro → fundo `darkColors.background`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T7 — Menu do baralho edita e exclui com confirmação
 
