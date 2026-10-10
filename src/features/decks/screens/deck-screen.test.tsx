@@ -38,6 +38,7 @@ const routes = {
   "decks/[deckId]/cards/new": () => <Text>Editor-novo</Text>,
   "decks/[deckId]/edit": () => <Text>Form-editar</Text>,
   "cards/[cardId]/edit": () => <Text>Editor-editar</Text>,
+  "decks/[deckId]/study": () => <Text>Sessão-baralho</Text>,
 };
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -58,7 +59,11 @@ describe("DeckScreen", () => {
     return createDeckRepository(realm).create({ name, description });
   }
 
-  type Schedule = { repetitions?: number; intervalDays?: number; dueDate?: Date };
+  type Schedule = {
+    repetitions?: number;
+    intervalDays?: number;
+    dueDate?: Date;
+  };
   function seedCard(deckId: string, front: string, back: string, schedule: Schedule = {}) {
     const card = createCardRepository(realm).create(deckId, { front, back });
     realm.write(() => {
@@ -104,8 +109,16 @@ describe("DeckScreen", () => {
   it("DECK-02 shows count, due and mature badges", async () => {
     const deck = seedDeck();
     seedCard(deck.id, "a", "a"); // due now, new
-    seedCard(deck.id, "b", "b", { repetitions: 4, intervalDays: 30, dueDate: future() });
-    seedCard(deck.id, "c", "c", { repetitions: 1, intervalDays: 3, dueDate: future() });
+    seedCard(deck.id, "b", "b", {
+      repetitions: 4,
+      intervalDays: 30,
+      dueDate: future(),
+    });
+    seedCard(deck.id, "c", "c", {
+      repetitions: 1,
+      intervalDays: 3,
+      dueDate: future(),
+    });
     const rendered = await open(deck.id);
     expect(await screen.findByText("3 cartões")).toBeTruthy();
     expect(screen.getByText("1 para hoje")).toBeTruthy();
@@ -115,7 +128,11 @@ describe("DeckScreen", () => {
 
   it("DECK-02 omits due and mature badges when there are none", async () => {
     const deck = seedDeck();
-    seedCard(deck.id, "a", "a", { repetitions: 1, intervalDays: 3, dueDate: future() });
+    seedCard(deck.id, "a", "a", {
+      repetitions: 1,
+      intervalDays: 3,
+      dueDate: future(),
+    });
     const rendered = await open(deck.id);
     expect(await screen.findByText("1 cartão")).toBeTruthy();
     await screen.findByTestId("card-row");
@@ -126,8 +143,16 @@ describe("DeckScreen", () => {
 
   it("DECK-03 lists newest first with joined back lines and stage badges", async () => {
     const deck = seedDeck();
-    seedCard(deck.id, "c1", "v1", { repetitions: 4, intervalDays: 30, dueDate: future() });
-    seedCard(deck.id, "c2", "v2", { repetitions: 1, intervalDays: 3, dueDate: future() });
+    seedCard(deck.id, "c1", "v1", {
+      repetitions: 4,
+      intervalDays: 30,
+      dueDate: future(),
+    });
+    seedCard(deck.id, "c2", "v2", {
+      repetitions: 1,
+      intervalDays: 3,
+      dueDate: future(),
+    });
     seedCard(deck.id, "c3", "a\nb");
     const rendered = await open(deck.id);
     await screen.findByText("c3");
@@ -187,7 +212,6 @@ describe("DeckScreen", () => {
     await rendered.unmount();
   });
 
-
   type AlertButton = { text?: string; style?: string; onPress?: () => void };
   function lastAlert() {
     const spy = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
@@ -203,7 +227,11 @@ describe("DeckScreen", () => {
       },
       press: async (text: string) => {
         const { buttons } = (() => {
-          const [, , b] = spy.mock.calls[spy.mock.calls.length - 1] as [string, string, AlertButton[]];
+          const [, , b] = spy.mock.calls[spy.mock.calls.length - 1] as [
+            string,
+            string,
+            AlertButton[],
+          ];
           return { buttons: b };
         })();
         await act(async () => buttons.find((b) => b.text === text)!.onPress?.());
@@ -287,14 +315,17 @@ describe("DeckScreen", () => {
     await rendered.unmount();
   });
 
-  it.each(["xyz", "64b7f0000000000000000000"])("DECK-11 unknown id %s shows not found", async (id) => {
-    const rendered = await renderRouterWithProviders(routes, realm, "/");
-    await act(async () => router.push(`/decks/${id}`));
-    expect(await screen.findByText("Baralho não encontrado")).toBeTruthy();
-    await fireEvent.press(screen.getByRole("button", { name: "Voltar ao início" }));
-    expect(rendered).toHavePathname("/");
-    await rendered.unmount();
-  });
+  it.each(["xyz", "64b7f0000000000000000000"])(
+    "DECK-11 unknown id %s shows not found",
+    async (id) => {
+      const rendered = await renderRouterWithProviders(routes, realm, "/");
+      await act(async () => router.push(`/decks/${id}`));
+      expect(await screen.findByText("Baralho não encontrado")).toBeTruthy();
+      await fireEvent.press(screen.getByRole("button", { name: "Voltar ao início" }));
+      expect(rendered).toHavePathname("/");
+      await rendered.unmount();
+    },
+  );
 
   it("PERF-01 renders fewer than 100 rows for 1000 cards", async () => {
     const deck = seedDeck();
@@ -302,7 +333,12 @@ describe("DeckScreen", () => {
       const obj = realm.objectForPrimaryKey(Deck, new Realm.BSON.ObjectId(deck.id))!;
       for (let i = 0; i < 1000; i++) {
         obj.cards.push(
-          realm.create(Card, { front: `f${i}`, back: `b${i}`, createdAt: new Date(), dueDate: future() }),
+          realm.create(Card, {
+            front: `f${i}`,
+            back: `b${i}`,
+            createdAt: new Date(),
+            dueDate: future(),
+          }),
         );
       }
     });
@@ -350,13 +386,16 @@ describe("DeckScreen", () => {
       const slop = target.props.hitSlop;
       const extra = (side: "top" | "bottom" | "left" | "right") =>
         typeof slop === "number" ? slop : (slop?.[side] ?? 0);
-      const height = Math.max(style.minHeight ?? 0, Number(style.height ?? 0)) + extra("top") + extra("bottom");
+      const height =
+        Math.max(style.minHeight ?? 0, Number(style.height ?? 0)) + extra("top") + extra("bottom");
       expect(height).toBeGreaterThanOrEqual(44);
       // Width is content-sized for rows and links; only check it where the style fixes it.
       const fixed = Math.max(style.minWidth ?? 0, Number(style.width ?? 0));
       if (fixed > 0) expect(fixed + extra("left") + extra("right")).toBeGreaterThanOrEqual(44);
     }
-    expect(screen.getByTestId("card-row").props.accessibilityLabel).toBe("to forget, esquecer verbo");
+    expect(screen.getByTestId("card-row").props.accessibilityLabel).toBe(
+      "to forget, esquecer verbo",
+    );
     await rendered.unmount();
   });
 
@@ -368,6 +407,34 @@ describe("DeckScreen", () => {
     expect(screen.getByTestId("deck-screen")).toHaveStyle({
       backgroundColor: darkColors.background,
     });
+    await rendered.unmount();
+  });
+
+  it.each([
+    [12, "Estudar · 12 cartões"],
+    [1, "Estudar · 1 cartão"],
+    [0, "Estudar"],
+  ])("ENT-01 with %i due cards the button reads %s", async (due, label) => {
+    const deck = seedDeck();
+    for (let i = 0; i < due; i++) seedCard(deck.id, `f${i}`, `b${i}`);
+    const rendered = await open(deck.id);
+    expect(await screen.findByRole("button", { name: label })).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it("ENT-01 shows Estudar for a deck without cards", async () => {
+    const deck = seedDeck();
+    const rendered = await open(deck.id);
+    expect(await screen.findByRole("button", { name: "Estudar" })).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it("ENT-03 tapping Estudar opens the deck session", async () => {
+    const deck = seedDeck();
+    seedCard(deck.id, "a", "b");
+    const rendered = await open(deck.id);
+    await fireEvent.press(await screen.findByRole("button", { name: "Estudar · 1 cartão" }));
+    expect(rendered).toHavePathname(`/decks/${deck.id}/study`);
     await rendered.unmount();
   });
 });

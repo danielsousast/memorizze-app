@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
+import { Button } from "@/components/button";
 import { Fab } from "@/components/fab";
 import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
@@ -52,8 +53,15 @@ function confirmDelete(deck: Deck, onDelete: () => void) {
 
 function openOptions(deck: Deck, onDelete: () => void) {
   Alert.alert(deck.name, undefined, [
-    { text: "Editar baralho", onPress: () => router.push(`/decks/${deck.id}/edit`) },
-    { text: "Excluir baralho", style: "destructive", onPress: () => confirmDelete(deck, onDelete) },
+    {
+      text: "Editar baralho",
+      onPress: () => router.push(`/decks/${deck.id}/edit`),
+    },
+    {
+      text: "Excluir baralho",
+      style: "destructive",
+      onPress: () => confirmDelete(deck, onDelete),
+    },
     { text: "Cancelar", style: "cancel" },
   ]);
 }
@@ -83,6 +91,12 @@ function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
         {deck.dueCount > 0 ? <Badge tone="accent" text={`${deck.dueCount} para hoje`} /> : null}
         {matureCount > 0 ? <Badge tone="outline" text={`${matureCount} maduros`} /> : null}
       </View>
+      <Button
+        label={
+          deck.dueCount > 0 ? `Estudar · ${plural(deck.dueCount, "cartão", "cartões")}` : "Estudar"
+        }
+        onPress={() => router.push(`/decks/${deck.id}/study`)}
+      />
       {all && all.length > 0 ? (
         <>
           <TextField label="Buscar cartões" value={query} onChangeText={setQuery} />
@@ -133,10 +147,7 @@ function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
         contentContainerStyle={styles.list}
       />
       <View style={styles.fab}>
-        <Fab
-          label="Adicionar cartão"
-          onPress={() => router.push(`/decks/${deck.id}/cards/new`)}
-        />
+        <Fab label="Adicionar cartão" onPress={() => router.push(`/decks/${deck.id}/cards/new`)} />
       </View>
     </Screen>
   );
@@ -178,14 +189,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: screenMargin,
     paddingVertical: spacing.md,
   },
-  back: { flexDirection: "row", alignItems: "center", gap: spacing.xs, minHeight: sizes.minTouch },
+  back: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    minHeight: sizes.minTouch,
+  },
   more: {
     minHeight: sizes.minTouch,
     minWidth: sizes.minTouch,
     alignItems: "center",
     justifyContent: "center",
   },
-  list: { paddingHorizontal: screenMargin, paddingBottom: sizes.fab + spacing.xxxl },
+  list: {
+    paddingHorizontal: screenMargin,
+    paddingBottom: sizes.fab + spacing.xxxl,
+  },
   fab: { position: "absolute", right: screenMargin, bottom: screenMargin },
   headerContent: { gap: spacing.xl, paddingBottom: spacing.lg },
   titleBlock: { gap: spacing.sm },

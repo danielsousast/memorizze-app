@@ -271,7 +271,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · screen — suítes de Início e Baralho verdes (HOME-06, A11Y-01 da M2)
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T8 — Responder agenda o cartão e avança a sessão
 
@@ -290,7 +290,7 @@ Mutações sugeridas ao verificador:
   - SPEC QUE-05 · screen — fila `[a, b]`; `b` excluído no Realm; Bom em `a` → Resumo com `2 cartões revistos` e só um log
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T9 — Sair no meio pede confirmação
 

@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from "expo-router/testing-library";
+import { act, fireEvent, screen, waitFor, within } from "expo-router/testing-library";
 import { StyleSheet, Text } from "react-native";
 import Realm from "realm";
 
@@ -27,6 +27,7 @@ const routes = {
   index: IndexRoute,
   "decks/new": () => <Text>Form</Text>,
   "decks/[deckId]/index": () => <Text>Detalhe</Text>,
+  study: () => <Text>Sessão-geral</Text>,
 };
 
 const day = 24 * 60 * 60 * 1000;
@@ -84,7 +85,9 @@ describe("HomeScreen", () => {
     const rendered = await renderRouterWithProviders(routes, realm);
     expect(await screen.findByText("IN")).toBeTruthy();
     expect(screen.getByText("Inglês").props.numberOfLines).toBe(1);
-    expect(screen.getByText("1 cartão")).toBeTruthy();
+    expect(
+      within(screen.getByRole("button", { name: /^Inglês/ })).getByText("1 cartão"),
+    ).toBeTruthy();
     await rendered.unmount();
   });
 
@@ -158,13 +161,61 @@ describe("HomeScreen", () => {
   });
 
   it("LOAD-01 does not flash the empty state while decks load", async () => {
-    const { useDecks } = jest.requireMock("../usecases/use-decks") as { useDecks: jest.Mock };
+    const { useDecks } = jest.requireMock("../usecases/use-decks") as {
+      useDecks: jest.Mock;
+    };
     const real = useDecks.getMockImplementation();
     useDecks.mockImplementation(() => ({ isPending: true, data: undefined }));
     const rendered = await renderRouterWithProviders(routes, realm);
     expect(screen.getByText("Olá")).toBeTruthy();
     expect(screen.queryByText("Nenhum baralho ainda")).toBeNull();
     useDecks.mockImplementation(real);
+    await rendered.unmount();
+  });
+
+  it("ENT-02 shows Estudar tudo with the summed due count", async () => {
+    const a = decks().create({ name: "A" });
+    const b = decks().create({ name: "B" });
+    cards().create(a.id, { front: "1", back: "1" });
+    cards().create(a.id, { front: "2", back: "2" });
+    for (const n of ["3", "4", "5"]) cards().create(b.id, { front: n, back: n });
+    const rendered = await renderRouterWithProviders(routes, realm);
+    expect(await screen.findByRole("button", { name: "Estudar tudo" })).toBeTruthy();
+    expect(within(screen.getByTestId("study-all")).getByText("5 cartões")).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it("ENT-02 singular badge for one due card", async () => {
+    const a = decks().create({ name: "A" });
+    cards().create(a.id, { front: "1", back: "1" });
+    const rendered = await renderRouterWithProviders(routes, realm);
+    await screen.findByRole("button", { name: "Estudar tudo" });
+    expect(within(screen.getByTestId("study-all")).getByText("1 cartão")).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it("ENT-02 no badge when nothing is due", async () => {
+    const a = decks().create({ name: "A" });
+    cards().create(a.id, { front: "1", back: "1" });
+    postpone();
+    const rendered = await renderRouterWithProviders(routes, realm);
+    await screen.findByRole("button", { name: "Estudar tudo" });
+    expect(within(screen.getByTestId("study-all")).queryByText(/cartão|cartões/)).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("ENT-02 no button without decks", async () => {
+    const rendered = await renderRouterWithProviders(routes, realm);
+    await screen.findByText("Nenhum baralho ainda");
+    expect(screen.queryByRole("button", { name: "Estudar tudo" })).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("ENT-03 tapping Estudar tudo opens /study", async () => {
+    decks().create({ name: "A" });
+    const rendered = await renderRouterWithProviders(routes, realm);
+    await fireEvent.press(await screen.findByRole("button", { name: "Estudar tudo" }));
+    expect(rendered).toHavePathname("/study");
     await rendered.unmount();
   });
 });

@@ -56,7 +56,9 @@ export function HomeScreen() {
 
   const header = (
     <View style={styles.header}>
-      <Text style={[typography.caption, { color: colors.text2 }]}>{formatLongDate(new Date())}</Text>
+      <Text style={[typography.caption, { color: colors.text2 }]}>
+        {formatLongDate(new Date())}
+      </Text>
       <Text accessibilityRole="header" style={[typography.display, { color: colors.text }]}>
         Olá
       </Text>
@@ -74,13 +76,16 @@ export function HomeScreen() {
         <View style={styles.empty}>
           <Text style={[typography.title, { color: colors.text }]}>Nenhum baralho ainda</Text>
           <Text style={[typography.body, styles.emptyText, { color: colors.text2 }]}>
-            Crie seu primeiro baralho e adicione alguns cartões. Cinco minutos por dia já fazem diferença.
+            Crie seu primeiro baralho e adicione alguns cartões. Cinco minutos por dia já fazem
+            diferença.
           </Text>
           <Button label="Criar primeiro baralho" icon="plus" onPress={openCreate} />
         </View>
       </Screen>
     );
   }
+
+  const totalDue = data.reduce((sum, deck) => sum + deck.dueCount, 0);
 
   return (
     <Screen testID="home-screen">
@@ -91,6 +96,12 @@ export function HomeScreen() {
         ListHeaderComponent={
           <>
             {header}
+            <View testID="study-all" style={styles.study}>
+              <Button label="Estudar tudo" onPress={() => router.push("/study")} />
+              {totalDue > 0 ? (
+                <Badge tone="accent" text={plural(totalDue, "cartão", "cartões")} />
+              ) : null}
+            </View>
             <View style={styles.sectionRow}>
               <Text style={[typography.section, { color: colors.text }]}>Seus baralhos</Text>
               <Text style={[typography.caption, { color: colors.text2 }]}>
@@ -114,7 +125,18 @@ function Separator() {
 }
 
 const styles = StyleSheet.create({
-  header: { paddingHorizontal: screenMargin, paddingTop: spacing.xl, paddingBottom: spacing.xl },
+  header: {
+    paddingHorizontal: screenMargin,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.xl,
+  },
+  study: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    paddingHorizontal: screenMargin,
+    paddingBottom: spacing.xl,
+  },
   sectionRow: {
     flexDirection: "row",
     alignItems: "baseline",
