@@ -18,12 +18,14 @@ App mobile offline de flashcards com repetição espaçada. O usuário cria bara
 - CRUD de baralhos e cartões
 - Sessão de estudo com repetição espaçada
 - Estatísticas e streak
+- Preferências: tema (claro, escuro, sistema), "novos por dia" e lembrete diário
+- Backup e restauração local: exportar e importar um arquivo JSON do próprio app (AD-008)
 
 **Fora (não fazer)**
 - Login, backend, sincronização, nuvem
 - Imagens/áudio nos cartões
-- Importação/exportação (Anki, CSV)
-- Notificações push
+- Importação/exportação de formatos de terceiros (Anki, CSV)
+- Notificações push (remotas); o lembrete diário é uma notificação local agendada no aparelho
 - Múltiplos perfis
 
 ## 3. Stack
@@ -191,5 +193,5 @@ Regra: `domain/` não importa Realm nem React. Telas falam com o banco só por h
 ## 13. Decisões em aberto
 
 - Expo (dev client) ou React Native CLI?
-- Limite de cartões novos por dia? (hoje: sem limite)
+- ~~Limite de cartões novos por dia?~~ Resolvida (AD-008): entra no MVP como preferência "novos por dia"; a fila do RF4 passa a respeitá-la (definido na spec da F5).
 - Idioma da interface: só pt-BR ou pt-BR + en?
