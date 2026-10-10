@@ -340,6 +340,47 @@ Mutações sugeridas ao verificador:
 - **Gate**: quick
 - **Status**: [x] done
 
+### F1 — Dupla pressão no form de baralho prova uma única criação
+
+- **Covers**: DFM-06
+- **Depends on**: T5
+- **Risk**: inherit
+- **Touches**: `src/features/decks/screens/deck-form-screen.test.tsx`
+- **Change**: nenhuma no código; reforça o teste (gap G1, mutante M5).
+- **Tests**:
+  - SPEC DFM-06 · screen — dois `press` em `Salvar` no mesmo `act` → 1 baralho no Realm, nenhuma mensagem `Já existe um baralho com esse nome.` e a gravação chamada uma só vez (`jest.spyOn(realm, "write")` conta 1 escrita de criação)
+- **Done when**: o teste falha com o guard `busy` removido (M5) e passa com ele; quick gate green
+- **Gate**: quick
+- **Status**: [ ] pending
+
+### F2 — Alvos de toque das telas têm papel, rótulo e tamanho testados
+
+- **Covers**: A11Y-01
+- **Depends on**: T6, T10
+- **Risk**: inherit
+- **Touches**: `src/features/decks/screens/deck-screen.tsx`, `src/features/decks/screens/deck-screen.test.tsx`
+- **Change**: a linha de cartão ganha `accessibilityLabel` (frente e verso); testes de nível de tela para papel, rótulo e tamanho mínimo dos tocáveis da tela Baralho (linha de cartão, `Início`, `Opções do baralho`, FAB).
+- **Tests**:
+  - SPEC A11Y-01 · screen — cada tocável tem `accessibilityRole` `"button"`, `accessibilityLabel` não vazio e `minHeight`/`minWidth` ≥ 44 (ou `hitSlop` que complete); linha de cartão tem label com frente e verso
+- **Done when**: tests above pass; quick gate green
+- **Gate**: quick
+- **Status**: [ ] pending
+
+### F3 — Descrição só com espaços e mensagens sem teste
+
+- **Covers**: DFM-01, DFM-03, HOME-06, ERR-01
+- **Depends on**: T5, T4, T9
+- **Risk**: inherit
+- **Touches**: `src/features/decks/screens/deck-form-screen.test.tsx`, `src/features/decks/screens/home-screen.test.tsx`, `src/features/cards/screens/card-editor-screen.test.tsx`
+- **Change**: nenhuma no código; fecha gaps G3 (mutante M7) e G5.
+- **Tests**:
+  - SPEC DFM-01/DFM-03 · screen — criar e editar com descrição `"   "` → `description` ausente no Realm; descrição `" texto "` gravada como `"texto"`
+  - SPEC HOME-06 · screen — o texto de apoio do estado vazio aparece
+  - SPEC ERR-01 · screen — Editor em modo edição: `realm.write` lança `Error` ao salvar → mensagem genérica de salvar; ao excluir → `Não foi possível excluir. Tente de novo.` (mensagem sem AC; registrada no validation.md como extra aceito)
+- **Done when**: tests above pass; o teste de descrição falha sem o trim (M7); full gate green
+- **Gate**: full
+- **Status**: [ ] pending
+
 ## Execution Waves
 
 - **Wave 1**: T1 ∥ T3
