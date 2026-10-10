@@ -4,11 +4,12 @@ import Realm from "realm";
 import { Card, Deck, Profile as ProfileObject, ReviewLog } from "@/db";
 import { addLocalDays, startOfLocalDay } from "@/domain/dates";
 import { AppError } from "@/domain/errors";
+import { THEME_OPTIONS, isNewCardsLimit, limitToStored } from "@/domain/preferences";
 import { accuracy, dailyCounts, stageCounts } from "@/domain/stats";
 import { currentStreak, longestStreak } from "@/domain/streak";
 
 import { toProfile } from "./adapters";
-import type { ProfileErrorCode, ProfileRepository } from "./interfaces";
+import type { ProfileErrorCode, ProfileInput, ProfileRepository } from "./interfaces";
 
 const NAME_MAX = 30;
 
@@ -17,6 +18,16 @@ function validName(name: string): string {
   if (!trimmed) throw new AppError<ProfileErrorCode>("PROFILE_NAME_EMPTY");
   if (trimmed.length > NAME_MAX) throw new AppError<ProfileErrorCode>("PROFILE_NAME_TOO_LONG");
   return trimmed;
+}
+
+function validPreferences(input: ProfileInput) {
+  const { themePreference, newCardsPerDay } = input;
+  if (themePreference !== undefined && !THEME_OPTIONS.includes(themePreference)) {
+    throw new AppError<ProfileErrorCode>("PROFILE_PREFERENCE_INVALID");
+  }
+  if (newCardsPerDay !== undefined && !isNewCardsLimit(newCardsPerDay)) {
+    throw new AppError<ProfileErrorCode>("PROFILE_PREFERENCE_INVALID");
+  }
 }
 
 export function createProfileRepository(
@@ -47,12 +58,17 @@ export function createProfileRepository(
 
     update(input) {
       const name = input.name === undefined ? undefined : validName(input.name);
+      validPreferences(input);
       const profile = oldest();
       if (!profile) throw new AppError<ProfileErrorCode>("PROFILE_NOT_FOUND");
       realm.write(() => {
         if (name !== undefined) profile.name = name;
         if (input.dailyGoal !== undefined) profile.dailyGoal = input.dailyGoal;
         if (input.studyTutorialSeen !== undefined) profile.studyTutorialSeen = input.studyTutorialSeen;
+        if (input.themePreference !== undefined) profile.themePreference = input.themePreference;
+        if (input.newCardsPerDay !== undefined) {
+          profile.newCardsPerDay = limitToStored(input.newCardsPerDay);
+        }
       });
       return toProfile(profile);
     },

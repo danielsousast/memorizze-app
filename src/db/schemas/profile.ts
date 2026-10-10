@@ -6,6 +6,9 @@ export class Profile extends Realm.Object<Profile> {
   dailyGoal!: number;
   createdAt!: Date;
   studyTutorialSeen!: boolean;
+  themePreference!: string;
+  /** 0 = no limit. */
+  newCardsPerDay!: number;
 
   static schema: Realm.ObjectSchema = {
     name: "Profile",
@@ -16,6 +19,8 @@ export class Profile extends Realm.Object<Profile> {
       dailyGoal: { type: "int", default: 20 },
       createdAt: "date",
       studyTutorialSeen: { type: "bool", default: false },
+      themePreference: { type: "string", default: "system" },
+      newCardsPerDay: { type: "int", default: 10 },
     },
   };
 }

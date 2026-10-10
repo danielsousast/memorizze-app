@@ -1,17 +1,28 @@
+import type { NewCardsLimit, ThemePreference } from "@/domain/preferences";
+
 export type Profile = {
   id: string;
   name: string;
   dailyGoal: number;
   createdAt: Date;
   studyTutorialSeen: boolean;
+  themePreference: ThemePreference;
+  newCardsPerDay: NewCardsLimit;
 };
 
 export type ProfileErrorCode =
   | "PROFILE_NAME_EMPTY"
   | "PROFILE_NAME_TOO_LONG"
-  | "PROFILE_NOT_FOUND";
+  | "PROFILE_NOT_FOUND"
+  | "PROFILE_PREFERENCE_INVALID";
 
-export type ProfileInput = { name?: string; dailyGoal?: number; studyTutorialSeen?: boolean };
+export type ProfileInput = {
+  name?: string;
+  dailyGoal?: number;
+  studyTutorialSeen?: boolean;
+  themePreference?: ThemePreference;
+  newCardsPerDay?: NewCardsLimit;
+};
 
 export type ProfileStats = {
   currentStreak: number;

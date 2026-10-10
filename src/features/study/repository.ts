@@ -1,9 +1,10 @@
 import { useRealm } from "@realm/react";
 import Realm, { BSON } from "realm";
 
-import { Card as CardObject, Deck as DeckObject, ReviewLog } from "@/db";
-import { addLocalDays, endOfLocalDay } from "@/domain/dates";
+import { Card as CardObject, Deck as DeckObject, Profile, ReviewLog } from "@/db";
+import { addLocalDays, endOfLocalDay, startOfLocalDay } from "@/domain/dates";
 import { AppError } from "@/domain/errors";
+import { selectQueue } from "@/domain/new-cards";
 import { schedule } from "@/domain/schedule";
 import { currentStreak } from "@/domain/streak";
 
@@ -24,11 +25,35 @@ export function createStudyRepository(
     return due.filtered("@links.Deck.cards._id == $0", id);
   }
 
+  // Cards whose first review ever happened today (NEW-03).
+  function introducedToday(at: Date): Set<string> {
+    const start = startOfLocalDay(at);
+    const end = startOfLocalDay(addLocalDays(at, 1));
+    const ids = new Map<string, BSON.ObjectId>();
+    for (const log of realm
+      .objects(ReviewLog)
+      .filtered("reviewedAt >= $0 AND reviewedAt < $1", start, end)) {
+      ids.set(log.cardId.toHexString(), log.cardId);
+    }
+    return new Set(
+      [...ids]
+        .filter(
+          ([, cardId]) =>
+            realm
+              .objects(ReviewLog)
+              .filtered("cardId == $0 AND reviewedAt < $1", cardId, start)
+              .length === 0,
+        )
+        .map(([hex]) => hex),
+    );
+  }
+
   return {
     queue(deckId) {
-      const cards = scopedCards(deckId, endOfLocalDay(now()));
+      const at = now();
+      const cards = scopedCards(deckId, endOfLocalDay(at));
       if (!cards) return null;
-      return cards
+      const queue = cards
         .sorted([
           ["dueDate", false],
           ["createdAt", false],
@@ -37,6 +62,15 @@ export function createStudyRepository(
           const deck = card.linkingObjects(DeckObject, "cards")[0];
           return toStudyCard(card, deck);
         });
+      const profile = realm.objects(Profile).sorted("createdAt")[0];
+      if (!profile) return queue;
+      const limit =
+        profile.newCardsPerDay === 0 ? null : profile.newCardsPerDay;
+      return selectQueue(
+        queue,
+        limit,
+        limit === null ? new Set() : introducedToday(at),
+      );
     },
 
     countDueTomorrow(deckId) {

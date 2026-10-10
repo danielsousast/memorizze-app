@@ -81,6 +81,162 @@ describe("study repository", () => {
     expect(repo().queue(deckId)).toEqual([]);
   });
 
+  describe("daily new-card budget", () => {
+    function setLimit(newCardsPerDay: number) {
+      realm.write(() => realm.create(Profile, { name: "Ana", createdAt: day(1), newCardsPerDay }));
+    }
+
+    function seedMixed(name: string, news: number, olds = 0) {
+      const cards = [
+        ...Array.from({ length: news }, (_, i) => ({ front: `${name}n${i}`, dueDate: day(9, 0, i) })),
+        ...Array.from({ length: olds }, (_, i) => ({ front: `${name}o${i}`, dueDate: day(9, 1, i) })),
+      ];
+      const deckId = seedDeck(name, cards);
+      realm.write(() => {
+        for (const card of realm.objects(Card).filtered("front BEGINSWITH $0", `${name}o`)) {
+          card.repetitions = 2;
+          card.intervalDays = 3;
+        }
+      });
+      return deckId;
+    }
+
+    function logFirst(front: string, reviewedAt: Date) {
+      const card = realm.objects(Card).filtered("front == $0", front)[0];
+      realm.write(() =>
+        realm.create(ReviewLog, {
+          cardId: card._id,
+          deckId: new BSON.ObjectId(),
+          grade: 2,
+          reviewedAt,
+        }),
+      );
+    }
+
+    it("NEW-02 caps new cards at the limit and never cuts the others", () => {
+      seedMixed("A", 5, 3);
+      setLimit(2);
+
+      const fronts = repo().queue()!.map((c) => c.front);
+
+      expect(fronts.filter((f) => f.startsWith("An"))).toEqual(["An0", "An1"]);
+      expect(fronts.filter((f) => f.startsWith("Ao"))).toHaveLength(3);
+    });
+
+    it("NEW-03 shares one budget across decks", () => {
+      seedMixed("A", 3);
+      seedMixed("B", 3);
+      setLimit(4);
+
+      expect(repo().queue()!).toHaveLength(4);
+    });
+
+    it("NEW-02 a deck queue spends the same single budget", () => {
+      const a = seedMixed("A", 3);
+      seedMixed("B", 3);
+      setLimit(4);
+      logFirst("Bn0", day(10, 8));
+      logFirst("Bn1", day(10, 9));
+      realm.write(() => {
+        for (const card of realm.objects(Card).filtered("front IN {'Bn0','Bn1'}")) {
+          card.repetitions = 1;
+          card.dueDate = day(20);
+        }
+      });
+
+      expect(repo().queue(a)!.map((c) => c.front)).toEqual(["An0", "An1"]);
+    });
+
+    it("NEW-03 a first review before today does not count as introduced today", () => {
+      seedMixed("A", 4);
+      setLimit(2);
+      logFirst("An0", day(9, 8));
+
+      expect(repo().queue()!).toHaveLength(2);
+    });
+
+    it("NEW-03 only the first review of all time counts, not a later one today", () => {
+      seedMixed("A", 4);
+      setLimit(2);
+      logFirst("An0", day(9, 8));
+      logFirst("An0", day(10, 8));
+
+      expect(repo().queue()!).toHaveLength(2);
+    });
+
+    it("NEW-04 a card introduced today and failed stays without spending budget", () => {
+      seedMixed("A", 4);
+      setLimit(2);
+      logFirst("An0", day(10, 8));
+
+      const fronts = repo().queue()!.map((c) => c.front);
+
+      expect(fronts).toEqual(["An0", "An1"]);
+    });
+
+    it("NEW-05 no limit and no profile keep every due card", () => {
+      seedMixed("A", 5);
+      expect(repo().queue()!).toHaveLength(5);
+      setLimit(0);
+      expect(repo().queue()!).toHaveLength(5);
+    });
+
+    it("NEW-06 a changed limit applies to the next queue", () => {
+      seedMixed("A", 5);
+      setLimit(2);
+      expect(repo().queue()!).toHaveLength(2);
+      realm.write(() => {
+        realm.objects(Profile)[0].newCardsPerDay = 5;
+      });
+      expect(repo().queue()!).toHaveLength(5);
+    });
+
+    it("NEW-08 an exhausted budget with only new cards due gives an empty queue", () => {
+      seedMixed("A", 3);
+      setLimit(1);
+      realm.write(() => {
+        realm.objects(Card).filtered("front == 'An0'")[0].dueDate = day(20);
+      });
+      logFirst("An0", day(10, 8));
+
+      expect(repo().queue()).toEqual([]);
+    });
+
+    it("NEW-09 a reset card is queued as new within the budget and does not count as introduced", () => {
+      seedMixed("A", 3);
+      setLimit(2);
+      logFirst("An0", day(5, 8));
+
+      const fronts = repo().queue()!.map((c) => c.front);
+
+      expect(fronts).toEqual(["An0", "An1"]);
+    });
+
+    it("CONTRACT NEW-02 keeps the StudyCard shape and the order without a limit", () => {
+      seedMixed("A", 2, 2);
+      setLimit(0);
+
+      const queue = repo().queue()!;
+
+      expect(queue.map((c) => c.front)).toEqual(["An0", "An1", "Ao0", "Ao1"]);
+      expect(Object.keys(queue[0]).sort()).toEqual(
+        [
+          "back",
+          "createdAt",
+          "deckId",
+          "deckName",
+          "dueDate",
+          "easeFactor",
+          "front",
+          "id",
+          "intervalDays",
+          "lapses",
+          "repetitions",
+        ].sort(),
+      );
+    });
+  });
+
   it("PERF-01 maps only the 1000 due cards, not the future ones", () => {
     const due = Array.from({ length: 1000 }, (_, i) => ({
       front: `d${i}`,

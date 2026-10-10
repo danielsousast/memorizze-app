@@ -111,6 +111,8 @@ describe("profile repository", () => {
       dailyGoal: 20,
       createdAt: now,
       studyTutorialSeen: false,
+      themePreference: "system",
+      newCardsPerDay: 10,
     });
   });
 
@@ -214,6 +216,35 @@ describe("profile repository study tutorial flag", () => {
     repository.create("Ana");
     expect(repository.update({ studyTutorialSeen: true }).studyTutorialSeen).toBe(true);
     expect(repository.update({ name: "Bia" }).studyTutorialSeen).toBe(true);
+  });
+
+  it("THM-02, NEW-01 update persists theme and limit, null meaning no limit", () => {
+    const repository = createProfileRepository(realm);
+    repository.create("Ana");
+
+    expect(repository.update({ themePreference: "dark" }).themePreference).toBe("dark");
+    expect(repository.update({ newCardsPerDay: null }).newCardsPerDay).toBeNull();
+    expect(realm.objects(Profile)[0].newCardsPerDay).toBe(0);
+    expect(repository.get()).toEqual(
+      expect.objectContaining({ themePreference: "dark", newCardsPerDay: null }),
+    );
+    expect(repository.update({ newCardsPerDay: 30 }).newCardsPerDay).toBe(30);
+    expect(repository.update({ name: "Bia" }).themePreference).toBe("dark");
+  });
+
+  it("SET-04 rejects an invalid preference without writing anything", () => {
+    const repository = createProfileRepository(realm);
+    repository.create("Ana");
+
+    expect(() => repository.update({ themePreference: "sepia" as never, name: "Bia" })).toThrow(
+      expect.objectContaining({ code: "PROFILE_PREFERENCE_INVALID" }),
+    );
+    expect(() => repository.update({ newCardsPerDay: 7 as never, name: "Bia" })).toThrow(
+      expect.objectContaining({ code: "PROFILE_PREFERENCE_INVALID" }),
+    );
+    expect(repository.get()).toEqual(
+      expect.objectContaining({ name: "Ana", themePreference: "system", newCardsPerDay: 10 }),
+    );
   });
 
   describe("sign out", () => {
