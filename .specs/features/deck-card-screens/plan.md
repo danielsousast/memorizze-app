@@ -207,7 +207,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · suíte inteira verde (`_layout` alterado)
 - **Done when**: tests above pass; full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — Início lista baralhos com contagens e cria o primeiro baralho
 

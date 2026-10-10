@@ -28,9 +28,10 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Path | Contents |
 | --- | --- |
 | `src/app/` | Expo Router routes (`_layout.tsx`, `index.tsx`) |
+| `src/components/` | Shared accessible UI (`Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon`, `Screen`, `NotFound`), one file per component, theme tokens only |
 | `src/db/` | Realm schemas, config and error boundary |
 | `src/domain/` | Pure logic; today only `errors.ts` (`AppError`) |
-| `src/features/` | Feature modules (`decks`, `cards`): repository + React Query hooks ([layout](../ARCHITECTURE.md#feature-modules)) |
+| `src/features/` | Feature modules (`decks`, `cards`): repository + React Query hooks, and `screens/` with one screen per file ([layout](../ARCHITECTURE.md#feature-modules)) |
 | `src/lib/` | App-wide setup (`query-client.ts`) |
 | `src/testing/` | Test helpers (`realm.ts`, `providers.tsx`, `random.ts`) |
 | `src/theme/` | Colors, typography, layout, `useTheme` |
@@ -39,7 +40,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | `example/` | Leftover from the removed reset script; unused, excluded from `tsc` and Jest |
 | `PROJECT-SPEC.md` | General app definition (draft v0.1) |
 
-Planned additions (`src/components`, more of `src/domain`): see [ARCHITECTURE.md](../ARCHITECTURE.md).
+Planned additions (more of `src/domain`): see [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## Engineering Conventions
 
