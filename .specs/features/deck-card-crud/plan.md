@@ -277,7 +277,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC HK-04 · integration — `useCreateCard` com `front` vazio → `error.code === "CARD_FRONT_EMPTY"`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T8 — Padrão de arquitetura garantido e documentado
 
