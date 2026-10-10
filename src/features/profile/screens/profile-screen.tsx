@@ -82,17 +82,28 @@ export function ProfileScreen() {
     decrease,
     increase,
     editName,
+    openSettings,
   } = useProfileScreen();
 
   return (
     <Screen testID="profile-screen" edges={TOP_EDGE}>
       <ScrollView contentContainerStyle={styles.body}>
-        <Text
-          accessibilityRole="header"
-          style={[typography.title, { color: colors.text }]}
-        >
-          Perfil
-        </Text>
+        <View style={styles.header}>
+          <Text
+            accessibilityRole="header"
+            style={[typography.title, { color: colors.text }]}
+          >
+            Perfil
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Configurações"
+            onPress={openSettings}
+            style={[styles.gear, { backgroundColor: colors.surface }]}
+          >
+            <Icon name="gear" size={22} color={colors.text} />
+          </Pressable>
+        </View>
         {profile ? (
           <>
             <Pressable
@@ -193,6 +204,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: screenMargin,
     paddingBottom: spacing.xl,
     gap: spacing.xl,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  gear: {
+    width: sizes.minTouch,
+    height: sizes.minTouch,
+    borderRadius: radii.icon,
+    alignItems: "center",
+    justifyContent: "center",
   },
   identity: { flexDirection: "row", alignItems: "center", gap: spacing.lg },
   avatar: {

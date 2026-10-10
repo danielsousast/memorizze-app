@@ -225,6 +225,13 @@ describe("ProfileScreen", () => {
     await empty.unmount();
   });
 
+  it("HDR-01 shows the settings gear in the header", async () => {
+    seed(20, 0);
+    const rendered = await open();
+    expect(await screen.findByRole("button", { name: "Configurações" })).toBeTruthy();
+    await rendered.unmount();
+  });
+
   it("ACC-01 the accuracy tiles are not shown (user decision, 84da58d)", async () => {
     seed(20, 0);
     logs(87, 2);
