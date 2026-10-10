@@ -158,7 +158,7 @@ Domínio puro (`new-cards`, `preferences`) com tabelas e INVARIANT de 100 opera�
   - SPEC THM-05 · screen — Sair devolve o tema ao sistema
 - **Done when**: tests above pass; `npm run ci` green; lint limpo
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T5 — Documentação
 

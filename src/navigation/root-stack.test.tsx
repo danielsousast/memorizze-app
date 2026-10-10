@@ -11,6 +11,7 @@ import { renderRouterWithProviders } from "@/testing/router";
 import HomeRoute from "../app/(tabs)/index";
 import TabsLayout from "../app/(tabs)/_layout";
 import ProfileRoute from "../app/(tabs)/profile";
+import SettingsRoute from "../app/settings";
 import WelcomeRoute from "../app/welcome";
 import { RootStack } from "./root-stack";
 
@@ -37,6 +38,7 @@ const routes = {
   "decks/[deckId]/cards/new": stub("Novo cartão"),
   "cards/[cardId]/edit": stub("Editar cartão"),
   "edit-name": stub("Editar nome"),
+  settings: SettingsRoute,
   study: stub("Estudo"),
   "decks/[deckId]/index": stub("Baralho"),
   "decks/[deckId]/study": stub("Estudo do baralho"),
@@ -133,6 +135,37 @@ describe("RootStack", () => {
     const rendered = await open(url);
     expect(await screen.findByText(label)).toBeTruthy();
     await rendered.unmount();
+  });
+
+  describe("settings", () => {
+    it("SET-03 without a profile a deep link to /settings opens the welcome screen", async () => {
+      const rendered = await open("/settings");
+      expect(await screen.findByText("Começar")).toBeTruthy();
+      expect(screen.queryByText("Ajustes")).toBeNull();
+      await rendered.unmount();
+    });
+
+    it("SET-03 with a profile /settings renders", async () => {
+      addProfile();
+      const rendered = await open("/settings");
+      expect(await screen.findByText("Ajustes")).toBeTruthy();
+      await rendered.unmount();
+    });
+
+    it("THM-05 Sair returns the theme to the system and removes the preference", async () => {
+      const spy = jest.spyOn(Appearance, "setColorScheme");
+      realm.write(() => {
+        realm.create(Profile, { name: "Ana", createdAt: new Date(), themePreference: "dark" });
+      });
+      const rendered = await open("/profile");
+      await waitFor(() => expect(spy).toHaveBeenLastCalledWith("dark"));
+      await fireEvent.press(await screen.findByRole("button", { name: "Sair" }));
+      await fireEvent.press(await screen.findByRole("button", { name: "Apagar e sair" }));
+      expect(await screen.findByText("Começar")).toBeTruthy();
+      expect(spy).toHaveBeenLastCalledWith("unspecified");
+      expect(realm.objects(Profile)).toHaveLength(0);
+      await rendered.unmount();
+    });
   });
 
   describe("theme", () => {

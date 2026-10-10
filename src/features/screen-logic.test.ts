@@ -12,6 +12,7 @@ const banned: Record<string, string[]> = {
   "decks/screens/deck-form-screen.tsx": ["useState", "useRef"],
   "profile/screens/edit-name-screen.tsx": ["useState", "useRef"],
   "profile/screens/welcome-screen.tsx": ["useState", "useRef"],
+  "profile/screens/settings-screen.tsx": ["useState", "useRef", "Appearance", "router", "expo-constants"],
   "profile/screens/profile-screen.tsx": ["@/domain/goal", "useRef", "useState"],
 };
 

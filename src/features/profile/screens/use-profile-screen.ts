@@ -19,8 +19,9 @@ function editName() {
   router.push("/edit-name");
 }
 
-// F5 (settings) owns the destination; until then the gear is wired but inert.
-function openSettings() {}
+function openSettings() {
+  router.push("/settings");
+}
 
 export function useProfileScreen() {
   const profile = useProfile().data;
