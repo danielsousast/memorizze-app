@@ -322,7 +322,7 @@ Mutações sugeridas ao verificador:
   - INVARIANT INV-01 · screen — cartão com agendamento semeado (`easeFactor` 1.9, `intervalDays` 6, `repetitions` 3, `lapses` 1, `dueDate` d); 20 edições com textos aleatórios (`createRandom`, seed fixa) pelo Editor → os 5 campos idênticos após cada uma
 - **Done when**: tests above pass; full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T10 — Baralho busca cartões e abre o Editor
 
