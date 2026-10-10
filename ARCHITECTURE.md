@@ -34,7 +34,7 @@ A feature with a single use case keeps that `use-*.ts` at its root, without `use
 
 **Rules**
 
-- Only `repository.ts` and `adapters.ts` import `realm`, `@realm/react` or `@/db`. ESLint `no-restricted-imports` enforces it (`eslint.config.js`).
+- Only `repository.ts`, `adapters.ts` and tests import `realm`, `@realm/react` or `src/db`, by any path (alias or relative). ESLint `no-restricted-imports` (`eslint.config.js`) and `src/features/architecture.test.ts` enforce it.
 - Each hook makes exactly one `useQuery` or `useMutation` call, and its function calls exactly one repository method. `src/features/architecture.test.ts` enforces it.
 - The repository validates, writes, and returns plain objects through the adapters. It throws `AppError` with the feature's code before any `realm.write`.
 - Hooks return plain objects, never live `Realm.Object`s, so data stays readable after the record is deleted.

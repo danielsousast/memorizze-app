@@ -25,6 +25,12 @@ module.exports = defineConfig([
               message:
                 "Only repository.ts and adapters.ts may import Realm (AD-001).",
             },
+            {
+              // Relative paths into src/db, e.g. "../../../db" (A-02).
+              regex: "^(\\.\\.?/)+(.*/)?db(/.*)?$",
+              message:
+                "Only repository.ts and adapters.ts may import Realm (AD-001).",
+            },
           ],
         },
       ],

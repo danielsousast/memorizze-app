@@ -1,7 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 const root = __dirname;
+const dbDir = resolve(root, "../db");
 const features = readdirSync(root, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
@@ -25,6 +26,30 @@ function hookFiles(feature: string): string[] {
 
 const count = (source: string, pattern: RegExp) =>
   source.match(pattern)?.length ?? 0;
+
+function sourceFiles(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return sourceFiles(path);
+    return /\.tsx?$/.test(entry.name) ? [path] : [];
+  });
+}
+
+// ARC-03 (A-02): Realm, @realm/* and src/db by any path, alias or relative.
+function isRealmImport(file: string, specifier: string): boolean {
+  if (specifier === "realm" || specifier.startsWith("@realm/")) return true;
+  const target = specifier.startsWith("@/")
+    ? resolve(root, "..", specifier.slice(2))
+    : specifier.startsWith(".")
+      ? resolve(dirname(file), specifier)
+      : null;
+  return target !== null && (target === dbDir || target.startsWith(dbDir + "/"));
+}
+
+function imports(source: string): string[] {
+  const pattern = /(?:\bfrom\s*|\bimport\s*\(?\s*)["']([^"']+)["']/g;
+  return [...source.matchAll(pattern)].map((match) => match[1]);
+}
 
 describe("feature architecture", () => {
   it("has at least one feature to check", () => {
@@ -53,6 +78,19 @@ describe("feature architecture", () => {
       } else {
         expect(rootHooks.length).toBeLessThanOrEqual(1);
       }
+    });
+
+    it("ARC-03 imports Realm or src/db only from repository, adapters and tests", () => {
+      const exempt = (file: string) =>
+        isTest(file) || /\/(repository|adapters)\.ts$/.test(file);
+      const offending = sourceFiles(dir)
+        .filter((file) => !exempt(file))
+        .flatMap((file) =>
+          imports(readFileSync(file, "utf8"))
+            .filter((specifier) => isRealmImport(file, specifier))
+            .map((specifier) => `${file.slice(root.length + 1)}: ${specifier}`),
+        );
+      expect(offending).toEqual([]);
     });
 
     it("ARC-02 makes each hook call React Query once and one repository method", () => {

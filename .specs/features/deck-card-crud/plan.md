@@ -334,7 +334,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC ARC-03 · lint — mutação manual com `../../../db` e `../../db/schemas` → lint falha
 - **Done when**: tests above pass; full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 
