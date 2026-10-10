@@ -5,6 +5,7 @@ import { plural } from "@/domain/text";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
 import type { ProfileStats } from "../interfaces";
+import { WeekChart } from "./week-chart";
 
 type TileProps = {
   value: string;
@@ -44,8 +45,7 @@ function Tile({ value, label, accessibilityLabel, highlighted }: TileProps) {
 const days = (n: number) => plural(n, "dia", "dias");
 const percent = (n: number | null) => (n === null ? "—" : `${n}%`);
 
-// `dailyGoal` is unused until WeekChart (T5) draws the goal line.
-export function StatsSection({ stats }: { stats: ProfileStats; dailyGoal: number }) {
+export function StatsSection({ stats, dailyGoal }: { stats: ProfileStats; dailyGoal: number }) {
   return (
     <View style={styles.section}>
       <View style={styles.row}>
@@ -73,6 +73,7 @@ export function StatsSection({ stats }: { stats: ProfileStats; dailyGoal: number
           accessibilityLabel={`Acerto 30 dias, ${percent(stats.accuracy30)}`}
         />
       </View>
+      <WeekChart week={stats.week} dailyGoal={dailyGoal} />
     </View>
   );
 }

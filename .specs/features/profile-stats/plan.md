@@ -164,7 +164,7 @@ Mutação (1–3 alvos, MEDIUM): `>= 1` → `> 1` em `accuracy`; `-1` → `0` em
   - SPEC CHT-05 · component — um único label `Últimos 7 dias: Sáb 32, Dom 24, …, Hoje 18`
 - **Done when**: testes acima passam; quick gate verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T6 — Mostrar os cartões por estágio
 
