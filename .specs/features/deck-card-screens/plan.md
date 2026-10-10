@@ -285,7 +285,7 @@ Mutações sugeridas ao verificador:
   - SPEC DECK-10 · screen — `Cancelar` → Realm inalterado; continua em `/decks/<id>`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T8 — Criar cartões pelo Editor
 

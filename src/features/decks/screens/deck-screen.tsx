@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
 import { Fab } from "@/components/fab";
@@ -13,7 +13,7 @@ import { matches, plural } from "@/domain/text";
 import { useCards, type Card } from "@/features/cards";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
-import { useDeck, type Deck } from "@/features/decks";
+import { useDeck, useDeleteDeck, type Deck } from "@/features/decks";
 
 function goHome() {
   router.dismissTo("/");
@@ -23,18 +23,42 @@ type Props = { deckId: string };
 
 export function DeckScreen({ deckId }: Props) {
   const { data: deck, isPending } = useDeck(deckId);
+  const remove = useDeleteDeck();
   if (isPending) return <Screen testID="deck-screen">{null}</Screen>;
   if (!deck) {
+    // Deleted from this screen: the deck vanishes before navigation settles; avoid a not-found flash.
+    if (remove.isPending || remove.isSuccess) return <Screen testID="deck-screen">{null}</Screen>;
     return (
       <Screen testID="deck-screen">
         <NotFound title="Baralho não encontrado" actionLabel="Voltar ao início" onAction={goHome} />
       </Screen>
     );
   }
-  return <DeckDetail deck={deck} />;
+  return <DeckDetail deck={deck} onDelete={() => remove.mutate(deck.id, { onSuccess: goHome })} />;
 }
 
-function DeckDetail({ deck }: { deck: Deck }) {
+function confirmDelete(deck: Deck, onDelete: () => void) {
+  const message =
+    deck.cardCount === 0
+      ? undefined
+      : deck.cardCount === 1
+        ? "O único cartão deste baralho também será excluído."
+        : `Os ${deck.cardCount} cartões deste baralho também serão excluídos.`;
+  Alert.alert(`Excluir “${deck.name}”?`, message, [
+    { text: "Cancelar", style: "cancel" },
+    { text: "Excluir", style: "destructive", onPress: onDelete },
+  ]);
+}
+
+function openOptions(deck: Deck, onDelete: () => void) {
+  Alert.alert(deck.name, undefined, [
+    { text: "Editar baralho", onPress: () => router.push(`/decks/${deck.id}/edit`) },
+    { text: "Excluir baralho", style: "destructive", onPress: () => confirmDelete(deck, onDelete) },
+    { text: "Cancelar", style: "cancel" },
+  ]);
+}
+
+function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
   const { colors } = useTheme();
   const { data: cards } = useCards(deck.id);
   const [query, setQuery] = useState("");
@@ -86,7 +110,7 @@ function DeckDetail({ deck }: { deck: Deck }) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Opções do baralho"
-          onPress={() => undefined}
+          onPress={() => openOptions(deck, onDelete)}
           hitSlop={8}
           style={styles.more}
         >

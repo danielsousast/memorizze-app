@@ -1,7 +1,7 @@
 import { act, fireEvent, screen, within } from "expo-router/testing-library";
 import { router } from "expo-router";
 import * as ReactNative from "react-native";
-import { Text } from "react-native";
+import { Alert, Text } from "react-native";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
@@ -187,6 +187,97 @@ describe("DeckScreen", () => {
     await rendered.unmount();
   });
 
+
+  type AlertButton = { text?: string; style?: string; onPress?: () => void };
+  function lastAlert() {
+    const spy = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
+    return {
+      spy,
+      call: () => {
+        const [title, message, buttons] = spy.mock.calls[spy.mock.calls.length - 1] as [
+          string,
+          string | undefined,
+          AlertButton[],
+        ];
+        return { title, message, buttons };
+      },
+      press: async (text: string) => {
+        const { buttons } = (() => {
+          const [, , b] = spy.mock.calls[spy.mock.calls.length - 1] as [string, string, AlertButton[]];
+          return { buttons: b };
+        })();
+        await act(async () => buttons.find((b) => b.text === text)!.onPress?.());
+      },
+    };
+  }
+
+  async function openMenu(alert: ReturnType<typeof lastAlert>) {
+    await fireEvent.press(await screen.findByRole("button", { name: "Opções do baralho" }));
+    expect(alert.spy).toHaveBeenCalledTimes(1);
+  }
+
+  it("DECK-09 options menu offers edit, delete and cancel; edit opens the form", async () => {
+    const deck = seedDeck();
+    const alert = lastAlert();
+    const rendered = await open(deck.id);
+    await openMenu(alert);
+    const { buttons } = alert.call();
+    expect(buttons.map((b) => b.text)).toEqual(["Editar baralho", "Excluir baralho", "Cancelar"]);
+    expect(buttons.find((b) => b.text === "Cancelar")!.style).toBe("cancel");
+    await alert.press("Editar baralho");
+    expect(rendered).toHavePathname(`/decks/${deck.id}/edit`);
+    await rendered.unmount();
+  });
+
+  it.each([
+    [2, "Os 2 cartões deste baralho também serão excluídos."],
+    [1, "O único cartão deste baralho também será excluído."],
+    [0, undefined],
+  ])("DECK-10 confirmation for %i cards", async (count, message) => {
+    const deck = seedDeck("Inglês");
+    for (let i = 0; i < count; i++) seedCard(deck.id, `f${i}`, `b${i}`);
+    const alert = lastAlert();
+    const rendered = await open(deck.id);
+    await openMenu(alert);
+    await alert.press("Excluir baralho");
+    expect(alert.spy).toHaveBeenCalledTimes(2);
+    const call = alert.call();
+    expect(call.title).toBe("Excluir “Inglês”?");
+    expect(call.message).toBe(message);
+    expect(call.buttons.map((b) => b.text)).toEqual(["Cancelar", "Excluir"]);
+    expect(call.buttons.find((b) => b.text === "Excluir")!.style).toBe("destructive");
+    await rendered.unmount();
+  });
+
+  it("DECK-10 confirming deletes deck and cards and returns home without not-found", async () => {
+    const deck = seedDeck("Inglês");
+    seedCard(deck.id, "a", "b");
+    const alert = lastAlert();
+    const rendered = await renderRouterWithProviders(routes, realm, "/");
+    await act(async () => router.push(`/decks/${deck.id}`));
+    await openMenu(alert);
+    await alert.press("Excluir baralho");
+    await alert.press("Excluir");
+    expect(rendered).toHavePathname("/");
+    expect(screen.queryByText("Baralho não encontrado")).toBeNull();
+    expect(realm.objects(Deck)).toHaveLength(0);
+    expect(realm.objects(Card)).toHaveLength(0);
+    await rendered.unmount();
+  });
+
+  it("DECK-10 cancelling leaves everything unchanged", async () => {
+    const deck = seedDeck("Inglês");
+    seedCard(deck.id, "a", "b");
+    const alert = lastAlert();
+    const rendered = await open(deck.id);
+    await openMenu(alert);
+    await alert.press("Excluir baralho");
+    await alert.press("Cancelar");
+    expect(rendered).toHavePathname(`/decks/${deck.id}`);
+    expect(realm.objects(Deck)).toHaveLength(1);
+    expect(realm.objects(Card)).toHaveLength(1);
+    await rendered.unmount();
+  });
 
   it("DECK-06 empty deck shows empty state and no search field", async () => {
     const deck = seedDeck();
