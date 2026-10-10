@@ -6,7 +6,6 @@ import { Fab } from "@/components/fab";
 import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
-import { TextField } from "@/components/text-field";
 import { plural } from "@/domain/text";
 import type { Card } from "@/features/cards";
 import { screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
@@ -67,10 +66,23 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
       <Button label={screen.studyLabel} onPress={screen.study} />
       {all && all.length > 0 ? (
         <>
-          <TextField label="Buscar cartões" value={screen.query} onChangeText={screen.setQuery} />
-          <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
-            Cartões
-          </Text>
+          <View style={styles.sectionRow}>
+            <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
+              Cartões
+            </Text>
+            {screen.showAll ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Ver todos"
+                onPress={screen.seeAll}
+                hitSlop={8}
+                style={styles.seeAll}
+              >
+                <Text style={[typography.button, { color: colors.accentInk }]}>Ver todos</Text>
+                <Icon name="chevron-right" size={16} color={colors.accentInk} />
+              </Pressable>
+            ) : null}
+          </View>
         </>
       ) : null}
     </View>
@@ -108,7 +120,7 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
         ListEmptyComponent={
           all ? (
             <Text style={[typography.body, styles.empty, { color: colors.text2 }]}>
-              {all.length === 0 ? "Nenhum cartão ainda" : "Nenhum cartão encontrado"}
+              Nenhum cartão ainda
             </Text>
           ) : null
         }
@@ -149,5 +161,12 @@ const styles = StyleSheet.create({
   headerContent: { gap: spacing.xl, paddingBottom: spacing.lg },
   titleBlock: { gap: spacing.sm },
   badges: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  sectionRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  seeAll: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    minHeight: sizes.minTouch,
+  },
   empty: { textAlign: "center", paddingVertical: spacing.xl },
 });

@@ -8,6 +8,7 @@ const banned: Record<string, string[]> = {
   ],
   "cards/screens/card-editor-screen.tsx": ["useState", "useRef", "Alert", "AppError", "router"],
   "decks/screens/deck-screen.tsx": ["Alert", "matches", "cardStage", "useState"],
+  "decks/screens/deck-cards-screen.tsx": ["Alert", "matches", "cardStage", "useState"],
   "decks/screens/deck-form-screen.tsx": ["useState", "useRef"],
   "profile/screens/edit-name-screen.tsx": ["useState", "useRef"],
   "profile/screens/welcome-screen.tsx": ["useState", "useRef"],

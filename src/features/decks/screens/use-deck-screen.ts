@@ -1,8 +1,9 @@
 import { router } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Alert } from "react-native";
 
-import { plural, matches } from "@/domain/text";
+import { PREVIEW_LIMIT, newestFirst, previewCards } from "@/domain/cards-list";
+import { plural } from "@/domain/text";
 import { cardStage } from "@/domain/stage";
 import { useCards } from "@/features/cards";
 import type { Deck, useDeleteDeck } from "@/features/decks";
@@ -15,9 +16,9 @@ export function goHome() {
 
 export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDeck>) {
   const { data: cards } = useCards(deck.id);
-  const [query, setQuery] = useState("");
-  const all = cards ? [...cards].reverse() : undefined;
-  const rows = all?.filter((c) => matches(query, c.front, c.back));
+  const all = cards ? newestFirst(cards) : undefined;
+  const rows = cards ? previewCards(cards) : [];
+  const showAll = (cards?.length ?? 0) > PREVIEW_LIMIT;
   const matureCount = cards ? cards.filter((c) => cardStage(c) === "mature").length : 0;
   const studyLabel =
     deck.dueCount > 0 ? `Estudar · ${plural(deck.dueCount, "cartão", "cartões")}` : "Estudar";
@@ -45,16 +46,20 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
     router.push(`/decks/${deck.id}/study`);
   }, [deck.id]);
 
+  const seeAll = useCallback(() => {
+    router.push(`/decks/${deck.id}/cards`);
+  }, [deck.id]);
+
   const addCard = useCallback(() => {
     router.push(`/decks/${deck.id}/cards/new`);
   }, [deck.id]);
 
   return {
     all,
-    rows: rows ?? [],
+    rows,
+    showAll,
+    seeAll,
     matureCount,
-    query,
-    setQuery,
     studyLabel,
     study,
     addCard,

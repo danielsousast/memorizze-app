@@ -1,5 +1,5 @@
-import { act, fireEvent, screen, waitFor } from "expo-router/testing-library";
-import { Alert, Text } from "react-native";
+import { act, fireEvent, screen, waitFor, within } from "expo-router/testing-library";
+import { Text } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import Realm from "realm";
 
@@ -274,6 +274,8 @@ describe("CardEditorScreen (edit)", () => {
     await fireEvent.changeText(screen.getByLabelText("Frente"), front);
     await fireEvent.changeText(screen.getByLabelText("Verso"), back);
   };
+  const dialog = () => within(screen.getByTestId("overlay-modal"));
+  const pressDialog = (name: string) => fireEvent.press(dialog().getByRole("button", { name }));
   const press = (name: string) => fireEvent.press(screen.getByRole("button", { name }));
 
   it("EDT-04 shows the prefilled edit form and Salvar updates the text and closes", async () => {
@@ -292,21 +294,14 @@ describe("CardEditorScreen (edit)", () => {
     await rendered.unmount();
   });
 
-  it("EDT-05 Excluir cartão asks for confirmation; Excluir removes the card and closes", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  it("ALL-11 Excluir cartão asks for confirmation; Excluir removes the card and closes", async () => {
     const rendered = await openEditor();
     await press("Excluir cartão");
-    expect(alert).toHaveBeenCalledTimes(1);
-    const [title, , buttons] = alert.mock.calls[0];
-    expect(title).toBe("Excluir cartão?");
-    expect(buttons?.map((b) => [b.text, b.style])).toEqual([
-      ["Cancelar", "cancel"],
-      ["Excluir", "destructive"],
-    ]);
+    expect(dialog().getByText("Excluir cartão?")).toBeTruthy();
+    expect(dialog().getByText("Esta ação não pode ser desfeita.")).toBeTruthy();
+    expect(dialog().getByRole("button", { name: "Cancelar" })).toBeTruthy();
 
-    await act(async () => {
-      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
-    });
+    await pressDialog("Excluir");
     await waitFor(() => expect(rendered).toHavePathname(`/decks/${deckId}`));
     expect(stored()).toBeNull();
     await waitFor(() => expect(screen.queryByText("row:forget")).toBeNull());
@@ -314,45 +309,34 @@ describe("CardEditorScreen (edit)", () => {
     await rendered.unmount();
   });
 
-  it("EDT-05 Cancelar in the confirmation leaves the card intact", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  it("ALL-12 Cancelar in the confirmation leaves the card intact", async () => {
     const rendered = await openEditor();
     await press("Excluir cartão");
-    const buttons = alert.mock.calls[0][2];
-    await act(async () => {
-      buttons?.find((b) => b.text === "Cancelar")?.onPress?.();
-    });
+    await pressDialog("Cancelar");
+    expect(screen.queryByText("Excluir cartão?")).toBeNull();
     expect(stored()).not.toBeNull();
     expect(rendered).toHavePathname(editUrl());
     await rendered.unmount();
   });
 
   it("EDT-05 no NotFound flash while a successful delete closes the Editor", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
     const rendered = await openEditor();
     await press("Excluir cartão");
-    const buttons = alert.mock.calls[0][2];
     // Keep the Editor mounted after the delete so any flash would be observable.
     jest.spyOn(router, "back").mockImplementation(() => {});
-    await act(async () => {
-      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
-    });
+    await pressDialog("Excluir");
     await waitFor(() => expect(stored()).toBeNull());
     expect(screen.queryByText("Cartão não encontrado")).toBeNull();
     await rendered.unmount();
   });
 
-  it("EDT-08 Salvar and Excluir cartão are disabled while the delete is pending", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  it("ALL-14 (EDT-08) Salvar and Excluir cartão are disabled while the delete is pending", async () => {
     const rendered = await openEditor();
     await press("Excluir cartão");
-    const buttons = alert.mock.calls[0][2];
     let release!: () => void;
     const gate = new Promise<void>((resolve) => (release = resolve));
     jest.spyOn(rendered.queryClient, "invalidateQueries").mockReturnValue(gate);
-    await act(async () => {
-      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
-    });
+    await pressDialog("Excluir");
     await waitFor(() => expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled());
     expect(screen.getByRole("button", { name: "Excluir cartão" })).toBeDisabled();
     await act(async () => release());
@@ -373,18 +357,15 @@ describe("CardEditorScreen (edit)", () => {
     await rendered.unmount();
   });
 
-  it("ERR-01 edit mode: a write failure on delete shows the delete message and keeps the card", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  it("ALL-13 (ERR-01) edit mode: a write failure on delete shows the delete message and keeps the card", async () => {
     const rendered = await openEditor();
     jest.spyOn(realm, "write").mockImplementation(() => {
       throw new Error("disk full");
     });
     await press("Excluir cartão");
-    const buttons = alert.mock.calls[0][2];
-    await act(async () => {
-      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
-    });
+    await pressDialog("Excluir");
     expect(await screen.findByText("Não foi possível excluir. Tente de novo.")).toBeTruthy();
+    expect(screen.queryByText("Excluir cartão?")).toBeNull();
     expect(rendered).toHavePathname(editUrl());
     expect(stored()).not.toBeNull();
     await rendered.unmount();

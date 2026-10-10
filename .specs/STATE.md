@@ -68,12 +68,12 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: ui-overlays (F1, MEDIUM) — T1–T4 feitas, `npm run ci` sai 0 (475 testes), lint limpo, 8 mutações detectadas, commitada. Verify independente é opcional em MEDIUM; a revisão do diff foi feita pelo autor
-- **Where**: `src/components/{confirm-dialog,bottom-sheet,toast,toast-provider,use-toast-state}.tsx`, `Button variant="destructive"`, ícones `trash` e `sign-out`, `ToastProvider` em `src/app/_layout.tsx`, helper de teste `src/testing/safe-area.tsx`
-- **Next step**: F2 `deck-menu-and-delete`. Roteiro aprovado pelo usuário em 2026-10-10 (ordem: F1 → F2, F3, F4 em paralelo → F5 → F6 → F7 → F8, F9). Cada uma passa por spec + plan + execução; rodar o skill `adaptive-spec-driven` primeiro
+- **Feature**: deck-all-cards (F3, MEDIUM) — T1–T3 feitas, `npm run ci` sai 0 (494 testes), lint limpo, 5 mutações detectadas, commitada. Revisão do diff pelo autor
+- **Where**: `src/features/decks/screens/{deck-cards-screen.tsx,use-deck-cards-screen.ts}`, rota `src/app/decks/[deckId]/cards/index.tsx`, `src/domain/cards-list.ts`, `ConfirmDialog` no Editor (`use-edit-card-form.ts`), ícone `chevron-right`. Amendment A-01 move busca e lista completa do Baralho para a tela 3b
+- **Next step**: F4 `study-onboarding-and-exit` (não depende das decisões) ou F8/F9; F2 segue bloqueada pelas decisões 1–5. Rodar o skill `adaptive-spec-driven` primeiro
 - **Roteiro** (análise de `design/`, novos PNGs 3b, 3c, 3d, 5c, 7b, 9, 10, Componentes 2, ícone do app):
   - F2 `deck-menu-and-delete` (MEDIUM): menu 3c em `BottomSheet` (Adicionar cartão, Redefinir progresso, Excluir baralho); excluir 3d em `ConfirmDialog`; toast "Baralho excluído"; novo método de repositório e hook `useResetDeckProgress`. Troca o `Alert` de `use-deck-screen.ts`
-  - F3 `deck-all-cards` (MEDIUM): rota `decks/[deckId]/cards/index.tsx` (3b) com busca; Baralho (3) mostra só os 5 primeiros + "Ver todos >"; excluir cartão do editor passa a `ConfirmDialog`; checar 1.000 cartões
+  - F3 `deck-all-cards` (MEDIUM, FEITA): rota `decks/[deckId]/cards/index.tsx` (3b) com busca; Baralho (3) mostra só os 5 primeiros + "Ver todos >"; excluir cartão do editor passa a `ConfirmDialog`; checar 1.000 cartões
   - F4 `study-onboarding-and-exit` (MEDIUM): folha "Como responder" (5c) na 1ª sessão, flag persistida no `Profile` (migração Realm); sair da sessão em `ConfirmDialog`; conferir visual de 5a/5b/6/8
   - F5 `settings-and-preferences` (HIGH): rota `/settings` (9) via engrenagem do Perfil; novo `Switch`, `SegmentedControl`, `SettingsRow`; schema com tema, lembrete, horário, novos por dia; `useTheme` com preferência; "novos por dia" altera a fila (RF4); lembrete com `expo-notifications` (talvez `daily-reminder` separada, HIGH)
   - F6 `backup-restore` (HIGH): tela 10; `src/domain/backup.ts` (serializar, validar, versionar), exportar JSON (`expo-file-system` + `expo-sharing`), importar (`expo-document-picker`) substituindo tudo numa transação; data do último backup

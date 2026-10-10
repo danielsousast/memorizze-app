@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from "react";
-import { Alert } from "react-native";
 
 import { useUpdateCard, type Card, type useDeleteCard } from "@/features/cards";
 
@@ -11,6 +10,7 @@ export function useEditCardForm(card: Card, remove: ReturnType<typeof useDeleteC
   const [back, setBack] = useState(card.back);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | undefined>();
+  const [confirming, setConfirming] = useState(false);
   const busy = useRef(false);
 
   const save = useCallback(() => {
@@ -35,6 +35,7 @@ export function useEditCardForm(card: Card, remove: ReturnType<typeof useDeleteC
   }, [update, card.id, front, back]);
 
   const deleteCard = useCallback(() => {
+    setConfirming(false);
     if (busy.current) return;
     busy.current = true;
     setFormError(undefined);
@@ -49,11 +50,12 @@ export function useEditCardForm(card: Card, remove: ReturnType<typeof useDeleteC
 
   const confirmDelete = useCallback(() => {
     if (busy.current) return;
-    Alert.alert("Excluir cartão?", undefined, [
-      { text: "Cancelar", style: "cancel" },
-      { text: "Excluir", style: "destructive", onPress: deleteCard },
-    ]);
-  }, [deleteCard]);
+    setConfirming(true);
+  }, []);
+
+  const cancelDelete = useCallback(() => {
+    setConfirming(false);
+  }, []);
 
   return {
     front,
@@ -65,6 +67,9 @@ export function useEditCardForm(card: Card, remove: ReturnType<typeof useDeleteC
     setBack,
     cancel: closeToHome,
     save,
+    confirming,
     confirmDelete,
+    cancelDelete,
+    deleteCard,
   };
 }

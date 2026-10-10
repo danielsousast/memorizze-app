@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
 
 import { Button } from "@/components/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DeckIcon } from "@/components/deck-icon";
 import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
@@ -88,6 +89,9 @@ function EditCardForm({
       onCancel={form.cancel}
       onSave={form.save}
       onDelete={form.confirmDelete}
+      confirmingDelete={form.confirming}
+      onConfirmDelete={form.deleteCard}
+      onCancelDelete={form.cancelDelete}
     />
   );
 }
@@ -131,6 +135,9 @@ type FormProps = {
   onSaveAnother?: () => void;
   /** Provide to show `Excluir cartão` (edit mode). */
   onDelete?: () => void;
+  confirmingDelete?: boolean;
+  onConfirmDelete?: () => void;
+  onCancelDelete?: () => void;
 };
 
 function CardEditorForm(props: FormProps) {
@@ -203,6 +210,18 @@ function CardEditorForm(props: FormProps) {
           />
         ) : null}
       </ScrollView>
+      {props.onDelete && props.onConfirmDelete && props.onCancelDelete ? (
+        <ConfirmDialog
+          visible={props.confirmingDelete ?? false}
+          icon="trash"
+          tone="destructive"
+          title="Excluir cartão?"
+          message="Esta ação não pode ser desfeita."
+          confirmLabel="Excluir"
+          onConfirm={props.onConfirmDelete}
+          onCancel={props.onCancelDelete}
+        />
+      ) : null}
     </Screen>
   );
 }

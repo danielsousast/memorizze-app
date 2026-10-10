@@ -12,6 +12,7 @@ import { openTestRealm } from "@/testing/realm";
 import { renderRouterWithProviders } from "@/testing/router";
 
 import DeckRoute from "../../../app/decks/[deckId]/index";
+import DeckCardsRoute from "../../../app/decks/[deckId]/cards/index";
 
 // LOAD-01 needs a read that has not resolved yet; these flags hold a hook pending.
 const hold = { deck: false, cards: false };
@@ -35,6 +36,7 @@ const models = [Profile, Deck, Card, ReviewLog] as unknown as Realm.ObjectClass[
 const routes = {
   index: () => <Text>Início-home</Text>,
   "decks/[deckId]/index": DeckRoute,
+  "decks/[deckId]/cards/index": DeckCardsRoute,
   "decks/[deckId]/cards/new": () => <Text>Editor-novo</Text>,
   "decks/[deckId]/edit": () => <Text>Form-editar</Text>,
   "cards/[cardId]/edit": () => <Text>Editor-editar</Text>,
@@ -166,32 +168,50 @@ describe("DeckScreen", () => {
     await rendered.unmount();
   });
 
-  it("DECK-04 search filters by front or back ignoring case and accents", async () => {
+  function seedMany(deckId: string, count: number) {
+    for (let i = 1; i <= count; i++) seedCard(deckId, `c${i}`, `v${i}`);
+  }
+  const fronts = () => screen.getAllByTestId("card-front").map((n) => n.props.children);
+
+  it("ALL-01 lists only the 5 newest cards, newest first", async () => {
     const deck = seedDeck();
-    seedCard(deck.id, "forget", "esquecer");
-    seedCard(deck.id, "easy", "fácil");
-    seedCard(deck.id, "other", "outro");
+    seedMany(deck.id, 7);
     const rendered = await open(deck.id);
-    const field = await screen.findByLabelText("Buscar cartões");
-    const fronts = () => screen.getAllByTestId("card-front").map((n) => n.props.children);
-    await fireEvent.changeText(field, "ESQUE");
-    expect(fronts()).toEqual(["forget"]);
-    await fireEvent.changeText(field, "facil");
-    expect(fronts()).toEqual(["easy"]);
-    await fireEvent.changeText(field, "  ");
-    expect(fronts()).toEqual(["other", "easy", "forget"]);
-    await fireEvent.changeText(field, "");
-    expect(fronts()).toHaveLength(3);
+    await screen.findByText("c7");
+    expect(fronts()).toEqual(["c7", "c6", "c5", "c4", "c3"]);
     await rendered.unmount();
   });
 
-  it("DECK-05 search without results shows not-found text", async () => {
+  it("ALL-02 Ver todos appears only with more than 5 cards", async () => {
+    const six = seedDeck("Seis");
+    seedMany(six.id, 6);
+    const rendered = await open(six.id);
+    expect(await screen.findByRole("button", { name: "Ver todos" })).toBeTruthy();
+    await rendered.unmount();
+
+    const five = seedDeck("Cinco");
+    seedMany(five.id, 5);
+    const again = await open(five.id);
+    await screen.findByText("c5");
+    expect(screen.queryByRole("button", { name: "Ver todos" })).toBeNull();
+    await again.unmount();
+  });
+
+  it("ALL-03 Ver todos opens the full list route", async () => {
     const deck = seedDeck();
-    seedCard(deck.id, "a", "b");
+    seedMany(deck.id, 6);
     const rendered = await open(deck.id);
-    await fireEvent.changeText(await screen.findByLabelText("Buscar cartões"), "zzz");
-    expect(screen.getByText("Nenhum cartão encontrado")).toBeTruthy();
-    expect(screen.queryByText("Nenhum cartão ainda")).toBeNull();
+    await fireEvent.press(await screen.findByRole("button", { name: "Ver todos" }));
+    expect(rendered).toHavePathname(`/decks/${deck.id}/cards`);
+    await rendered.unmount();
+  });
+
+  it("ALL-04 the deck screen has no search field", async () => {
+    const deck = seedDeck();
+    seedMany(deck.id, 8);
+    const rendered = await open(deck.id);
+    await screen.findByText("c8");
+    expect(screen.queryByLabelText("Buscar cartões")).toBeNull();
     await rendered.unmount();
   });
 
@@ -370,11 +390,13 @@ describe("DeckScreen", () => {
 
   it("A11Y-01 every tappable has role, label and a 44pt touch target", async () => {
     const deck = seedDeck();
+    seedMany(deck.id, 5);
     seedCard(deck.id, "to forget", "esquecer\nverbo");
     const rendered = await open(deck.id);
     await screen.findByText("to forget");
     const targets = [
-      screen.getByTestId("card-row"),
+      screen.getAllByTestId("card-row")[0],
+      screen.getByRole("button", { name: "Ver todos" }),
       screen.getByRole("button", { name: "Início" }),
       screen.getByRole("button", { name: "Opções do baralho" }),
       screen.getByRole("button", { name: "Adicionar cartão" }),
@@ -393,9 +415,7 @@ describe("DeckScreen", () => {
       const fixed = Math.max(style.minWidth ?? 0, Number(style.width ?? 0));
       if (fixed > 0) expect(fixed + extra("left") + extra("right")).toBeGreaterThanOrEqual(44);
     }
-    expect(screen.getByTestId("card-row").props.accessibilityLabel).toBe(
-      "to forget, esquecer verbo",
-    );
+    expect(screen.getByLabelText("to forget, esquecer verbo")).toBeTruthy();
     await rendered.unmount();
   });
 

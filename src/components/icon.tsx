@@ -4,6 +4,7 @@ import type { ColorValue } from "react-native";
 const symbols = {
   plus: { ios: "plus", android: "add", web: "add" },
   "chevron-left": { ios: "chevron.left", android: "chevron_left", web: "chevron_left" },
+  "chevron-right": { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
   more: { ios: "ellipsis", android: "more_horiz", web: "more_horiz" },
   search: { ios: "magnifyingglass", android: "search", web: "search" },
   check: { ios: "checkmark", android: "check", web: "check" },
