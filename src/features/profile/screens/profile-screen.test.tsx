@@ -1,7 +1,10 @@
 import { fireEvent, screen, waitFor } from "expo-router/testing-library";
+import * as ReactNative from "react-native";
+import { StyleSheet } from "react-native";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
+import { darkColors, lightColors } from "@/theme";
 import { openTestRealm } from "@/testing/realm";
 import { renderRouterWithProviders } from "@/testing/router";
 
@@ -273,6 +276,33 @@ describe("ProfileScreen", () => {
     await fireEvent.press(await screen.findByLabelText(/^Perfil, tab/));
     expect(await screen.findByLabelText("Sequência atual, 1 dia")).toBeTruthy();
     expect(screen.getByLabelText("Acerto 7 dias, 100%")).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it.each([
+    ["light", lightColors],
+    ["dark", darkColors],
+  ] as const)("THM-01 the %s scheme takes cards and accent from the tokens", async (scheme, colors) => {
+    jest.spyOn(ReactNative, "useColorScheme").mockReturnValue(scheme);
+    seed(20, 0);
+    const now = new Date();
+    realm.write(() => {
+      realm.create(Card, {
+        front: "f",
+        back: "b",
+        dueDate: now,
+        createdAt: now,
+        repetitions: 4,
+        intervalDays: 30,
+      });
+    });
+    const rendered = await open();
+    const card = StyleSheet.flatten(
+      (await screen.findByTestId("stage-card", { includeHiddenElements: true })).props.style,
+    );
+    expect(card.backgroundColor).toBe(colors.surface);
+    const mature = StyleSheet.flatten(screen.getByTestId("segment-mature", { includeHiddenElements: true }).props.style);
+    expect(mature.backgroundColor).toBe(colors.accent);
     await rendered.unmount();
   });
 });

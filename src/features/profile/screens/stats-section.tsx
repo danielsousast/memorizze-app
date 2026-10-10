@@ -5,6 +5,7 @@ import { plural } from "@/domain/text";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
 import type { ProfileStats } from "../interfaces";
+import { StageBar } from "./stage-bar";
 import { WeekChart } from "./week-chart";
 
 type TileProps = {
@@ -74,6 +75,7 @@ export function StatsSection({ stats, dailyGoal }: { stats: ProfileStats; dailyG
         />
       </View>
       <WeekChart week={stats.week} dailyGoal={dailyGoal} />
+      <StageBar stages={stats.stages} />
     </View>
   );
 }
