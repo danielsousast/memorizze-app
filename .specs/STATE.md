@@ -41,9 +41,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: profile-stats (MEDIUM) — `spec.md` e `plan.md` em Draft, aguardando aprovação única (6 tarefas, 5 ondas). profile-onboarding concluída localmente (PASS-WITH-GAPS, UAT pendente)
-- **Where**: specify + plan prontos; nenhum código escrito
-- **Next step**: aprovar spec + plan de `profile-stats`, depois executar T1 ∥ T2. UAT de profile-onboarding e M3 em development build; push só com go-ahead explícito
+- **Feature**: profile-stats (MEDIUM) — T1–T6 implementadas e commitadas localmente; full gate verde (404 testes, lint, tsc); 3 mutações do plano detectadas
+- **Where**: execução concluída; falta UAT visual em development build (PNG 7 claro e escuro) e conferir cores das barras do gráfico e dos segmentos de estágio (usam `accentSoft` e opacidades de `accent`)
+- **Next step**: UAT em dispositivo; depois F2. Push só com go-ahead explícito
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-10
