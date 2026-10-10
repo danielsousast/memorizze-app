@@ -21,6 +21,12 @@ export function createCardRepository(
     return realm.objectForPrimaryKey(CardObject, new BSON.ObjectId(id));
   }
 
+  function existingCard(id: string) {
+    const card = findCard(id);
+    if (!card) throw new AppError<CardErrorCode>("CARD_NOT_FOUND");
+    return card;
+  }
+
   function nonEmpty(text: string, code: CardErrorCode): string {
     const trimmed = text.trim();
     if (!trimmed) throw new AppError(code);
@@ -54,6 +60,24 @@ export function createCardRepository(
         return created;
       });
       return toCard(card);
+    },
+
+    update(id, input) {
+      const front =
+        input.front === undefined ? undefined : nonEmpty(input.front, "CARD_FRONT_EMPTY");
+      const back =
+        input.back === undefined ? undefined : nonEmpty(input.back, "CARD_BACK_EMPTY");
+      const card = existingCard(id);
+      realm.write(() => {
+        if (front !== undefined) card.front = front;
+        if (back !== undefined) card.back = back;
+      });
+      return toCard(card);
+    },
+
+    remove(id) {
+      const card = existingCard(id);
+      realm.write(() => realm.delete(card));
     },
   };
 }

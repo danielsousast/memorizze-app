@@ -22,4 +22,6 @@ export type CardRepository = {
   listByDeck(deckId: string): Card[];
   getById(id: string): Card | null;
   create(deckId: string, input: CardInput): Card;
+  update(id: string, input: Partial<CardInput>): Card;
+  remove(id: string): void;
 };

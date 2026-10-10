@@ -242,7 +242,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - INVARIANT INV-03 · integration — sequência aleatória (seed fixa) de 100 operações de deck e card a partir de 5 `ReviewLog` semeados → os 5 logs continuam idênticos (ids, campos) e nenhum novo
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T6 — Hooks de baralho com cache invalidado e erros expostos
 
