@@ -362,6 +362,19 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
 - **Gate**: quick
 - **Status**: [x] done
 
+### F6 — Todos os hooks de baralho rodam offline
+
+- **Covers**: HK-03
+- **Depends on**: none
+- **Risk**: inherit
+- **Touches**: `src/features/decks/usecases/decks.test.tsx`
+- **Change**: só teste; padrão de F5 aplicado a baralhos (aprovado pelo usuário após o round 3).
+- **Tests**:
+  - SPEC HK-03 · integration — `onlineManager.setOnline(false)` → `useDecks`/`useDeck` chegam a `isSuccess` sem `fetchStatus` `"paused"`; `useCreateDeck`, `useUpdateDeck`, `useDeleteDeck` concluem
+- **Done when**: tests above pass; quick gate green
+- **Gate**: quick
+- **Status**: [ ] pending
+
 ## Execution Waves
 
 - **Wave 1**: T1 ∥ T2
@@ -371,6 +384,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
 - **Wave 5**: T8
 - **Wave 6**: F1 ∥ F2 ∥ F3
 - **Wave 7**: F4 ∥ F5
+- **Wave 8**: F6
 
 ## Deferred
 

@@ -112,15 +112,28 @@ describe("deck hooks", () => {
   });
 
   it("HK-03 runs reads and writes while offline", async () => {
+    const seeded = createDeckRepository(realm).create({ name: "Inglês" });
     onlineManager.setOnline(false);
-    const { result, unmount } = await renderDeckHooks("missing");
+    const { result, unmount } = await renderDeckHooks(seeded.id);
 
-    await waitFor(() => expect(result.current.list.isSuccess).toBe(true));
-    expect(result.current.list.fetchStatus).not.toBe("paused");
-    await act(async () => {
-      await result.current.create.mutateAsync({ name: "Inglês" });
+    await waitFor(() => {
+      expect(result.current.list.isSuccess).toBe(true);
+      expect(result.current.item.isSuccess).toBe(true);
     });
-    await waitFor(() => expect(result.current.create.isSuccess).toBe(true));
+    expect(result.current.list.fetchStatus).not.toBe("paused");
+    expect(result.current.item.fetchStatus).not.toBe("paused");
+
+    await act(async () => {
+      const created = await result.current.create.mutateAsync({ name: "Física" });
+      await result.current.update.mutateAsync({ id: seeded.id, input: { name: "Arte" } });
+      await result.current.remove.mutateAsync(created.id);
+    });
+
+    await waitFor(() => {
+      const { create, update, remove } = result.current;
+      expect([create, update, remove].every((m) => m.isSuccess)).toBe(true);
+    });
+    expect(realm.objects(Deck).map((d) => d.name)).toEqual(["Arte"]);
     await unmount();
   });
 
