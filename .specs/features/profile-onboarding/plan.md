@@ -314,7 +314,7 @@ Mutações sugeridas ao verificador:
   - SPEC ERR-01 · tela — repositório lança erro → mensagem de erro e Realm com o valor antigo
 - **Done when**: tests above pass; full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

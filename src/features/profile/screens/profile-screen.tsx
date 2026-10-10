@@ -1,9 +1,12 @@
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { GoalProgress } from "@/components/goal-progress";
+import { Icon } from "@/components/icon";
 import { Screen } from "@/components/screen";
 import { formatMonthYear } from "@/domain/dates";
+import { canStep, stepGoal } from "@/domain/goal";
 import {
   radii,
   screenMargin,
@@ -15,11 +18,64 @@ import {
 
 import { useProfile } from "../usecases/use-profile";
 import { useReviewsToday } from "../usecases/use-reviews-today";
+import { useUpdateProfile } from "../usecases/use-update-profile";
+import { GENERIC_ERROR } from "./name-errors";
+
+function StepButton({
+  label,
+  icon,
+  disabled,
+  onPress,
+}: {
+  label: string;
+  icon: "minus" | "plus";
+  disabled: boolean;
+  onPress: () => void;
+}) {
+  const { colors } = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={[styles.step, { backgroundColor: colors.surface2, opacity: disabled ? 0.5 : 1 }]}
+    >
+      <Icon name={icon} color={colors.text} />
+    </Pressable>
+  );
+}
 
 export function ProfileScreen() {
   const { colors } = useTheme();
   const profile = useProfile().data;
-  const reviewsToday = useReviewsToday().data ?? 0;
+  const reviewsQuery = useReviewsToday();
+  const reviewsToday = reviewsQuery.data ?? 0;
+  const { refetch: refetchReviews } = reviewsQuery;
+  const update = useUpdateProfile();
+  const [error, setError] = useState<string>();
+  const busy = useRef(false);
+
+  // HOM-07: numbers follow the recorded reviews whenever the screen refocuses.
+  useFocusEffect(
+    useCallback(() => {
+      void refetchReviews();
+    }, [refetchReviews]),
+  );
+
+  async function step(direction: 1 | -1) {
+    if (!profile || busy.current) return;
+    busy.current = true;
+    setError(undefined);
+    try {
+      await update.mutateAsync({ dailyGoal: stepGoal(profile.dailyGoal, direction) });
+    } catch {
+      setError(GENERIC_ERROR);
+    } finally {
+      busy.current = false;
+    }
+  }
 
   return (
     <Screen testID="profile-screen" style={styles.body}>
@@ -69,10 +125,35 @@ export function ProfileScreen() {
                   revisões por dia
                 </Text>
               </View>
-              <Text style={[typography.section, { color: colors.text }]}>
-                {profile.dailyGoal}
-              </Text>
+              <View style={styles.stepper}>
+                <StepButton
+                  label="Diminuir meta"
+                  icon="minus"
+                  disabled={!canStep(profile.dailyGoal, -1)}
+                  onPress={() => step(-1)}
+                />
+                <Text
+                  accessibilityLabel={`Meta diária, ${profile.dailyGoal} revisões por dia`}
+                  style={[typography.section, styles.value, { color: colors.text }]}
+                >
+                  {profile.dailyGoal}
+                </Text>
+                <StepButton
+                  label="Aumentar meta"
+                  icon="plus"
+                  disabled={!canStep(profile.dailyGoal, 1)}
+                  onPress={() => step(1)}
+                />
+              </View>
             </View>
+            {error ? (
+              <Text
+                accessibilityRole="alert"
+                style={[typography.caption, { color: colors.grade.again.text }]}
+              >
+                {error}
+              </Text>
+            ) : null}
             <GoalProgress
               done={reviewsToday}
               goal={profile.dailyGoal}
@@ -103,6 +184,15 @@ const styles = StyleSheet.create({
     borderRadius: radii.studyCard,
     borderWidth: 1,
   },
+  stepper: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  step: {
+    width: sizes.minTouch,
+    height: sizes.minTouch,
+    borderRadius: radii.icon,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  value: { minWidth: 40, textAlign: "center" },
   goalTop: {
     flexDirection: "row",
     alignItems: "center",
