@@ -147,7 +147,7 @@ Mutação (1–3 alvos, MEDIUM): `>= 1` → `> 1` em `accuracy`; `-1` → `0` em
   - REGRESSION · screen — testes atuais de meta, nome e `Revisões hoje` continuam passando
 - **Done when**: testes acima passam; quick gate verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T5 — Mostrar o gráfico dos últimos 7 dias
 

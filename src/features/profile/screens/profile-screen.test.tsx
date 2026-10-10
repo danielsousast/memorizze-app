@@ -181,4 +181,98 @@ describe("ProfileScreen", () => {
     expect(await screen.findByText("1 de 20")).toBeTruthy();
     await rendered.unmount();
   });
+  function logs(count: number, grade: number, daysAgo = 0) {
+    realm.write(() => {
+      for (let i = 0; i < count; i++) {
+        const reviewedAt = new Date();
+        reviewedAt.setDate(reviewedAt.getDate() - daysAgo);
+        realm.create(ReviewLog, {
+          cardId: new Realm.BSON.ObjectId(),
+          deckId: new Realm.BSON.ObjectId(),
+          grade,
+          reviewedAt,
+        });
+      }
+    });
+  }
+
+  it("SEQ-01 shows the current streak, singular for one day", async () => {
+    seed(20, 0);
+    for (let d = 0; d < 12; d++) logs(1, 2, d);
+    const rendered = await open();
+    expect(await screen.findByLabelText("Sequência atual, 12 dias")).toBeTruthy();
+    await rendered.unmount();
+    realm.write(() => realm.delete(realm.objects(ReviewLog)));
+    logs(1, 2);
+    const again = await open();
+    expect(await screen.findByLabelText("Sequência atual, 1 dia")).toBeTruthy();
+    await again.unmount();
+  });
+
+  it("SEQ-02 shows the longest streak, 0 dias without reviews", async () => {
+    seed(20, 0);
+    for (let d = 10; d < 51; d++) logs(1, 2, d);
+    const rendered = await open();
+    expect(await screen.findByLabelText("Maior sequência, 41 dias")).toBeTruthy();
+    expect(screen.getByText("41 dias")).toBeTruthy();
+    await rendered.unmount();
+    realm.write(() => realm.delete(realm.objects(ReviewLog)));
+    const empty = await open();
+    expect(await screen.findByLabelText("Maior sequência, 0 dias")).toBeTruthy();
+    await empty.unmount();
+  });
+
+  it("ACC-01 ACC-02 show the accuracy per window", async () => {
+    seed(20, 0);
+    logs(87, 2);
+    logs(13, 0);
+    const rendered = await open();
+    expect(await screen.findByLabelText("Acerto 7 dias, 87%")).toBeTruthy();
+    expect(screen.getByLabelText("Acerto 30 dias, 87%")).toBeTruthy();
+    await rendered.unmount();
+    realm.write(() => realm.delete(realm.objects(ReviewLog)));
+    logs(84, 2, 20);
+    logs(16, 0, 20);
+    const older = await open();
+    expect(await screen.findByLabelText("Acerto 30 dias, 84%")).toBeTruthy();
+    expect(screen.getByText("84%")).toBeTruthy();
+    await older.unmount();
+  });
+
+  it("ACC-04 shows a dash without reviews", async () => {
+    seed(20, 0);
+    const rendered = await open();
+    expect(await screen.findByLabelText("Acerto 7 dias, —")).toBeTruthy();
+    expect(screen.getByLabelText("Acerto 30 dias, —")).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it("ERR-01 a failed stats read replaces only the stats section", async () => {
+    seed(20, 0);
+    const objects = realm.objects.bind(realm);
+    jest.spyOn(realm, "objects").mockImplementation(((type: unknown) => {
+      if (type === Card) throw new Error("boom");
+      return objects(type as never);
+    }) as never);
+    const rendered = await open();
+    expect(
+      await screen.findByText("Não foi possível carregar as estatísticas."),
+    ).toBeTruthy();
+    expect(screen.getByText("Meta diária")).toBeTruthy();
+    expect(screen.queryByText("Maior sequência")).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("UPD-01 stats refresh when the Perfil tab regains focus", async () => {
+    seed(20, 0);
+    const rendered = await renderRouterWithProviders(tabRoutes, realm, "/profile");
+    expect(await screen.findByLabelText("Sequência atual, 0 dias")).toBeTruthy();
+    await fireEvent.press(await screen.findByLabelText(/^Início, tab/));
+    await screen.findByTestId("home-screen");
+    logs(4, 2);
+    await fireEvent.press(await screen.findByLabelText(/^Perfil, tab/));
+    expect(await screen.findByLabelText("Sequência atual, 1 dia")).toBeTruthy();
+    expect(screen.getByLabelText("Acerto 7 dias, 100%")).toBeTruthy();
+    await rendered.unmount();
+  });
 });

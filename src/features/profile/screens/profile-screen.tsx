@@ -18,8 +18,10 @@ import {
 
 import { useProfile } from "../usecases/use-profile";
 import { useReviewsToday } from "../usecases/use-reviews-today";
+import { useStats } from "../usecases/use-stats";
 import { useUpdateProfile } from "../usecases/use-update-profile";
 import { GENERIC_ERROR } from "./name-errors";
+import { StatsSection } from "./stats-section";
 
 function StepButton({
   label,
@@ -53,6 +55,8 @@ export function ProfileScreen() {
   const reviewsQuery = useReviewsToday();
   const reviewsToday = reviewsQuery.data ?? 0;
   const { refetch: refetchReviews } = reviewsQuery;
+  const statsQuery = useStats();
+  const { refetch: refetchStats } = statsQuery;
   const update = useUpdateProfile();
   const [error, setError] = useState<string>();
   const busy = useRef(false);
@@ -61,7 +65,8 @@ export function ProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       void refetchReviews();
-    }, [refetchReviews]),
+      void refetchStats();
+    }, [refetchReviews, refetchStats]),
   );
 
   async function step(direction: 1 | -1) {
@@ -161,6 +166,13 @@ export function ProfileScreen() {
               suffix=""
             />
           </View>
+          {statsQuery.data ? (
+            <StatsSection stats={statsQuery.data} dailyGoal={profile.dailyGoal} />
+          ) : statsQuery.isError ? (
+            <Text style={[typography.body, { color: colors.text2 }]}>
+              Não foi possível carregar as estatísticas.
+            </Text>
+          ) : null}
         </>
       ) : null}
     </Screen>
