@@ -188,7 +188,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - INVARIANT INV-01 · integration — 100 operações `create` aleatórias (seed fixa) com nomes de um pool pequeno com variação de caixa/espaços → nunca dois nomes normalizados iguais
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Atualizar e excluir baralhos (com cascata)
 
