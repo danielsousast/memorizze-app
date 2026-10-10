@@ -3,6 +3,7 @@ export type Profile = {
   name: string;
   dailyGoal: number;
   createdAt: Date;
+  studyTutorialSeen: boolean;
 };
 
 export type ProfileErrorCode =
@@ -10,7 +11,7 @@ export type ProfileErrorCode =
   | "PROFILE_NAME_TOO_LONG"
   | "PROFILE_NOT_FOUND";
 
-export type ProfileInput = { name?: string; dailyGoal?: number };
+export type ProfileInput = { name?: string; dailyGoal?: number; studyTutorialSeen?: boolean };
 
 export type ProfileStats = {
   currentStreak: number;

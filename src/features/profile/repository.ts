@@ -52,6 +52,7 @@ export function createProfileRepository(
       realm.write(() => {
         if (name !== undefined) profile.name = name;
         if (input.dailyGoal !== undefined) profile.dailyGoal = input.dailyGoal;
+        if (input.studyTutorialSeen !== undefined) profile.studyTutorialSeen = input.studyTutorialSeen;
       });
       return toProfile(profile);
     },

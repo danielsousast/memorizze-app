@@ -2,12 +2,14 @@ import { Stack } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Button } from "@/components/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { FlipCard } from "@/components/flip-card";
 import { Icon } from "@/components/icon";
 import { radii, screenMargin, sizes, spacing, tabularNums, typography, useTheme } from "@/theme";
 
 import type { StudyCard } from "../interfaces";
 import { AnswerButton } from "./answer-button";
+import { HowToAnswerSheet } from "./how-to-answer-sheet";
 import { SummaryView } from "./summary-view";
 import { useStudySession } from "./use-study-session";
 
@@ -15,8 +17,23 @@ type Props = { cards: StudyCard[]; deckId?: string };
 
 export function SessionView({ cards, deckId }: Props) {
   const { colors } = useTheme();
-  const { state, card, position, revealed, answers, error, pending, reveal, answer, confirmExit } =
-    useStudySession(cards);
+  const {
+    state,
+    card,
+    position,
+    revealed,
+    answers,
+    error,
+    pending,
+    reveal,
+    answer,
+    tutorialOpen,
+    dismissTutorial,
+    exitOpen,
+    requestExit,
+    cancelExit,
+    leave,
+  } = useStudySession(cards);
 
   // ANS-05: the summary replaces the session in the same route.
   if (!card) {
@@ -36,7 +53,7 @@ export function SessionView({ cards, deckId }: Props) {
           accessibilityRole="button"
           accessibilityLabel="Sair da sessão"
           hitSlop={8}
-          onPress={confirmExit}
+          onPress={requestExit}
           style={styles.close}
         >
           <Icon name="close" size={22} color={colors.text} />
@@ -118,6 +135,18 @@ export function SessionView({ cards, deckId }: Props) {
           <Button label="Mostrar resposta" onPress={reveal} variant="secondary" />
         )}
       </View>
+
+      <HowToAnswerSheet visible={tutorialOpen} onDismiss={dismissTutorial} />
+      <ConfirmDialog
+        visible={exitOpen}
+        icon="sign-out"
+        title="Sair da sessão?"
+        message="Seu progresso já foi salvo."
+        confirmLabel="Sair"
+        cancelLabel="Continuar"
+        onConfirm={leave}
+        onCancel={cancelExit}
+      />
     </View>
   );
 }

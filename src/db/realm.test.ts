@@ -5,8 +5,8 @@ import Realm from "realm";
 import { realmConfig } from "./realm";
 
 describe("realmConfig", () => {
-  it("SCH-07 uses schemaVersion 2 and opens a v1 file created with schema []", () => {
-    expect(realmConfig.schemaVersion).toBe(2);
+  it("SCH-07 uses schemaVersion 3 and opens a v1 file created with schema []", () => {
+    expect(realmConfig.schemaVersion).toBe(3);
 
     const path = join(tmpdir(), `memorizze-migration-${randomUUID()}.realm`);
     new Realm({ path, schemaVersion: 1, schema: [] }).close();

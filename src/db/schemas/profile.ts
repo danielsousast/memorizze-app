@@ -5,6 +5,7 @@ export class Profile extends Realm.Object<Profile> {
   name!: string;
   dailyGoal!: number;
   createdAt!: Date;
+  studyTutorialSeen!: boolean;
 
   static schema: Realm.ObjectSchema = {
     name: "Profile",
@@ -14,6 +15,7 @@ export class Profile extends Realm.Object<Profile> {
       name: "string",
       dailyGoal: { type: "int", default: 20 },
       createdAt: "date",
+      studyTutorialSeen: { type: "bool", default: false },
     },
   };
 }

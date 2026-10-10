@@ -110,6 +110,7 @@ describe("profile repository", () => {
       name: "Ana",
       dailyGoal: 20,
       createdAt: now,
+      studyTutorialSeen: false,
     });
   });
 
@@ -192,5 +193,26 @@ describe("profile repository", () => {
       week: [0, 0, 0, 0, 0, 0, 0],
       stages: { new: 0, learning: 0, mature: 0 },
     });
+  });
+});
+
+describe("profile repository study tutorial flag", () => {
+  let realm: Realm;
+  beforeEach(() => {
+    realm = openTestRealm(models);
+  });
+  afterEach(() => {
+    realm.close();
+  });
+
+  it("ONB-04 a new profile starts with the flag false", () => {
+    expect(createProfileRepository(realm).create("Ana").studyTutorialSeen).toBe(false);
+  });
+
+  it("ONB-04 update writes the flag and a name update keeps it", () => {
+    const repository = createProfileRepository(realm);
+    repository.create("Ana");
+    expect(repository.update({ studyTutorialSeen: true }).studyTutorialSeen).toBe(true);
+    expect(repository.update({ name: "Bia" }).studyTutorialSeen).toBe(true);
   });
 });

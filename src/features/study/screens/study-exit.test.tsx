@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { act, fireEvent, screen } from "expo-router/testing-library";
-import { Alert, BackHandler, Text } from "react-native";
+import { BackHandler, Text } from "react-native";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
@@ -42,22 +42,20 @@ describe("StudyScreen exit", () => {
     return deck;
   }
   const close = async () => fireEvent.press(await screen.findByRole("button", { name: "Sair da sessão" }));
-  const buttons = (spy: jest.SpyInstance) => spy.mock.calls[0][2] as { text: string; onPress?: () => void }[];
 
-  it("EXT-01 close opens the confirmation alert", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  it("EXT-01 close opens the confirmation dialog", async () => {
     const deck = seed(["a"]);
     const rendered = await renderRouterWithProviders(routes, realm, `/decks/${deck.id}/study`);
+    expect(screen.queryByText("Sair da sessão?")).toBeNull();
     await close();
-    expect(alert).toHaveBeenCalledWith("Sair da sessão?", "Seu progresso já foi salvo.", [
-      expect.objectContaining({ text: "Continuar" }),
-      expect.objectContaining({ text: "Sair" }),
-    ]);
+    expect(await screen.findByText("Sair da sessão?")).toBeTruthy();
+    expect(screen.getByText("Seu progresso já foi salvo.")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Sair" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Continuar" })).toBeTruthy();
     await rendered.unmount();
   });
 
   it("EXT-02 Sair returns to the deck keeping the log; Continuar keeps the card", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
     const deck = seed(["a", "b"]);
     const rendered = await renderRouterWithProviders(routes, realm, `/decks/${deck.id}`);
     await act(async () => router.push(`/decks/${deck.id}/study`));
@@ -67,19 +65,20 @@ describe("StudyScreen exit", () => {
     await fireEvent.press(screen.getByRole("button", { name: "Mostrar resposta" }));
 
     await close();
-    await act(async () => buttons(alert)[0].onPress?.());
+    await fireEvent.press(await screen.findByRole("button", { name: "Continuar" }));
+    expect(screen.queryByText("Sair da sessão?")).toBeNull();
     expect(await screen.findByText("VERSO")).toBeTruthy();
     expect(screen.getByText("b")).toBeTruthy();
 
-    await act(async () => buttons(alert)[1].onPress?.());
+    await close();
+    await fireEvent.press(await screen.findByRole("button", { name: "Sair" }));
     expect(rendered).toHavePathname(`/decks/${deck.id}`);
     expect(realm.objects(ReviewLog).length).toBe(1);
     expect(screen.queryByText("Sessão concluída")).toBeNull();
     await rendered.unmount();
   });
 
-  it("EXT-03 hardware back opens the alert while studying and is removed on unmount", async () => {
-    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  it("EXT-03 hardware back opens the dialog while studying and is removed on unmount", async () => {
     const remove = jest.fn();
     const add = jest.spyOn(BackHandler, "addEventListener").mockReturnValue({ remove });
     const deck = seed(["a"]);
@@ -87,10 +86,24 @@ describe("StudyScreen exit", () => {
     await screen.findByText("FRENTE");
     expect(add).toHaveBeenCalledWith("hardwareBackPress", expect.any(Function));
     const handler = add.mock.calls[add.mock.calls.length - 1][1] as () => boolean;
-    expect(handler()).toBe(true);
-    expect(alert).toHaveBeenCalledWith("Sair da sessão?", "Seu progresso já foi salvo.", expect.any(Array));
+    let handled = false;
+    await act(async () => {
+      handled = handler();
+    });
+    expect(handled).toBe(true);
+    expect(await screen.findByText("Sair da sessão?")).toBeTruthy();
     await rendered.unmount();
     expect(remove).toHaveBeenCalled();
+  });
+
+  it("EXT-04 with the dialog open nothing is answered", async () => {
+    const deck = seed(["a"]);
+    const rendered = await renderRouterWithProviders(routes, realm, `/decks/${deck.id}/study`);
+    await close();
+    await screen.findByText("Sair da sessão?");
+    expect(realm.objects(ReviewLog).length).toBe(0);
+    expect(screen.queryByText("VERSO")).toBeNull();
+    await rendered.unmount();
   });
 
   it("EXT-03 no hardware back listener outside the studying phase", async () => {

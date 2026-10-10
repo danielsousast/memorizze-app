@@ -8,5 +8,6 @@ export function toProfile(obj: ProfileObject): Profile {
     name: obj.name,
     dailyGoal: obj.dailyGoal,
     createdAt: obj.createdAt,
+    studyTutorialSeen: obj.studyTutorialSeen,
   };
 }

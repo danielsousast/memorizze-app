@@ -1,10 +1,11 @@
 import { router } from "expo-router";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { Alert, BackHandler } from "react-native";
+import { BackHandler } from "react-native";
 
 import { gradeLabel, intervalLabel, schedule, type Grade } from "@/domain/schedule";
 import { answerSession, skipCurrent, startSession, type SessionState } from "@/domain/session";
 import { useCard } from "@/features/cards";
+import { useProfile, useUpdateProfile } from "@/features/profile";
 
 import type { StudyCard } from "../interfaces";
 import { useAnswerCard } from "../usecases/use-answer-card";
@@ -24,13 +25,6 @@ export function sessionReducer(
   return action.type === "answer"
     ? answerSession(state, action.updated, action.grade, action.now)
     : skipCurrent(state);
-}
-
-export function confirmExit() {
-  Alert.alert("Sair da sessão?", "Seu progresso já foi salvo.", [
-    { text: "Continuar", style: "cancel" },
-    { text: "Sair", style: "destructive", onPress: () => router.back() },
-  ]);
 }
 
 export type AnswerOption = { grade: Grade; name: string; interval: string };
@@ -54,16 +48,37 @@ export function useStudySession(cards: StudyCard[]) {
     }
   }, [card, stored]);
 
+  // ONB-01..03: the sheet shows once, until the profile flag is saved.
+  const { data: profile, isPending: profilePending } = useProfile();
+  const { mutate: saveProfile } = useUpdateProfile();
+  const [tutorialDismissed, setTutorialDismissed] = useState(false);
+  const tutorialOpen =
+    card !== undefined && !tutorialDismissed && profile != null && !profile.studyTutorialSeen;
+  const dismissTutorial = useCallback(() => {
+    // ONB-05: the sheet closes even if saving the flag fails.
+    setTutorialDismissed(true);
+    saveProfile({ studyTutorialSeen: true });
+  }, [saveProfile]);
+
+  const [exitOpen, setExitOpen] = useState(false);
+  const requestExit = useCallback(() => setExitOpen(true), []);
+  const cancelExit = useCallback(() => setExitOpen(false), []);
+  const leave = useCallback(() => {
+    setExitOpen(false);
+    router.back();
+  }, []);
+
   // EXT-03: the Android back button asks for confirmation, only while studying.
-  const studying = card !== undefined;
+  // ONB-06: with the sheet open, back closes the sheet instead.
+  const listening = card !== undefined && !profilePending && !tutorialOpen;
   useEffect(() => {
-    if (!studying) return;
+    if (!listening) return;
     const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
-      confirmExit();
+      setExitOpen(true);
       return true;
     });
     return () => subscription.remove();
-  }, [studying]);
+  }, [listening]);
 
   const answer = useCallback(
     (grade: Grade) => {
@@ -107,6 +122,11 @@ export function useStudySession(cards: StudyCard[]) {
     pending: mutation.isPending,
     reveal,
     answer,
-    confirmExit,
+    tutorialOpen,
+    dismissTutorial,
+    exitOpen,
+    requestExit,
+    cancelExit,
+    leave,
   };
 }
