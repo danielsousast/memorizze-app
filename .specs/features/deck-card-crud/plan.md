@@ -294,7 +294,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC ARC-04 · review — ARCHITECTURE.md tem a seção "Feature modules" citando AD-001/AD-002; STATE.md tem AD-001 e AD-002
 - **Done when**: tests above pass; full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

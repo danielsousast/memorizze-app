@@ -20,6 +20,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Compiler | React Compiler enabled | `app.json` |
 | Package manager | npm | `package-lock.json` |
 | Database | Realm (`realm`, `@realm/react`), local only; requires development build | PROJECT-SPEC §3; `src/db/` |
+| Data fetching | `@tanstack/react-query` ^5, offline config in `src/lib/query-client.ts` | `package.json`; AD-002 |
 | Tests | Jest (`jest-expo`) + React Native Testing Library | `package.json`; see [TESTING.md](TESTING.md) |
 
 ## Repository Structure
@@ -27,12 +28,18 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Path | Contents |
 | --- | --- |
 | `src/app/` | Expo Router routes (`_layout.tsx`, `index.tsx`) |
+| `src/db/` | Realm schemas, config and error boundary |
+| `src/domain/` | Pure logic; today only `errors.ts` (`AppError`) |
+| `src/features/` | Feature modules (`decks`, `cards`): repository + React Query hooks ([layout](../ARCHITECTURE.md#feature-modules)) |
+| `src/lib/` | App-wide setup (`query-client.ts`) |
+| `src/testing/` | Test helpers (`realm.ts`, `providers.tsx`, `random.ts`) |
+| `src/theme/` | Colors, typography, layout, `useTheme` |
 | `assets/` | Icons, splash and images |
 | `design/` | Screen mockups (PNG, light and dark) and style guide |
 | `example/` | Leftover from the removed reset script; unused, excluded from `tsc` and Jest |
 | `PROJECT-SPEC.md` | General app definition (draft v0.1) |
 
-Planned layout (`src/domain`, `src/db`, `src/features`, `src/components`, `src/theme`): see [ARCHITECTURE.md](../ARCHITECTURE.md).
+Planned additions (`src/components`, more of `src/domain`): see [ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## Engineering Conventions
 
