@@ -387,7 +387,7 @@ Mutações sugeridas ao verificador:
 - **Wave 2**: T2 ∥ T5 ∥ T8
 - **Wave 3**: T4 ∥ T6 ∥ T9
 - **Wave 4**: T10 → T7 (mesmo arquivo)
-- **Wave 5**: F1 → F2 → F3 (fix da verificação, rodada 1; F1 e F3 editam o mesmo teste)
+- **Wave 5**: F1 → F2 → F3
 
 ## Deferred
 
