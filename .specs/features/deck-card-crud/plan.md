@@ -343,7 +343,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
 - **Wave 3**: T5 ∥ T6
 - **Wave 4**: T7
 - **Wave 5**: T8
-- **Fix round 1**: F1 ∥ F2 ∥ F3
+- **Wave 6**: F1 ∥ F2 ∥ F3
 
 ## Deferred
 

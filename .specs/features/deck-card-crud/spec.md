@@ -129,7 +129,7 @@ Other dimensions: idempotency N/A because a submissão duplicada de baralho cai 
 - **Reason**: "name e/ou description" não definia o caso omitido; o código apagava a descrição, risco de perda de dado em telas que editam só o nome.
 - **Affected**: DCK-04 (modified)
 - **Risk impact**: none
-- **Status**: approved (usuário, 2026-10-09)
+- **Status**: approved
 
 ### A-02 — ARC-03 isenta testes e cobre imports relativos
 - **Type**: clarification
@@ -138,4 +138,4 @@ Other dimensions: idempotency N/A because a submissão duplicada de baralho cai 
 - **Reason**: o spec não citava testes, e a regra de lint deixava passar `../../db`.
 - **Affected**: ARC-03 (modified)
 - **Risk impact**: none
-- **Status**: approved (usuário, 2026-10-09)
+- **Status**: approved
