@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { act, fireEvent, screen, waitFor } from "expo-router/testing-library";
 import { useQueryClient } from "@tanstack/react-query";
-import { Text } from "react-native";
+import { Appearance, Text } from "react-native";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
@@ -133,6 +133,37 @@ describe("RootStack", () => {
     const rendered = await open(url);
     expect(await screen.findByText(label)).toBeTruthy();
     await rendered.unmount();
+  });
+
+  describe("theme", () => {
+    it("THM-04 applies the saved theme on the first render with a profile", async () => {
+      const spy = jest.spyOn(Appearance, "setColorScheme");
+      realm.write(() => {
+        realm.create(Profile, { name: "Ana", createdAt: new Date(), themePreference: "dark" });
+      });
+      const rendered = await open();
+      await screen.findByTestId("home-screen");
+      expect(spy).toHaveBeenCalledWith("dark");
+      await rendered.unmount();
+    });
+
+    it("THM-03 Automático hands the theme back to the system", async () => {
+      const spy = jest.spyOn(Appearance, "setColorScheme");
+      addProfile();
+      const rendered = await open();
+      await screen.findByTestId("home-screen");
+      expect(spy).toHaveBeenLastCalledWith("unspecified");
+      expect(spy).not.toHaveBeenCalledWith("light");
+      await rendered.unmount();
+    });
+
+    it("THM-05 without a profile the system theme is used", async () => {
+      const spy = jest.spyOn(Appearance, "setColorScheme");
+      const rendered = await open();
+      await screen.findByText("Começar");
+      expect(spy).toHaveBeenLastCalledWith("unspecified");
+      await rendered.unmount();
+    });
   });
 
   describe("sign out", () => {

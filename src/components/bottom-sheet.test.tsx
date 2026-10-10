@@ -40,6 +40,25 @@ describe("BottomSheet", () => {
     expect(names).toEqual(["Adicionar cartão", "Redefinir progresso", "Excluir baralho", "Cancelar"]);
   });
 
+  it("NEW-01 marks the selected action with a check and the selected state", async () => {
+    const onClose = jest.fn();
+    await render(
+      <SafeArea>
+        <BottomSheet
+          visible
+          title="Cartões novos por dia"
+          actions={[
+            { label: "5", onPress: jest.fn() },
+            { label: "10", selected: true, onPress: jest.fn() },
+          ]}
+          onClose={onClose}
+        />
+      </SafeArea>,
+    );
+    expect(screen.getByRole("button", { name: "10", selected: true })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "5", selected: false })).toBeTruthy();
+  });
+
   it("runs the pressed action once and closes once (OVL-07)", async () => {
     const { element, onClose, add, reset } = setup();
     await render(element);

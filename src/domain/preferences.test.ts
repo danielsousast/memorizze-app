@@ -35,9 +35,9 @@ describe("preferences", () => {
     expect(THEME_OPTIONS.map((t) => themeLabel[t])).toEqual(["Automático", "Claro", "Escuro"]);
   });
 
-  it("THM-03 maps system (or no profile) to null so the OS decides", () => {
-    expect(colorSchemeFor("system")).toBeNull();
-    expect(colorSchemeFor(undefined)).toBeNull();
+  it("THM-03 maps system (or no profile) to unspecified so the OS decides", () => {
+    expect(colorSchemeFor("system")).toBe("unspecified");
+    expect(colorSchemeFor(undefined)).toBe("unspecified");
     expect(colorSchemeFor("light")).toBe("light");
     expect(colorSchemeFor("dark")).toBe("dark");
   });

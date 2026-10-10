@@ -12,6 +12,7 @@ export type SheetAction = {
   subtitle?: string;
   icon?: IconName;
   destructive?: boolean;
+  selected?: boolean;
   onPress: () => void;
 };
 
@@ -39,6 +40,7 @@ function ActionRow({ action, onClose }: RowProps) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={action.label}
+      accessibilityState={{ selected: action.selected }}
       onPress={press}
       style={[styles.row, { borderColor: colors.border }]}
     >
@@ -49,6 +51,7 @@ function ActionRow({ action, onClose }: RowProps) {
           <Text style={[typography.caption, { color: colors.text2 }]}>{action.subtitle}</Text>
         ) : null}
       </View>
+      {action.selected ? <Icon name="check" size={20} color={colors.accent} /> : null}
     </Pressable>
   );
 }

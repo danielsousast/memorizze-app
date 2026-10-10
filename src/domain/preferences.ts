@@ -20,10 +20,12 @@ export function newCardsLabel(limit: NewCardsLimit): string {
   return limit === null ? "Sem limite" : String(limit);
 }
 
-/** The scheme to force, or `null` to follow the system. */
-export function colorSchemeFor(preference: ThemePreference | undefined): "light" | "dark" | null {
+/** The scheme to force, or `"unspecified"` to follow the system (`Appearance.setColorScheme`). */
+export function colorSchemeFor(
+  preference: ThemePreference | undefined,
+): "light" | "dark" | "unspecified" {
   if (preference === "light" || preference === "dark") return preference;
-  return null;
+  return "unspecified";
 }
 
 export function parseTheme(stored: string): ThemePreference {

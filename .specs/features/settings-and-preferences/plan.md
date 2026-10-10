@@ -13,7 +13,7 @@ O `Profile` ganha `themePreference` e `newCardsPerDay` (Realm 3→4, com `onMigr
 ### Research (Expo SDK 57)
 
 - `userInterfaceStyle: "automatic"` e `expo-system-ui` já estão no projeto: pré-requisitos do tema no Android/iOS cumpridos (docs Color themes).
-- `Appearance.setColorScheme('light' | 'dark' | 'unspecified' | null)` existe no RN 0.86 (`node_modules/react-native/Libraries/Utilities/Appearance.js`); `null` devolve o controle ao sistema. Sem módulo nativo novo, funciona em dev build e Expo Go.
+- `Appearance.setColorScheme('light' | 'dark' | 'unspecified')` existe no RN 0.86 (`node_modules/react-native/Libraries/Utilities/Appearance.js`, `Appearance.d.ts`); `'unspecified'` devolve o controle ao sistema (o tipo não aceita `null`). Sem módulo nativo novo, funciona em dev build e Expo Go.
 - O `Realm` não aplica o `default` do schema a objetos antigos ao adicionar propriedade; a migração preenche os valores à mão.
 
 ### Reuse
@@ -29,11 +29,11 @@ O `Profile` ganha `themePreference` e `newCardsPerDay` (Realm 3→4, com `onMigr
 ### Components and interfaces
 
 - **Schema** (`db/schemas/profile.ts`, `db/realm.ts`): `themePreference: string` (`"system"|"light"|"dark"`), `newCardsPerDay: int` (`0` = sem limite); `schemaVersion: 4`; `onMigration` grava `"system"` e `10` em todo `Profile` existente.
-- **Domain** `domain/preferences.ts`: tipos `ThemePreference`, `NewCardsLimit` (`5|10|20|30|50|null`), listas de opções, rótulos, `colorSchemeFor(pref)` (`"light"|"dark"|null`), `parseTheme`, `parseNewLimit` (valida e mapeia 0↔null).
+- **Domain** `domain/preferences.ts`: tipos `ThemePreference`, `NewCardsLimit` (`5|10|20|30|50|null`), listas de opções, rótulos, `colorSchemeFor(pref)` (`"light"|"dark"|"unspecified"`), `parseTheme`, `parseNewLimit` (valida e mapeia 0↔null).
 - **Domain** `domain/new-cards.ts`: `selectQueue(cards: {id, repetitions}[], limit: number | null, introducedToday: ReadonlySet<string>, introducedCount?)`: mantém não novos; novos já introduzidos hoje entram sem custo; demais novos até `limite − introducedToday.size`; preserva a ordem recebida.
 - **Profile** (`interfaces.ts`, `adapters.ts`, `repository.ts`): `Profile` e `ProfileInput` ganham `themePreference`, `newCardsPerDay: NewCardsLimit`; `update` rejeita valor fora da lista (`PROFILE_PREFERENCE_INVALID`).
 - **Study repository** (`queue`): obtém o perfil, calcula `introducedToday` (ids de logs de hoje sem log anterior, uma consulta por id) e aplica `selectQueue`. Sem perfil, sem limite.
-- **Tema** (`navigation/use-apply-theme.ts`): `useLayoutEffect` chama `Appearance.setColorScheme(colorSchemeFor(profile?.themePreference))`; no `RootStack`, antes do primeiro desenho com perfil, o que cumpre THM-04; sem perfil devolve `null` (THM-05).
+- **Tema** (`navigation/use-apply-theme.ts`): `useLayoutEffect` chama `Appearance.setColorScheme(colorSchemeFor(profile?.themePreference))`; no `RootStack`, antes do primeiro desenho com perfil, o que cumpre THM-04; sem perfil devolve `"unspecified"` (THM-05).
 - **Componentes** `segmented-control.tsx` (`role="radiogroup"`, itens com ícone opcional, alvo ≥ 44pt) e `settings-row.tsx` (título, subtítulo, valor e chevron, `Pressable` com rótulo). `SheetAction` ganha `selected?: boolean` (ícone de check).
 - **Tela** `features/profile/screens/settings-screen.tsx` + `use-settings-screen.ts` (escolha de tema, folha, toast de erro; sem lógica na tela). Rota `src/app/settings.tsx` e `Stack.Screen name="settings"` dentro do guard; `openSettings` passa a `router.push("/settings")`. Versão via `expo-constants` (`expoConfig.version`).
 
@@ -82,7 +82,7 @@ O `Profile` ganha `themePreference` e `newCardsPerDay` (Realm 3→4, com `onMigr
 
 ## Test Strategy
 
-Domínio puro (`new-cards`, `preferences`) com tabelas e INVARIANT de 100 operações aleatórias (`createRandom`); repositório com Realm em memória e relógio fixo para NEW-02..09; migração: abrir arquivo em `schemaVersion 3` e reabrir em 4 (MIG-01); telas pelo `renderRouterWithProviders` (SET-01..04, THM-01..05, NEW-01, NEW-06); `Appearance.setColorScheme` com `jest.spyOn`. Mutações-alvo do verificador: `limite − introduzidos` trocado por `limite`, `<`/`≤` do orçamento, 0↔null invertido, `onMigration` sem `newCardsPerDay`, `setColorScheme(null)` removido no Sair, `useLayoutEffect` por `useEffect`.
+Domínio puro (`new-cards`, `preferences`) com tabelas e INVARIANT de 100 operações aleatórias (`createRandom`); repositório com Realm em memória e relógio fixo para NEW-02..09; migração: abrir arquivo em `schemaVersion 3` e reabrir em 4 (MIG-01); telas pelo `renderRouterWithProviders` (SET-01..04, THM-01..05, NEW-01, NEW-06); `Appearance.setColorScheme` com `jest.spyOn`. Mutações-alvo do verificador: `limite − introduzidos` trocado por `limite`, `<`/`≤` do orçamento, 0↔null invertido, `onMigration` sem `newCardsPerDay`, `setColorScheme("unspecified")` removido no Sair, `useLayoutEffect` por `useEffect`.
 
 ## Verification Commands
 
@@ -134,11 +134,11 @@ Domínio puro (`new-cards`, `preferences`) com tabelas e INVARIANT de 100 opera�
 - **Change**: dois componentes, `selected` na folha, hook de tema no `RootStack`.
 - **Tests**:
   - SPEC THM-01 · component — seleção, rótulos, alvo, claro e escuro
-  - SPEC THM-03, THM-04 · navigation — `Automático` passa `null`; preferência salva aplicada na primeira renderização com perfil
-  - SPEC THM-05 · navigation — perfil ausente volta a `null`
+  - SPEC THM-03, THM-04 · navigation — `Automático` passa `"unspecified"`; preferência salva aplicada na primeira renderização com perfil
+  - SPEC THM-05 · navigation — perfil ausente volta a `"unspecified"`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — Tela Ajustes e rota
 

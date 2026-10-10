@@ -3,6 +3,8 @@ import { Stack } from "expo-router";
 import { useProfile } from "@/features/profile";
 import { useTheme } from "@/theme";
 
+import { useApplyTheme } from "./use-apply-theme";
+
 /**
  * Root navigator. Without a profile only the welcome route exists; with one the rest of
  * the app does (AD-004). It renders nothing until the profile read finishes (ENT-03).
@@ -10,6 +12,7 @@ import { useTheme } from "@/theme";
 export function RootStack() {
   const { colors } = useTheme();
   const { data: profile, isPending } = useProfile();
+  useApplyTheme(profile?.themePreference);
 
   if (isPending) return null;
 

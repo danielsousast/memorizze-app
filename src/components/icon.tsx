@@ -19,6 +19,8 @@ const symbols = {
   pencil: { ios: "pencil", android: "edit", web: "edit" },
   reset: { ios: "arrow.counterclockwise", android: "restart_alt", web: "restart_alt" },
   trash: { ios: "trash", android: "delete", web: "delete" },
+  sun: { ios: "sun.max", android: "light_mode", web: "light_mode" },
+  moon: { ios: "moon", android: "dark_mode", web: "dark_mode" },
   "sign-out": {
     ios: "rectangle.portrait.and.arrow.right",
     android: "logout",
