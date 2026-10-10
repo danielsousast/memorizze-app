@@ -260,7 +260,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC HK-06 · integration — após HK-04, `useDecks().data` igual (mesma referência) ao anterior
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T7 — Hooks de cartão atualizam cartões e contagem do baralho
 
