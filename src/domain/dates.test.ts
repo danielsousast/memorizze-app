@@ -1,6 +1,6 @@
 import { createRandom } from "@/testing/random";
 
-import { endOfLocalDay, formatLongDate, isDue } from "./dates";
+import { addLocalDays, endOfLocalDay, formatLongDate, isDue, startOfLocalDay } from "./dates";
 
 describe("endOfLocalDay", () => {
   it("returns 23:59:59.999 of the local day (DAT-01)", () => {
@@ -59,5 +59,17 @@ describe("formatLongDate", () => {
 
   it("formats a Sunday on the 1st of March (HOME-01)", () => {
     expect(formatLongDate(new Date(2026, 2, 1))).toBe("Domingo, 1 de março");
+  });
+});
+
+describe("startOfLocalDay and addLocalDays", () => {
+  it("startOfLocalDay returns local midnight", () => {
+    expect(startOfLocalDay(new Date(2026, 9, 10, 23, 50))).toEqual(new Date(2026, 9, 10));
+  });
+
+  it("addLocalDays moves calendar days across month and year ends", () => {
+    expect(addLocalDays(new Date(2026, 11, 31), 1)).toEqual(new Date(2027, 0, 1));
+    expect(addLocalDays(new Date(2026, 9, 10), -10)).toEqual(new Date(2026, 8, 30));
+    expect(addLocalDays(new Date(2026, 9, 10, 8, 30), 0)).toEqual(new Date(2026, 9, 10, 8, 30));
   });
 });

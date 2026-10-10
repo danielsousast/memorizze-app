@@ -35,3 +35,20 @@ export function isDue(dueDate: Date, now: Date): boolean {
 export function formatLongDate(d: Date): string {
   return `${WEEKDAYS[d.getDay()]}, ${d.getDate()} de ${MONTHS[d.getMonth()]}`;
 }
+
+export function startOfLocalDay(d: Date): Date {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+// Calendar days via date components, so a DST change never shifts the wall clock.
+export function addLocalDays(d: Date, n: number): Date {
+  return new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate() + n,
+    d.getHours(),
+    d.getMinutes(),
+    d.getSeconds(),
+    d.getMilliseconds(),
+  );
+}
