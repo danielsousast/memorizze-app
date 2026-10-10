@@ -128,7 +128,7 @@ O app já cria baralhos e cartões (M2), mas não tem como estudar. Cartões nas
 
 - **SUM-01** — O Resumo mostra `Sessão concluída` e `Bom trabalho! Você revisou tudo o que vencia hoje.`
 - **SUM-02** — Bloco `N cartões revistos` (`1 cartão revisto`), N = cartões da fila.
-- **SUM-03** — Bloco `P% de acerto`, P = `round(100 × respostas com nota ≥ 1 / total de respostas da sessão)`. Exemplo: 27 cartões, 3 Errei, 4 Difícil, 15 Bom, 5 Fácil → 27/30 → `90%`.
+- **SUM-03** — Bloco `P% de acerto`, P = `round(100 × respostas com nota ≥ 1 / total de respostas da sessão)`. Exemplo: 3 Errei, 4 Difícil, 15 Bom, 5 Fácil → 24/27 → `89%`. (Emenda: o exemplo original, 27/30 = 90%, não batia com as contagens.)
 - **SUM-04** — Bloco `N dias seguidos` (`1 dia seguido`) com o streak atual (STK-02) calculado depois da sessão.
 - **SUM-05** — `Suas respostas`: contagem de cada nota (`Errei`, `Difícil`, `Bom`, `Fácil`) sobre todas as respostas, barra segmentada proporcional às contagens (nota com 0 não aparece na barra) e `M min de estudo`, M = minutos arredondados da abertura da sessão até a última resposta; abaixo de 1 min, `< 1 min de estudo`.
 - **SUM-06** — `Amanhã: N cartões para revisar` (`1 cartão`; 0 → `Amanhã: nenhum cartão para revisar`), N = cartões do mesmo escopo da sessão com `dueDate <=` fim do dia local de amanhã.

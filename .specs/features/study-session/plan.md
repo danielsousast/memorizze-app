@@ -180,7 +180,7 @@ Mutações sugeridas ao verificador:
   - SPEC STK-03 · unit — três revisões em 10 → 1; 09 23:59 e 10 00:01 → 2; entrada fora de ordem dá o mesmo resultado
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Progresso da sessão conta cartões e respostas
 
@@ -192,12 +192,12 @@ Mutações sugeridas ao verificador:
 - **Tests**:
   - SPEC ANS-02 · unit — fila `[a, b]`, Errei em `a` → fila `[b, a']` (`a'` = cartão atualizado), `completed 0`, `counts[0] 1`
   - SPEC ANS-03 · unit — Difícil, Bom e Fácil → cartão sai, `completed + 1`, contagem da nota + 1
-  - SPEC SUM-03 · unit — `counts [3, 4, 15, 5]` → 90; `[1, 0, 0, 0]` → 0; `[0, 0, 1, 0]` → 100
+  - SPEC SUM-03 · unit — `counts [3, 4, 15, 5]` → 89; `[1, 0, 0, 0]` → 0; `[0, 0, 1, 0]` → 100
   - SPEC SUM-05 · unit — 12 min 29 s → 12; 12 min 30 s → 13; 59 s → 0 (a view mostra `< 1 min`)
   - INVARIANT INV-03 · unit — 100 sessões aleatórias (seed fixa) com respostas e `skipCurrent` → após cada passo `0 <= completed <= total` e `completed + queue.length === total`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — Repositório monta a fila vencida e conta os cartões de amanhã
 
@@ -215,7 +215,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · unit — `architecture.test.ts` verde com `study` (ARC-01, 02, 03, 05)
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T5 — Responder grava cartão e ReviewLog juntos e o streak é lido do banco
 
