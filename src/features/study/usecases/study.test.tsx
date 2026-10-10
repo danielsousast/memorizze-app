@@ -1,13 +1,16 @@
-import { waitFor } from "@testing-library/react-native";
+import { act, waitFor } from "@testing-library/react-native";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
 import { createCardRepository } from "@/features/cards/repository";
 import { createDeckRepository } from "@/features/decks/repository";
+import { useDecks } from "@/features/decks";
 import { renderHookWithProviders } from "@/testing/providers";
 import { openTestRealm } from "@/testing/realm";
 
+import { useAnswerCard } from "./use-answer-card";
 import { useDueTomorrow } from "./use-due-tomorrow";
+import { useStreak } from "./use-streak";
 import { useStudyQueue } from "./use-study-queue";
 
 const models = [Profile, Deck, Card, ReviewLog] as unknown as Realm.ObjectClass[];
@@ -41,6 +44,37 @@ describe("study hooks", () => {
   it("SUM-06 useDueTomorrow returns the count for the scope", async () => {
     const rendered = await renderHookWithProviders(() => useDueTomorrow(deckId), realm);
     await waitFor(() => expect(rendered.result.current.data).toBe(1));
+    await rendered.unmount();
+  });
+  it("ANS-07 answering Bom lowers the deck dueCount", async () => {
+    const rendered = await renderHookWithProviders(
+      () => ({ decks: useDecks(), answer: useAnswerCard() }),
+      realm,
+    );
+    await waitFor(() => expect(rendered.result.current.decks.data?.[0].dueCount).toBe(1));
+    const cardId = realm.objects(Card)[0]._id.toHexString();
+
+    await act(async () => {
+      await rendered.result.current.answer.mutateAsync({ cardId, grade: 2 });
+    });
+
+    await waitFor(() => expect(rendered.result.current.decks.data?.[0].dueCount).toBe(0));
+    await rendered.unmount();
+  });
+
+  it("SUM-04 useStreak reads the streak from the logs", async () => {
+    const cardId = realm.objects(Card)[0]._id.toHexString();
+    const rendered = await renderHookWithProviders(
+      () => ({ streak: useStreak(), answer: useAnswerCard() }),
+      realm,
+    );
+    await waitFor(() => expect(rendered.result.current.streak.data).toBe(0));
+
+    await act(async () => {
+      await rendered.result.current.answer.mutateAsync({ cardId, grade: 2 });
+    });
+
+    await waitFor(() => expect(rendered.result.current.streak.data).toBe(1));
     await rendered.unmount();
   });
 });
