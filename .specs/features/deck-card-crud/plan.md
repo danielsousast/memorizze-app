@@ -307,7 +307,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC DCK-04 · integration — baralho com descrição "d" → `update(id, { name: "B" })` → `description: "d"`; `update(id, { name: "B", description: "" })` → `description` ausente
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### F2 — Hooks de cartão mantêm leituras após escrita rejeitada
 

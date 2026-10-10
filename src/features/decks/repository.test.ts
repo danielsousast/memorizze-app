@@ -135,6 +135,18 @@ describe("deck repository", () => {
     expect(stored.cards.map((c) => c._id.toHexString())).toEqual(cardIds);
   });
 
+  it("DCK-04 keeps an omitted description and removes an empty one (A-01)", () => {
+    const repository = createDeckRepository(realm, () => t0);
+    const { id } = repository.create({ name: "A", description: "d" });
+
+    expect(repository.update(id, { name: "B" }).description).toBe("d");
+    expect(repository.getById(id)?.description).toBe("d");
+
+    repository.update(id, { name: "B", description: "" });
+    expect(repository.getById(id)).not.toHaveProperty("description", expect.anything());
+    expect(realm.objectForPrimaryKey(Deck, new BSON.ObjectId(id))!.description).toBeNull();
+  });
+
   it("DCK-10 accepts an update that keeps the deck's own name in another case", () => {
     const repository = createDeckRepository(realm, () => t0);
     const { id } = repository.create({ name: "Inglês" });

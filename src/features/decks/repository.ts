@@ -65,7 +65,10 @@ export function createDeckRepository(
       const name = validName(input.name, deck._id);
       realm.write(() => {
         deck.name = name;
-        deck.description = input.description;
+        // Omitted keeps the current description; "" removes it (A-01).
+        if (input.description !== undefined) {
+          deck.description = input.description || undefined;
+        }
       });
       return toDeck(deck);
     },
