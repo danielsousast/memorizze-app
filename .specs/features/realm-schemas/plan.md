@@ -6,7 +6,7 @@
 
 ## Approach
 
-Uma classe por modelo estendendo `Realm.Object<T>` com `static schema: ObjectSchema` (padrão do realm-js, sem decorators nem plugin Babel). Campos TS declarados com `declare` se o Babel do `jest-expo` inicializar campos `!:` como `undefined` e sombrear os getters do Realm (SCH-05 detecta). `realmConfig` passa a listar as classes e sobe para `schemaVersion: 2`. Testes usam `openTestRealm` da feature `test-setup`.
+Uma classe por modelo estendendo `Realm.Object<T>` com `static schema: ObjectSchema` (padrão do realm-js, sem decorators nem plugin Babel). Campos TS com `!:` (o Babel do `jest-expo` rejeita `declare`; SCH-05 confirma que `!:` não sombreia os getters do Realm). `realmConfig` passa a listar as classes e sobe para `schemaVersion: 2`. Testes usam `openTestRealm` da feature `test-setup`.
 
 ## Design
 
@@ -77,7 +77,7 @@ Migração v1 → v2: só adição de classes; sem `onMigration`.
   - SPEC SCH-06 · unit — log intacto após apagar o cartão
 - **Done when**: testes verdes, mutações mortas
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T2 — Config v2
 
