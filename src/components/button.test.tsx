@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { StyleSheet } from "react-native";
 
+import { lightColors } from "@/theme";
+
 import { Button } from "./button";
 
 describe("Button", () => {
@@ -27,7 +29,20 @@ describe("Button", () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
-  it.each(["primary", "secondary", "text", "danger"] as const)(
+  it("destructive variant is solid danger with onAccent text (OVL-15)", async () => {
+    await render(<Button label="Apagar" variant="destructive" onPress={jest.fn()} />);
+    const button = screen.getByRole("button", { name: "Apagar" });
+    expect(StyleSheet.flatten(button.props.style).backgroundColor).toBe(lightColors.grade.again.text);
+    expect(StyleSheet.flatten(screen.getByText("Apagar").props.style).color).toBe(lightColors.onAccent);
+  });
+
+  it("keeps the danger variant colors (OVL-15)", async () => {
+    await render(<Button label="Remover" variant="danger" onPress={jest.fn()} />);
+    const button = screen.getByRole("button", { name: "Remover" });
+    expect(StyleSheet.flatten(button.props.style).backgroundColor).toBe(lightColors.grade.again.background);
+  });
+
+  it.each(["primary", "secondary", "text", "danger", "destructive"] as const)(
     "renders the %s variant",
     async (variant) => {
       await render(<Button label="X" variant={variant} onPress={jest.fn()} />);

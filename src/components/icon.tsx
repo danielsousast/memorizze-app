@@ -14,6 +14,12 @@ const symbols = {
   person: { ios: "person", android: "person", web: "person" },
   minus: { ios: "minus", android: "remove", web: "remove" },
   bulb: { ios: "lightbulb", android: "lightbulb", web: "lightbulb" },
+  trash: { ios: "trash", android: "delete", web: "delete" },
+  "sign-out": {
+    ios: "rectangle.portrait.and.arrow.right",
+    android: "logout",
+    web: "logout",
+  },
 } as const;
 
 export type IconName = keyof typeof symbols;

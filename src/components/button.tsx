@@ -4,7 +4,7 @@ import { radii, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { Icon, type IconName } from "./icon";
 
-export type ButtonVariant = "primary" | "secondary" | "text" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "text" | "danger" | "destructive";
 
 type Props = {
   label: string;
@@ -21,6 +21,7 @@ export function Button({ label, onPress, variant = "primary", disabled = false, 
     secondary: { bg: colors.surface, fg: colors.text, border: colors.border },
     text: { bg: "transparent", fg: colors.accentInk, border: "transparent" },
     danger: { bg: colors.grade.again.background, fg: colors.grade.again.text, border: colors.grade.again.background },
+    destructive: { bg: colors.grade.again.text, fg: colors.onAccent, border: colors.grade.again.text },
   }[variant];
   const bg = disabled && variant !== "text" ? colors.surface2 : palette.bg;
   const fg = disabled ? colors.text2 : palette.fg;
