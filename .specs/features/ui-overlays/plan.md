@@ -2,7 +2,7 @@
 
 **Spec**: [spec.md](spec.md)
 **Risk**: MEDIUM (from spec)
-**Status**: In progress
+**Status**: Done
 
 ## Approach
 
@@ -101,7 +101,7 @@ Testes de componente com Testing Library (`await render`) ao lado de cada arquiv
   - SPEC OVL-09 · component — ação `destructive` → texto `grade.again.text`; ação com `subtitle` → texto abaixo do rótulo
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Avisar com um toast que some sozinho e aceita ação
 
@@ -121,7 +121,7 @@ Testes de componente com Testing Library (`await render`) ao lado de cada arquiv
   - SPEC OVL-19 · component — toast com `accessibilityRole="alert"` e `accessibilityLiveRegion="polite"`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — Acessibilidade e toque mínimo nos três componentes
 
@@ -134,7 +134,7 @@ Testes de componente com Testing Library (`await render`) ao lado de cada arquiv
   - SPEC OVL-18 · component — cada botão do diálogo, da folha e da ação do toast: `getByRole("button", { name })` encontra e o `minHeight` do estilo é ≥ 44
 - **Done when**: tests above pass; `npm run ci` green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

@@ -58,10 +58,35 @@
 - **Date**: 2026-10-10
 - **Status**: active
 
+### AD-007
+- **Decision**: Confirmações, menus e avisos usam `ConfirmDialog`, `BottomSheet` e `ToastProvider`/`useToast` de `src/components/`; `Alert.alert` não é mais usado em telas novas. Os dois primeiros são `Modal` do RN e cobrem o toast, então a ação de uma folha fecha a folha antes de chamar `useToast().show`.
+- **Reason**: Os designs (Componentes 2, 3c, 3d, 7b, 5c) pedem visual próprio e ação no aviso, que `Alert.alert` não permite.
+- **Trade-off**: Sem gesto de arrastar a folha; um toast por vez (o novo substitui o atual).
+- **Scope**: `src/components/`, telas que confirmam ações
+- **Source**: `.specs/features/ui-overlays/plan.md`
+- **Date**: 2026-10-10
+- **Status**: active
+
 ## Handoff
-- **Feature**: ci-pipeline (MEDIUM) — T1–T3 implementadas; `npm run ci` sai 0 (448 testes, cobertura de `domain/` 100%, threshold 90); mutações do threshold e do lint detectadas; YAML validado por parse. Falta o verify independente
-- **Where**: `.github/workflows/ci.yml`, `package.json` (script `ci`, `coverageThreshold`), README, `.specs/PROJECT.md`
-- **Next step**: verify; o primeiro run real no GitHub exige `git push` com go-ahead explícito. UAT de profile-stats em dispositivo segue pendente
+- **Feature**: ui-overlays (F1, MEDIUM) — T1–T4 feitas, `npm run ci` sai 0 (475 testes), lint limpo, 8 mutações detectadas, commitada. Verify independente é opcional em MEDIUM; a revisão do diff foi feita pelo autor
+- **Where**: `src/components/{confirm-dialog,bottom-sheet,toast,toast-provider,use-toast-state}.tsx`, `Button variant="destructive"`, ícones `trash` e `sign-out`, `ToastProvider` em `src/app/_layout.tsx`, helper de teste `src/testing/safe-area.tsx`
+- **Next step**: F2 `deck-menu-and-delete`. Roteiro aprovado pelo usuário em 2026-10-10 (ordem: F1 → F2, F3, F4 em paralelo → F5 → F6 → F7 → F8, F9). Cada uma passa por spec + plan + execução; rodar o skill `adaptive-spec-driven` primeiro
+- **Roteiro** (análise de `design/`, novos PNGs 3b, 3c, 3d, 5c, 7b, 9, 10, Componentes 2, ícone do app):
+  - F2 `deck-menu-and-delete` (MEDIUM): menu 3c em `BottomSheet` (Adicionar cartão, Redefinir progresso, Excluir baralho); excluir 3d em `ConfirmDialog`; toast "Baralho excluído"; novo método de repositório e hook `useResetDeckProgress`. Troca o `Alert` de `use-deck-screen.ts`
+  - F3 `deck-all-cards` (MEDIUM): rota `decks/[deckId]/cards/index.tsx` (3b) com busca; Baralho (3) mostra só os 5 primeiros + "Ver todos >"; excluir cartão do editor passa a `ConfirmDialog`; checar 1.000 cartões
+  - F4 `study-onboarding-and-exit` (MEDIUM): folha "Como responder" (5c) na 1ª sessão, flag persistida no `Profile` (migração Realm); sair da sessão em `ConfirmDialog`; conferir visual de 5a/5b/6/8
+  - F5 `settings-and-preferences` (HIGH): rota `/settings` (9) via engrenagem do Perfil; novo `Switch`, `SegmentedControl`, `SettingsRow`; schema com tema, lembrete, horário, novos por dia; `useTheme` com preferência; "novos por dia" altera a fila (RF4); lembrete com `expo-notifications` (talvez `daily-reminder` separada, HIGH)
+  - F6 `backup-restore` (HIGH): tela 10; `src/domain/backup.ts` (serializar, validar, versionar), exportar JSON (`expo-file-system` + `expo-sharing`), importar (`expo-document-picker`) substituindo tudo numa transação; data do último backup
+  - F7 `sign-out-wipe` (HIGH): botão Sair no Perfil + dialog 7b com atalho "Fazer backup antes" (depende de F6); apaga Realm, preferências e cache; volta à Boas-vindas (AD-004)
+  - F8 `app-branding` (LOW): ícone novo (iOS claro/escuro/tingido, Android adaptativo) em `app.json` e `assets/`; splash
+  - F9 `profile-redesign` (LOW): conferir Perfil (rolagem completa) vs. código: engrenagem, linha "meta 30" no gráfico, rótulo de data
+- **Decisões pendentes do usuário** (bloqueiam F2, F5, F6, F7):
+  1. Backup/importação, lembrete (notificação local), tema escolhido e "novos por dia" entram no MVP? Exige emenda em PROJECT-SPEC §2 e §13
+  2. Toast de exclusão de baralho mantém "Desfazer" (adia a exclusão 4 s) ou fica só o "Não dá para desfazer" do diálogo 3d? Os designs se contradizem
+  3. "Editar baralho" não está no menu 3c; vai para onde? (hoje existe `decks/[deckId]/edit`)
+  4. A splash `design/0 · Splash.png` foi removida de propósito?
+  5. "Redefinir progresso" mantém os `ReviewLog`?
+- **Notas**: `design/` tem PNGs novos e alterados sem commit; não entraram nos commits de F1. UAT de profile-stats em dispositivo segue pendente; o primeiro run do CI no GitHub exige `git push` com go-ahead
 - **Open amendments**: none
-- **Blockers**: none
+- **Blockers**: decisões 1–5 acima para F2 e seguintes (F3, F4, F8 e F9 podem começar sem elas)
 - **Updated**: 2026-10-10

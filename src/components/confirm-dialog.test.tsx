@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import * as ReactNative from "react-native";
 import { StyleSheet } from "react-native";
 
 import { darkColors, lightColors } from "@/theme";
@@ -65,7 +66,7 @@ describe("ConfirmDialog", () => {
   });
 
   it("uses the destructive color of the dark theme (OVL-04)", async () => {
-    const scheme = jest.spyOn(require("react-native"), "useColorScheme").mockReturnValue("dark");
+    const scheme = jest.spyOn(ReactNative, "useColorScheme").mockReturnValue("dark");
     await render(setup({ tone: "destructive" }).element);
     expect(confirmBackground()).toBe(darkColors.grade.again.text);
     scheme.mockRestore();
@@ -74,5 +75,14 @@ describe("ConfirmDialog", () => {
   it("renders nothing when hidden (OVL-05)", async () => {
     await render(setup({ visible: false }).element);
     expect(screen.queryByText("Excluir baralho?")).toBeNull();
+  });
+
+  it("labels both buttons and keeps them at 44pt or more (OVL-18)", async () => {
+    await render(setup().element);
+    for (const name of ["Excluir baralho", "Cancelar"]) {
+      const button = screen.getByRole("button", { name });
+      expect(button.props.accessibilityLabel).toBe(name);
+      expect(StyleSheet.flatten(button.props.style).minHeight).toBeGreaterThanOrEqual(44);
+    }
   });
 });

@@ -93,7 +93,7 @@ Other dimensions: validação de entrada N/A porque os componentes só recebem p
 | Assumption / decision | Chosen default | Rationale | Confirmed |
 | --- | --- | --- | --- |
 | Implementação | `Modal` do RN para folha e diálogo; toast como `View` absoluta no provider | Sem dependência nativa nova; funciona em Expo Go e dev client | no |
-| Animação | `Animated` com timing curto (200 ms), sem gesto de arrastar | Mantém o escopo pequeno; fácil de testar | no |
+| Animação | Só a do `Modal` (`fade` no diálogo, `slide` na folha); o toast aparece sem animação; sem gesto de arrastar | Mantém o escopo pequeno; fácil de testar | no |
 | Posição do toast | 16 pt das bordas laterais, acima da área segura inferior | Medida de `Componentes 2` | no |
 | Cores do toast | Fundo `#17151F` e ação `darkColors.accentInk`, nos dois temas | O toast é escuro também no tema claro (Componentes 2); `accentInk` claro teria pouco contraste sobre ele | no |
 

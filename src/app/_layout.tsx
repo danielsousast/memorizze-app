@@ -11,6 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Text } from "react-native";
 
+import { ToastProvider } from "@/components/toast-provider";
 import { RealmErrorBoundary, realmConfig } from "@/db";
 import { createQueryClient } from "@/lib/query-client";
 import { RootStack } from "@/navigation/root-stack";
@@ -47,7 +48,9 @@ export default function RootLayout() {
         fallback={DatabaseLoading}
       >
         <QueryClientProvider client={queryClient}>
-          <RootStack />
+          <ToastProvider>
+            <RootStack />
+          </ToastProvider>
         </QueryClientProvider>
       </RealmProvider>
     </RealmErrorBoundary>
