@@ -1,7 +1,7 @@
 import { act, fireEvent, screen, within } from "expo-router/testing-library";
 import { router } from "expo-router";
 import * as ReactNative from "react-native";
-import { Alert, Text } from "react-native";
+import { Alert, StyleSheet, Text } from "react-native";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
@@ -329,6 +329,34 @@ describe("DeckScreen", () => {
     const rendered = await open(deck.id);
     await screen.findByText("Inglês");
     expect(screen.queryByText("Nenhum cartão ainda")).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("A11Y-01 every tappable has role, label and a 44pt touch target", async () => {
+    const deck = seedDeck();
+    seedCard(deck.id, "to forget", "esquecer\nverbo");
+    const rendered = await open(deck.id);
+    await screen.findByText("to forget");
+    const targets = [
+      screen.getByTestId("card-row"),
+      screen.getByRole("button", { name: "Início" }),
+      screen.getByRole("button", { name: "Opções do baralho" }),
+      screen.getByRole("button", { name: "Adicionar cartão" }),
+    ];
+    for (const target of targets) {
+      expect(target.props.accessibilityRole).toBe("button");
+      expect(target.props.accessibilityLabel).toBeTruthy();
+      const style = StyleSheet.flatten(target.props.style) ?? {};
+      const slop = target.props.hitSlop;
+      const extra = (side: "top" | "bottom" | "left" | "right") =>
+        typeof slop === "number" ? slop : (slop?.[side] ?? 0);
+      const height = Math.max(style.minHeight ?? 0, Number(style.height ?? 0)) + extra("top") + extra("bottom");
+      expect(height).toBeGreaterThanOrEqual(44);
+      // Width is content-sized for rows and links; only check it where the style fixes it.
+      const fixed = Math.max(style.minWidth ?? 0, Number(style.width ?? 0));
+      if (fixed > 0) expect(fixed + extra("left") + extra("right")).toBeGreaterThanOrEqual(44);
+    }
+    expect(screen.getByTestId("card-row").props.accessibilityLabel).toBe("to forget, esquecer verbo");
     await rendered.unmount();
   });
 

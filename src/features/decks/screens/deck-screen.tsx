@@ -149,6 +149,7 @@ function CardRow({ card }: { card: Card }) {
     <Pressable
       testID="card-row"
       accessibilityRole="button"
+      accessibilityLabel={`${card.front}, ${card.back.replace(/\s*\r?\n\s*/g, " ")}`}
       onPress={() => router.push(`/cards/${card.id}/edit`)}
       style={[styles.row, { backgroundColor: colors.surface, borderColor: colors.border }]}
     >

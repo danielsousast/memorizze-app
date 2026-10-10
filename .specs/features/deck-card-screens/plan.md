@@ -364,7 +364,7 @@ Mutações sugeridas ao verificador:
   - SPEC A11Y-01 · screen — cada tocável tem `accessibilityRole` `"button"`, `accessibilityLabel` não vazio e `minHeight`/`minWidth` ≥ 44 (ou `hitSlop` que complete); linha de cartão tem label com frente e verso
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### F3 — Descrição só com espaços e mensagens sem teste
 
