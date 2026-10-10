@@ -31,10 +31,19 @@
 - **Date**: 2026-10-09
 - **Status**: active
 
+### AD-004
+- **Decision**: A entrada do app usa `Stack.Protected` do Expo Router num `RootStack` (`src/navigation/root-stack.tsx`): a Boas-vindas só existe sem `Profile` e o resto do app só com `Profile`. Abas Início e Perfil vivem no grupo `src/app/(tabs)/` com `Tabs` de `expo-router/js-tabs`; as demais telas ficam no `Stack` raiz, sem barra de abas.
+- **Reason**: API oficial do Expo Router 57; o guard limpa o histórico, então voltar não reabre a Boas-vindas, e nenhuma rota precisa repetir a checagem.
+- **Trade-off**: Testes de navegação que dependem do guard precisam montar o `RootStack` no helper de teste (`navigator`).
+- **Scope**: `src/app/_layout.tsx`, `src/app/(tabs)/`, `src/navigation/`
+- **Source**: `.specs/features/profile-onboarding/plan.md`
+- **Date**: 2026-10-10
+- **Status**: active
+
 ## Handoff
-- **Feature**: study-session (HIGH) — M3 implementado em 2026-10-10; sessão de estudo, Nada para revisar e Resumo
-- **Where**: verificada (PASS, verificador independente, 51/51 ACs, 7/7 mutantes mortos, 283 testes). Commits locais em `main`, sem push. UAT em dispositivo pendente: deslizar para voltar desativado na sessão (iOS) e visual contra os PNGs 5a/5b/6/8, claro e escuro
-- **Next step**: UAT restante em development build (flip do cartão testado e aprovado pelo usuário em 2026-10-10; study-card-flip fechada); depois M4 (perfil, streak e meta na Início); push só com go-ahead explícito
+- **Feature**: profile-onboarding (HIGH) — primeira metade do M4 (Boas-vindas, entrada, abas, cartão de streak/meta na Início, Perfil com nome e meta). A segunda metade, `profile-stats`, ainda não foi especificada
+- **Where**: spec aprovado; plan.md (10 tasks, 8 waves) em Draft, aguardando aprovação. study-session (M3) segue verificada; UAT em dispositivo ainda pendente (deslizar para voltar no iOS, visual 5a/5b/6/8)
+- **Next step**: aprovar o plano e executar a Wave 1 (T1 ∥ T2); push só com go-ahead explícito
 - **Open amendments**: none (SUM-03 corrigido para 89% em 2026-10-10)
 - **Blockers**: none
 - **Updated**: 2026-10-10
