@@ -1,6 +1,14 @@
 import { createRandom } from "@/testing/random";
 
-import { addLocalDays, endOfLocalDay, formatLongDate, formatMonthYear, isDue, startOfLocalDay } from "./dates";
+import {
+  addLocalDays,
+  endOfLocalDay,
+  formatLongDate,
+  formatMonthYear,
+  formatWeekdayShort,
+  isDue,
+  startOfLocalDay,
+} from "./dates";
 
 describe("endOfLocalDay", () => {
   it("returns 23:59:59.999 of the local day (DAT-01)", () => {
@@ -41,8 +49,10 @@ describe("isDue", () => {
     const random = createRandom(42);
     const base = new Date(2026, 9, 9).getTime();
     const day = 24 * 60 * 60 * 1000;
-    const at = () => new Date(base + Math.floor((random.next() * 800 - 400) * day));
-    const key = (d: Date) => d.getFullYear() * 10000 + d.getMonth() * 100 + d.getDate();
+    const at = () =>
+      new Date(base + Math.floor((random.next() * 800 - 400) * day));
+    const key = (d: Date) =>
+      d.getFullYear() * 10000 + d.getMonth() * 100 + d.getDate();
 
     for (let i = 0; i < 1000; i++) {
       const due = at();
@@ -54,7 +64,9 @@ describe("isDue", () => {
 
 describe("formatLongDate", () => {
   it("formats a Friday in pt-BR (HOME-01)", () => {
-    expect(formatLongDate(new Date(2026, 9, 9))).toBe("Sexta-feira, 9 de outubro");
+    expect(formatLongDate(new Date(2026, 9, 9))).toBe(
+      "Sexta-feira, 9 de outubro",
+    );
   });
 
   it("formats a Sunday on the 1st of March (HOME-01)", () => {
@@ -64,13 +76,21 @@ describe("formatLongDate", () => {
 
 describe("startOfLocalDay and addLocalDays", () => {
   it("startOfLocalDay returns local midnight", () => {
-    expect(startOfLocalDay(new Date(2026, 9, 10, 23, 50))).toEqual(new Date(2026, 9, 10));
+    expect(startOfLocalDay(new Date(2026, 9, 10, 23, 50))).toEqual(
+      new Date(2026, 9, 10),
+    );
   });
 
   it("addLocalDays moves calendar days across month and year ends", () => {
-    expect(addLocalDays(new Date(2026, 11, 31), 1)).toEqual(new Date(2027, 0, 1));
-    expect(addLocalDays(new Date(2026, 9, 10), -10)).toEqual(new Date(2026, 8, 30));
-    expect(addLocalDays(new Date(2026, 9, 10, 8, 30), 0)).toEqual(new Date(2026, 9, 10, 8, 30));
+    expect(addLocalDays(new Date(2026, 11, 31), 1)).toEqual(
+      new Date(2027, 0, 1),
+    );
+    expect(addLocalDays(new Date(2026, 9, 10), -10)).toEqual(
+      new Date(2026, 8, 30),
+    );
+    expect(addLocalDays(new Date(2026, 9, 10, 8, 30), 0)).toEqual(
+      new Date(2026, 9, 10, 8, 30),
+    );
   });
 });
 
@@ -78,5 +98,14 @@ describe("formatMonthYear", () => {
   it("writes the month in full and the year (PRF-01)", () => {
     expect(formatMonthYear(new Date(2026, 2, 15))).toBe("março de 2026");
     expect(formatMonthYear(new Date(2025, 11, 31))).toBe("dezembro de 2025");
+  });
+});
+
+describe("formatWeekdayShort", () => {
+  it("names Sunday to Saturday in pt-BR (REGRESSION)", () => {
+    const names = [0, 1, 2, 3, 4, 5, 6].map((i) =>
+      formatWeekdayShort(new Date(2026, 9, 4 + i)),
+    );
+    expect(names).toEqual(["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]);
   });
 });

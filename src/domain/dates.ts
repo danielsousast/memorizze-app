@@ -56,3 +56,9 @@ export function addLocalDays(d: Date, n: number): Date {
     d.getMilliseconds(),
   );
 }
+
+const WEEKDAYS_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"] as const;
+
+export function formatWeekdayShort(d: Date): string {
+  return WEEKDAYS_SHORT[d.getDay()];
+}
