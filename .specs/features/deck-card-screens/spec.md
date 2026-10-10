@@ -1,6 +1,6 @@
 # Deck & Card Screens — Spec
 
-**Status**: Approved
+**Status**: Done
 **Date**: 2026-10-09
 
 ## Problem

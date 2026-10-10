@@ -2,7 +2,7 @@
 
 **Spec**: [spec.md](spec.md)
 **Risk**: HIGH (from spec)
-**Status**: Approved
+**Status**: Done
 
 ## Approach
 
