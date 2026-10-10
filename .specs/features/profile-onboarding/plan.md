@@ -232,7 +232,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · unit — `icon.test.tsx` cobre `house`, `person`, `minus`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T6 — Início mostra o cartão de streak e o progresso da meta
 

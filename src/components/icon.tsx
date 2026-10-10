@@ -10,6 +10,9 @@ const symbols = {
   close: { ios: "xmark", android: "close", web: "close" },
   calendar: { ios: "calendar", android: "calendar_today", web: "calendar_today" },
   flame: { ios: "flame", android: "local_fire_department", web: "local_fire_department" },
+  house: { ios: "house", android: "home", web: "home" },
+  person: { ios: "person", android: "person", web: "person" },
+  minus: { ios: "minus", android: "remove", web: "remove" },
   bulb: { ios: "lightbulb", android: "lightbulb", web: "lightbulb" },
 } as const;
 
