@@ -157,7 +157,7 @@ Mutações sugeridas ao verificador:
   - INVARIANT INV-02 · unit — 100 sequências de 50 passos (`createRandom`, seed fixa) a partir de 20 → após cada passo `5 <= meta <= 200` e `meta % 5 === 0`
 - **Done when**: tests above pass; cobertura de `src/domain/` ≥ 90%; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T2 — Repositório lê, cria e atualiza o perfil e conta as revisões de hoje
 
