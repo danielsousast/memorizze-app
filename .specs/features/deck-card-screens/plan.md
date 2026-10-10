@@ -305,7 +305,7 @@ Mutações sugeridas ao verificador:
   - SPEC ERR-01 · screen — `realm.write` lança `Error` → mensagem genérica; continua no Editor
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T9 — Editar e excluir cartão pelo Editor sem tocar no agendamento
 
