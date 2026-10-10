@@ -10,6 +10,7 @@ import { renderRouterWithProviders } from "@/testing/router";
 
 import HomeRoute from "../app/(tabs)/index";
 import TabsLayout from "../app/(tabs)/_layout";
+import ProfileRoute from "../app/(tabs)/profile";
 import WelcomeRoute from "../app/welcome";
 import { RootStack } from "./root-stack";
 
@@ -29,6 +30,7 @@ function PendingProfileStack() {
 const routes = {
   "(tabs)/_layout": TabsLayout,
   "(tabs)/index": HomeRoute,
+  "(tabs)/profile": ProfileRoute,
   welcome: WelcomeRoute,
   "decks/new": stub("Novo"),
   "decks/[deckId]/edit": stub("Editar"),
