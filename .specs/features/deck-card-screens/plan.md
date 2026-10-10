@@ -249,7 +249,7 @@ Mutações sugeridas ao verificador:
   - SPEC ERR-01 · screen — `jest.spyOn(realm, "write")` lança `Error` → `Não foi possível salvar. Tente de novo.`; continua no form
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T6 — Baralho mostra detalhes e cartões com estágio
 
