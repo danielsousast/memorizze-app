@@ -23,10 +23,8 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: deck-card-crud (`.specs/features/deck-card-crud/`)
-- **Risk**: HIGH
-- **Where**: spec aprovada; plan em Draft aguardando aprovação
-- **Next step**: aprovar o plan e executar Wave 1 (T1 ∥ T2)
+- **Feature**: deck-card-crud — concluída (T1–T8 feitas; Verify PASS HIGH, verificação pelo autor com reset de contexto)
+- **Next step**: telas Início, Baralho e Editor de cartão (M2) sobre os hooks de `@/features/decks` e `@/features/cards`
 - **Open amendments**: none
 - **Blockers**: nenhum
 - **Updated**: 2026-10-09
