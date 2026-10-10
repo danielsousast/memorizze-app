@@ -16,13 +16,23 @@ export function createDeckRepository(
     return realm.objectForPrimaryKey(DeckObject, new BSON.ObjectId(id));
   }
 
-  function validName(name: string): string {
+  function existing(id: string) {
+    const deck = find(id);
+    if (!deck) throw new AppError<DeckErrorCode>("DECK_NOT_FOUND");
+    return deck;
+  }
+
+  function validName(name: string, ownId?: BSON.ObjectId): string {
     const trimmed = name.trim();
     if (!trimmed) throw new AppError<DeckErrorCode>("DECK_NAME_EMPTY");
     const key = trimmed.toLocaleLowerCase();
     const taken = realm
       .objects(DeckObject)
-      .some((deck) => deck.name.trim().toLocaleLowerCase() === key);
+      .some(
+        (deck) =>
+          !(ownId && deck._id.equals(ownId)) &&
+          deck.name.trim().toLocaleLowerCase() === key,
+      );
     if (taken) throw new AppError<DeckErrorCode>("DECK_NAME_DUPLICATE");
     return trimmed;
   }
@@ -48,6 +58,24 @@ export function createDeckRepository(
         }),
       );
       return toDeck(deck);
+    },
+
+    update(id, input) {
+      const deck = existing(id);
+      const name = validName(input.name, deck._id);
+      realm.write(() => {
+        deck.name = name;
+        deck.description = input.description;
+      });
+      return toDeck(deck);
+    },
+
+    remove(id) {
+      const deck = existing(id);
+      realm.write(() => {
+        realm.delete(deck.cards);
+        realm.delete(deck);
+      });
     },
   };
 }

@@ -207,7 +207,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - INVARIANT INV-02 · integration — 100 operações aleatórias de baralho (create/update/remove, seed fixa), com cartões semeados via `realm.write` → `realm.objects(Card).length` == soma de `deck.cards.length`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — Criar, listar e obter cartões de um baralho
 

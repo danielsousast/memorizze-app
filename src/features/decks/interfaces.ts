@@ -17,4 +17,6 @@ export type DeckRepository = {
   list(): Deck[];
   getById(id: string): Deck | null;
   create(input: DeckInput): Deck;
+  update(id: string, input: DeckInput): Deck;
+  remove(id: string): void;
 };
