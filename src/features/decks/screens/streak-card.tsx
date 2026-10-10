@@ -1,3 +1,5 @@
+import { useFocusEffect } from "expo-router";
+import { useCallback, type ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { GoalProgress } from "@/components/goal-progress";
@@ -15,10 +17,22 @@ function subtitle(streak: number, reviewedToday: boolean): string {
   return `Estude hoje para chegar a ${streak + 1}`;
 }
 
-export function StreakCard() {
+export function StreakCard({ children }: { children?: ReactNode }) {
   const { colors } = useTheme();
-  const streak = useStreak().data ?? 0;
-  const reviewsToday = useReviewsToday().data ?? 0;
+  const streakQuery = useStreak();
+  const reviewsQuery = useReviewsToday();
+  const streak = streakQuery.data ?? 0;
+  const reviewsToday = reviewsQuery.data ?? 0;
+  const { refetch: refetchStreak } = streakQuery;
+  const { refetch: refetchReviews } = reviewsQuery;
+
+  // HOM-07: numbers follow the recorded reviews and the local day whenever the screen refocuses.
+  useFocusEffect(
+    useCallback(() => {
+      void refetchStreak();
+      void refetchReviews();
+    }, [refetchStreak, refetchReviews]),
+  );
   const goal = useProfile().data?.dailyGoal ?? DEFAULT_GOAL;
 
   return (
@@ -47,6 +61,7 @@ export function StreakCard() {
         </View>
       </View>
       <GoalProgress done={reviewsToday} goal={goal} />
+      {children}
     </View>
   );
 }

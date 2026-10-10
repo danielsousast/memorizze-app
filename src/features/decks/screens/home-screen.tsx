@@ -10,6 +10,7 @@ import { formatLongDate } from "@/domain/dates";
 import { plural } from "@/domain/text";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
+import { useProfile } from "@/features/profile";
 import { useDecks, type Deck } from "@/features/decks";
 
 import { StreakCard } from "./streak-card";
@@ -55,6 +56,7 @@ function DeckItem({ deck }: { deck: Deck }) {
 export function HomeScreen() {
   const { colors } = useTheme();
   const { data, isPending } = useDecks();
+  const name = useProfile().data?.name;
 
   const header = (
     <View style={styles.header}>
@@ -62,7 +64,7 @@ export function HomeScreen() {
         {formatLongDate(new Date())}
       </Text>
       <Text accessibilityRole="header" style={[typography.display, { color: colors.text }]}>
-        Olá
+        {name ? `Olá, ${name}` : "Olá"}
       </Text>
     </View>
   );
@@ -99,13 +101,14 @@ export function HomeScreen() {
         ListHeaderComponent={
           <>
             {header}
-            <StreakCard />
-            <View testID="study-all" style={styles.study}>
-              <Button label="Estudar tudo" onPress={() => router.push("/study")} />
-              {totalDue > 0 ? (
-                <Badge tone="accent" text={plural(totalDue, "cartão", "cartões")} />
-              ) : null}
-            </View>
+            <StreakCard>
+              <View style={styles.study}>
+                <Button label="Estudar tudo" onPress={() => router.push("/study")} />
+                {totalDue > 0 ? (
+                  <Badge tone="accent" text={plural(totalDue, "cartão", "cartões")} />
+                ) : null}
+              </View>
+            </StreakCard>
             <View style={styles.sectionRow}>
               <Text style={[typography.section, { color: colors.text }]}>Seus baralhos</Text>
               <Text style={[typography.caption, { color: colors.text2 }]}>
@@ -138,8 +141,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
-    paddingHorizontal: screenMargin,
-    paddingBottom: spacing.xl,
   },
   sectionRow: {
     flexDirection: "row",
