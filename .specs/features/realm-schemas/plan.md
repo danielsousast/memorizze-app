@@ -90,7 +90,7 @@ Migração v1 → v2: só adição de classes; sem `onMigration`.
   - SPEC SCH-07 · unit — arquivo v1 `[]` em tmp reabre com `realmConfig`
 - **Done when**: teste verde
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Smoke no simulador
 
