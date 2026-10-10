@@ -185,7 +185,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · integration — suítes de repositório e hooks de decks/cards verdes sem afrouxar asserções; `toEqual` de objetos `Deck` ganha `dueCount` (mudança mandada por DUE-01)
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Componentes base acessíveis, rotas modais e helper de teste de tela
 

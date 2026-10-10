@@ -49,8 +49,30 @@ describe("deck repository", () => {
       description: "x",
       createdAt: t0,
       cardCount: 0,
+      dueCount: 0,
     });
     expect(realm.objects(Deck)).toHaveLength(1);
+  });
+
+  it("DUE-01 counts cards due by the end of the local day in list and getById", () => {
+    const now = new Date(2026, 9, 9, 10, 0);
+    const repository = createDeckRepository(realm, () => now);
+    const { id } = repository.create({ name: "Inglês" });
+    const empty = repository.create({ name: "Vazio" });
+    const deck = realm.objectForPrimaryKey(Deck, new BSON.ObjectId(id))!;
+    realm.write(() => {
+      for (const dueDate of [
+        new Date(2026, 9, 8, 12, 0),
+        new Date(2026, 9, 9, 23, 0),
+        new Date(2026, 9, 10, 0, 0),
+      ]) {
+        deck.cards.push(realm.create(Card, { front: "f", back: "b", dueDate, createdAt: now }));
+      }
+    });
+
+    expect(repository.list().map((d) => d.dueCount)).toEqual([2, 0]);
+    expect(repository.getById(id)?.dueCount).toBe(2);
+    expect(repository.getById(empty.id)?.dueCount).toBe(0);
   });
 
   it("DCK-02 lists decks by createdAt ascending with their card count", () => {
@@ -61,7 +83,7 @@ describe("deck repository", () => {
     repository.create({ name: "B" });
     seedCards(third.id, 2);
 
-    const decks = repository.list();
+    const decks = createDeckRepository(realm, () => t0).list();
 
     expect(decks.map((d) => d.name)).toEqual(["A", "B", "C"]);
     expect(decks.map((d) => d.cardCount)).toEqual([0, 0, 2]);
@@ -129,6 +151,7 @@ describe("deck repository", () => {
       description: "y",
       createdAt: t0,
       cardCount: 2,
+      dueCount: 2,
     });
     expect(repository.getById(id)).toEqual(updated);
     const stored = realm.objectForPrimaryKey(Deck, new BSON.ObjectId(id))!;

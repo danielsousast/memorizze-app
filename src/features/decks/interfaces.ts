@@ -4,6 +4,7 @@ export type Deck = {
   description?: string;
   createdAt: Date;
   cardCount: number;
+  dueCount: number;
 };
 
 export type DeckInput = { name: string; description?: string };

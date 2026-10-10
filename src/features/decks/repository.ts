@@ -39,25 +39,30 @@ export function createDeckRepository(
 
   return {
     list() {
-      return realm.objects(DeckObject).sorted("createdAt").map(toDeck);
+      const at = now();
+      return realm
+        .objects(DeckObject)
+        .sorted("createdAt")
+        .map((deck) => toDeck(deck, at));
     },
 
     getById(id) {
       const deck = find(id);
-      return deck ? toDeck(deck) : null;
+      return deck ? toDeck(deck, now()) : null;
     },
 
     create(input: DeckInput) {
       const name = validName(input.name);
+      const createdAt = now();
       const deck = realm.write(() =>
         realm.create(DeckObject, {
           name,
           description: input.description,
-          createdAt: now(),
+          createdAt,
           cards: [],
         }),
       );
-      return toDeck(deck);
+      return toDeck(deck, createdAt);
     },
 
     update(id, input) {
@@ -70,7 +75,7 @@ export function createDeckRepository(
           deck.description = input.description || undefined;
         }
       });
-      return toDeck(deck);
+      return toDeck(deck, now());
     },
 
     remove(id) {

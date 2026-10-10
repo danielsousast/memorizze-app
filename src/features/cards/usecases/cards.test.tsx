@@ -91,6 +91,7 @@ describe("card hooks", () => {
   it("HK-02 updates the card list and the deck's card count on create and delete", async () => {
     const { result, unmount } = await renderReady();
     expect(result.current.decks.data?.[0].cardCount).toBe(1);
+    expect(result.current.decks.data?.[0].dueCount).toBe(1);
 
     let createdId = "";
     await act(async () => {
@@ -99,12 +100,14 @@ describe("card hooks", () => {
       ).id;
     });
     await waitFor(() => expect(result.current.decks.data?.[0].cardCount).toBe(2));
+    await waitFor(() => expect(result.current.decks.data?.[0].dueCount).toBe(2));
     expect(result.current.list.data?.map((c) => c.id)).toEqual([cardId, createdId]);
 
     await act(async () => {
       await result.current.remove.mutateAsync(createdId);
     });
     await waitFor(() => expect(result.current.decks.data?.[0].cardCount).toBe(1));
+    await waitFor(() => expect(result.current.decks.data?.[0].dueCount).toBe(1));
     expect(result.current.list.data?.map((c) => c.id)).toEqual([cardId]);
     await unmount();
   });
