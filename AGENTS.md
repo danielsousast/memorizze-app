@@ -40,6 +40,12 @@ Docs: https://docs.expo.dev/eas/index.md
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
 
+## Code Rules (AD-005)
+
+- **No nested ternaries.** One `?:` per expression; for 3+ branches use early returns, `if`/`else`, or a lookup object/function.
+- **No functions created inline in component props.** Never write `onPress={() => ...}`, `renderItem={...}`, `keyExtractor={...}` or `fallback={...}` with an arrow/function body. Declare a named handler (or a `useCallback`/module-level function) and pass its reference.
+- **No business logic in screens or components.** Screens and components render and wire props. State machines, derived data, validation, navigation side effects, alerts and mutation orchestration live in hooks (`use-*.ts`) next to the feature, backed by `src/domain/` pure functions.
+
 ## Specs & Spec-Driven Development
 
 This project is **spec-driven**. Never write code for a feature or bug fix before it has gone through the `adaptive-spec-driven` skill.

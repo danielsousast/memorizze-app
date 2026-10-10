@@ -1,25 +1,32 @@
 import { router } from "expo-router";
+import { useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Icon } from "@/components/icon";
+import { tomorrowLabel } from "@/domain/labels";
 import { screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useDueTomorrow } from "../index";
 
 type Props = { deckId?: string };
 
-function tomorrowLabel(count: number | undefined) {
-  if (count === undefined) return "";
-  if (count === 0) return "Amanhã: nenhum cartão";
-  return `Amanhã: ${count} ${count === 1 ? "cartão" : "cartões"}`;
+function goBack() {
+  router.back();
+}
+
+function goHome() {
+  router.dismissTo("/");
 }
 
 export function EmptyView({ deckId }: Props) {
   const { colors } = useTheme();
   const { data: tomorrow } = useDueTomorrow(deckId);
   const label = tomorrowLabel(tomorrow);
+  const addCards = useCallback(() => {
+    router.replace(`/decks/${deckId}/cards/new`);
+  }, [deckId]);
 
   return (
     <View style={styles.root}>
@@ -27,7 +34,7 @@ export function EmptyView({ deckId }: Props) {
         accessibilityRole="button"
         accessibilityLabel="Sair da sessão"
         hitSlop={8}
-        onPress={() => router.back()}
+        onPress={goBack}
         style={styles.close}
       >
         <Icon name="close" size={22} color={colors.text} />
@@ -47,12 +54,12 @@ export function EmptyView({ deckId }: Props) {
       </View>
 
       <View style={styles.bottom}>
-        <Button label="Voltar ao início" onPress={() => router.dismissTo("/")} />
+        <Button label="Voltar ao início" onPress={goHome} />
         {deckId ? (
           <Button
             label="Adicionar novos cartões"
             variant="text"
-            onPress={() => router.replace(`/decks/${deckId}/cards/new`)}
+            onPress={addCards}
           />
         ) : null}
       </View>

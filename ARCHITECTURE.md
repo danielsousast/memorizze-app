@@ -34,6 +34,8 @@ src/features/<feature>/
 
 A feature with a single use case keeps that `use-*.ts` at its root, without `usecases/`.
 
+Screen hooks (`screens/use-<screen>.ts`, [AD-006](.specs/STATE.md#ad-006)) hold a screen's state, effects, navigation and alerts and compose `usecases/` hooks and `src/domain/` functions; screens only render and wire named handlers ([AD-005](.specs/STATE.md#ad-005)). `src/features/screen-logic.test.ts` guards the screens.
+
 **Rules**
 
 - Only `repository.ts`, `adapters.ts` and tests import `realm`, `@realm/react` or `src/db`, by any path (alias or relative). ESLint `no-restricted-imports` (`eslint.config.js`) and `src/features/architecture.test.ts` enforce it.

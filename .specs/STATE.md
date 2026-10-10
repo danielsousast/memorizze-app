@@ -40,10 +40,28 @@
 - **Date**: 2026-10-10
 - **Status**: active
 
+### AD-005
+- **Decision**: Regras de código: (1) sem ternário aninhado; (2) sem funções criadas inline nas props de componentes; (3) sem lógica de negócio em telas e componentes, que só renderizam e ligam props, e a lógica vai para hooks da feature apoiados em `src/domain/`.
+- **Reason**: Pedido do usuário; leitura simples, props estáveis e telas testáveis sem a UI.
+- **Trade-off**: Mais arquivos de hook e handlers nomeados; as duas regras mecânicas estão como `error` no lint.
+- **Scope**: `src/**/*.tsx`
+- **Source**: pedido do usuário, 2026-10-10 (AGENTS.md "Code Rules")
+- **Date**: 2026-10-10
+- **Status**: active
+
+### AD-006
+- **Decision**: Hooks de tela (`use-<tela>.ts`) ficam em `src/features/<feature>/screens/` ao lado da tela; compõem hooks de `usecases/` e funções de `src/domain/`, e a tela só renderiza e liga props.
+- **Reason**: `usecases/` obriga uma chamada React Query por hook (ARC-02); um hook de tela compõe vários.
+- **Trade-off**: `src/features/architecture.test.ts` não inspeciona esses hooks; a checagem é `src/features/screen-logic.test.ts`.
+- **Scope**: `src/features/*/screens/`
+- **Source**: `.specs/features/code-rules-refactor/plan.md`
+- **Date**: 2026-10-10
+- **Status**: active
+
 ## Handoff
-- **Feature**: profile-stats (MEDIUM) — T1–T6 implementadas e commitadas localmente; full gate verde (404 testes, lint, tsc); 3 mutações do plano detectadas
-- **Where**: execução concluída; falta UAT visual em development build (PNG 7 claro e escuro) e conferir cores das barras do gráfico e dos segmentos de estágio (usam `accentSoft` e opacidades de `accent`)
-- **Next step**: UAT em dispositivo; depois F2. Push só com go-ahead explícito
+- **Feature**: code-rules-refactor (MEDIUM) — T1–T8 implementadas e commitadas localmente; verificada por agente independente (PASS); full gate verde (448 testes, lint 0 problemas, tsc); 3 mutações do plano detectadas
+- **Where**: feature concluída; nenhuma asserção de teste existente foi alterada
+- **Next step**: UAT de profile-stats em dispositivo segue pendente. Push só com go-ahead explícito
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-10

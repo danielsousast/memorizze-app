@@ -25,6 +25,29 @@ describe("TextField", () => {
     expect(screen.getByText("x")).toBeTruthy();
   });
 
+  it("picks the border color: error, then focus, then default", async () => {
+    const border = () => StyleSheet.flatten(screen.getByLabelText("Nome").props.style).borderColor;
+    const { rerender } = await render(<TextField label="Nome" value="" />);
+    const idle = border();
+    await fireEvent(screen.getByLabelText("Nome"), "focus");
+    const focused = border();
+    expect(focused).not.toBe(idle);
+    await rerender(<TextField label="Nome" value="" error="x" />);
+    const errored = border();
+    expect(errored).not.toBe(focused);
+    expect(errored).not.toBe(idle);
+  });
+
+  it("calls the caller's onFocus and onBlur", async () => {
+    const onFocus = jest.fn();
+    const onBlur = jest.fn();
+    await render(<TextField label="Nome" value="" onFocus={onFocus} onBlur={onBlur} />);
+    await fireEvent(screen.getByLabelText("Nome"), "focus");
+    await fireEvent(screen.getByLabelText("Nome"), "blur");
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onBlur).toHaveBeenCalledTimes(1);
+  });
+
   it("shows the hint", async () => {
     await render(<TextField label="Frente" hint="Dica" multiline />);
     expect(screen.getByText("Dica")).toBeTruthy();

@@ -21,6 +21,10 @@ SplashScreen.preventAutoHideAsync();
 
 const queryClient = createQueryClient();
 
+function DatabaseLoading() {
+  return <Text>Abrindo banco de dados…</Text>;
+}
+
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     PlusJakartaSans_500Medium,
@@ -40,7 +44,7 @@ export default function RootLayout() {
     <RealmErrorBoundary>
       <RealmProvider
         {...realmConfig}
-        fallback={() => <Text>Abrindo banco de dados…</Text>}
+        fallback={DatabaseLoading}
       >
         <QueryClientProvider client={queryClient}>
           <RootStack />

@@ -5,7 +5,12 @@ import { Button } from "@/components/button";
 import { Icon } from "@/components/icon";
 import { gradeLabel, type Grade } from "@/domain/schedule";
 import { accuracy, studyMinutes, type SessionState } from "@/domain/session";
-import { plural } from "@/domain/text";
+import {
+  reviewedCardsLabel,
+  streakDaysLabel,
+  studyTimeLabel,
+  tomorrowSummaryLabel,
+} from "@/domain/labels";
 import { radii, screenMargin, spacing, tabularNums, typography, useTheme } from "@/theme";
 
 import { useDueTomorrow, useStreak } from "../index";
@@ -13,6 +18,10 @@ import type { StudyCard } from "../interfaces";
 
 const grades: Grade[] = [0, 1, 2, 3];
 const gradeTone = ["again", "hard", "good", "easy"] as const;
+
+function goBack() {
+  router.back();
+}
 
 type Props = { state: SessionState<StudyCard>; deckId?: string };
 
@@ -44,13 +53,8 @@ export function SummaryView({ state, deckId }: Props) {
   const { data: tomorrow } = useDueTomorrow(deckId);
 
   const minutes = studyMinutes(state.startedAt, state.lastAnswerAt);
-  const studyText = minutes === 0 ? "< 1 min de estudo" : `${minutes} min de estudo`;
-  const tomorrowText =
-    tomorrow === undefined
-      ? ""
-      : tomorrow === 0
-        ? "Amanhã: nenhum cartão para revisar"
-        : `Amanhã: ${plural(tomorrow, "cartão", "cartões")} para revisar`;
+  const studyText = studyTimeLabel(minutes);
+  const tomorrowText = tomorrowSummaryLabel(tomorrow);
 
   return (
     <View style={styles.root}>
@@ -69,7 +73,7 @@ export function SummaryView({ state, deckId }: Props) {
       <View style={styles.blocks}>
         <Block
           value={String(state.total)}
-          rest={state.total === 1 ? "cartão revisto" : "cartões revistos"}
+          rest={reviewedCardsLabel(state.total)}
           background={colors.surface}
           valueColor={colors.text}
           restColor={colors.text2}
@@ -86,7 +90,7 @@ export function SummaryView({ state, deckId }: Props) {
         ) : (
           <Block
             value={String(streak)}
-            rest={streak === 1 ? "dia seguido" : "dias seguidos"}
+            rest={streakDaysLabel(streak)}
             background={colors.accentSoft}
             valueColor={colors.accentInk}
             restColor={colors.accentInk}
@@ -137,7 +141,7 @@ export function SummaryView({ state, deckId }: Props) {
       ) : null}
 
       <View style={styles.spacer} />
-      <Button label="Concluir" onPress={() => router.back()} />
+      <Button label="Concluir" onPress={goBack} />
     </View>
   );
 }

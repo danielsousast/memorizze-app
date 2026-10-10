@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { Icon } from "@/components/icon";
-import { plural } from "@/domain/text";
+import { daysLabel as days, percentLabel as percent } from "@/domain/labels";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
 import type { ProfileStats } from "../interfaces";
@@ -42,9 +42,6 @@ function Tile({ value, label, accessibilityLabel, highlighted }: TileProps) {
     </View>
   );
 }
-
-const days = (n: number) => plural(n, "dia", "dias");
-const percent = (n: number | null) => (n === null ? "—" : `${n}%`);
 
 export function StatsSection({ stats, dailyGoal }: { stats: ProfileStats; dailyGoal: number }) {
   return (

@@ -8,6 +8,15 @@ module.exports = defineConfig([
     ignores: ["dist/*"],
   },
   {
+    // AD-005: code rules.
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/**/*.test.{ts,tsx}"],
+    rules: {
+      "no-nested-ternary": "error",
+      "react/jsx-no-bind": ["error", { allowArrowFunctions: false, allowFunctions: false, allowBind: false }],
+    },
+  },
+  {
     // AD-001: inside a feature, only the repository and adapters touch Realm.
     files: ["src/features/**/*.{ts,tsx}"],
     ignores: [

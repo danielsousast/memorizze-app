@@ -1,6 +1,4 @@
-import { router } from "expo-router";
-import { useRef, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
+import { ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
 
 import { Button } from "@/components/button";
 import { DeckIcon } from "@/components/deck-icon";
@@ -8,23 +6,17 @@ import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
-import { AppError } from "@/domain/errors";
 import { useDeck } from "@/features/decks";
 import { radii, screenMargin, spacing, typography, useTheme } from "@/theme";
 
-import { useCard, useCreateCard, useDeleteCard, useUpdateCard } from "@/features/cards";
+import { useCard, useDeleteCard } from "@/features/cards";
 import type { Card } from "@/features/cards";
 
+import { closeToHome, type FieldErrors } from "./card-form";
+import { useCreateCardForm } from "./use-create-card-form";
+import { useEditCardForm } from "./use-edit-card-form";
+
 type Props = { deckId: string } | { cardId: string };
-
-type FieldErrors = { front?: string; back?: string };
-
-const GENERIC_ERROR = "Não foi possível salvar. Tente de novo.";
-
-function closeEditor(fallbackHref: string) {
-  if (router.canGoBack()) router.back();
-  else router.replace(fallbackHref as never);
-}
 
 export function CardEditorScreen(props: Props) {
   if ("cardId" in props) return <EditCard cardId={props.cardId} />;
@@ -43,22 +35,12 @@ function CreateCard({ deckId }: { deckId: string }) {
         <NotFound
           title="Baralho não encontrado"
           actionLabel="Voltar"
-          onAction={() => closeEditor("/")}
+          onAction={closeToHome}
         />
       </Screen>
     );
   }
   return <CreateCardForm deckId={deckId} deckName={deck.data.name} />;
-}
-
-function toFieldErrors(error: unknown): { errors?: FieldErrors; formError?: string } {
-  if (error instanceof AppError && error.code === "CARD_FRONT_EMPTY") {
-    return { errors: { front: "Escreva a frente do cartão." } };
-  }
-  if (error instanceof AppError && error.code === "CARD_BACK_EMPTY") {
-    return { errors: { back: "Escreva o verso do cartão." } };
-  }
-  return { formError: GENERIC_ERROR };
 }
 
 // Edit mode: the card carries no deck reference, so the deck chip is omitted and
@@ -77,7 +59,7 @@ function EditCard({ cardId }: { cardId: string }) {
         <NotFound
           title="Cartão não encontrado"
           actionLabel="Voltar"
-          onAction={() => closeEditor("/")}
+          onAction={closeToHome}
         />
       </Screen>
     );
@@ -92,127 +74,41 @@ function EditCardForm({
   card: Card;
   remove: ReturnType<typeof useDeleteCard>;
 }) {
-  const update = useUpdateCard();
-  const [front, setFront] = useState(card.front);
-  const [back, setBack] = useState(card.back);
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState<string | undefined>();
-  const busy = useRef(false);
-
-  function save() {
-    if (busy.current) return;
-    busy.current = true;
-    setErrors({});
-    setFormError(undefined);
-    update.mutate(
-      { id: card.id, input: { front, back } },
-      {
-        onSuccess: () => closeEditor("/"),
-        onError: (error) => {
-          const mapped = toFieldErrors(error);
-          setErrors(mapped.errors ?? {});
-          setFormError(mapped.formError);
-        },
-        onSettled: () => {
-          busy.current = false;
-        },
-      },
-    );
-  }
-
-  function confirmDelete() {
-    if (busy.current) return;
-    Alert.alert("Excluir cartão?", undefined, [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Excluir",
-        style: "destructive",
-        onPress: () => {
-          if (busy.current) return;
-          busy.current = true;
-          setFormError(undefined);
-          remove.mutate(card.id, {
-            onSuccess: () => closeEditor("/"),
-            onError: () => setFormError("Não foi possível excluir. Tente de novo."),
-            onSettled: () => {
-              busy.current = false;
-            },
-          });
-        },
-      },
-    ]);
-  }
-
+  const form = useEditCardForm(card, remove);
   return (
     <CardEditorForm
       title="Editar cartão"
-      front={front}
-      back={back}
-      onFrontChange={setFront}
-      onBackChange={setBack}
-      errors={errors}
-      formError={formError}
-      pending={update.isPending || remove.isPending}
-      onCancel={() => closeEditor("/")}
-      onSave={save}
-      onDelete={confirmDelete}
+      front={form.front}
+      back={form.back}
+      onFrontChange={form.setFront}
+      onBackChange={form.setBack}
+      errors={form.errors}
+      formError={form.formError}
+      pending={form.pending}
+      onCancel={form.cancel}
+      onSave={form.save}
+      onDelete={form.confirmDelete}
     />
   );
 }
 
 function CreateCardForm({ deckId, deckName }: { deckId: string; deckName: string }) {
-  const create = useCreateCard();
-  const [front, setFront] = useState("");
-  const [back, setBack] = useState("");
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [formError, setFormError] = useState<string | undefined>();
-  const frontRef = useRef<TextInput>(null);
-  const busy = useRef(false);
-
-  function submit(another: boolean) {
-    if (busy.current) return;
-    busy.current = true;
-    setErrors({});
-    setFormError(undefined);
-    create.mutate(
-      { deckId, input: { front, back } },
-      {
-        onSuccess: () => {
-          if (another) {
-            setFront("");
-            setBack("");
-            frontRef.current?.focus();
-          } else {
-            closeEditor(`/decks/${deckId}`);
-          }
-        },
-        onError: (error) => {
-          const mapped = toFieldErrors(error);
-          setErrors(mapped.errors ?? {});
-          setFormError(mapped.formError);
-        },
-        onSettled: () => {
-          busy.current = false;
-        },
-      },
-    );
-  }
-
+  const form = useCreateCardForm(deckId);
   return (
     <CardEditorForm
       title="Novo cartão"
       deckName={deckName}
-      front={front}
-      back={back}
-      onFrontChange={setFront}
-      onBackChange={setBack}
-      frontRef={frontRef}
-      errors={errors}
-      formError={formError}
-      pending={create.isPending}
-      onCancel={() => closeEditor(`/decks/${deckId}`)}
-      onSave={() => submit(false)}
-      onSaveAnother={() => submit(true)}
+      front={form.front}
+      back={form.back}
+      onFrontChange={form.setFront}
+      onBackChange={form.setBack}
+      frontRef={form.frontRef}
+      errors={form.errors}
+      formError={form.formError}
+      pending={form.pending}
+      onCancel={form.cancel}
+      onSave={form.save}
+      onSaveAnother={form.saveAnother}
     />
   );
 }

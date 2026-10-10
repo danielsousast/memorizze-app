@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import { addLocalDays, formatWeekdayShort } from "@/domain/dates";
-import { plural } from "@/domain/text";
+import { reviewsLabel, weekLabels } from "@/domain/labels";
 import { radii, spacing, tabularNums, typography, useTheme } from "@/theme";
 
 const CHART_HEIGHT = 120;
@@ -13,9 +12,7 @@ export function WeekChart({ week, dailyGoal, now = new Date() }: Props) {
   const { colors } = useTheme();
   const scale = Math.max(dailyGoal, ...week);
   const last = week.length - 1;
-  const labels = week.map((_, i) =>
-    i === last ? "Hoje" : formatWeekdayShort(addLocalDays(now, i - last)),
-  );
+  const labels = weekLabels(week.length, now);
   const total = week.reduce((sum, n) => sum + n, 0);
   const summary = week.map((n, i) => `${labels[i]} ${n}`).join(", ");
   const goalBottom = (dailyGoal / scale) * CHART_HEIGHT;
@@ -25,7 +22,7 @@ export function WeekChart({ week, dailyGoal, now = new Date() }: Props) {
       <View style={styles.header}>
         <Text style={[typography.section, { color: colors.text }]}>Últimos 7 dias</Text>
         <Text style={[typography.caption, { color: colors.text2 }]}>
-          {plural(total, "revisão", "revisões")}
+          {reviewsLabel(total)}
         </Text>
       </View>
       <View

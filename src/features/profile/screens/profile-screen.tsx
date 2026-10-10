@@ -1,12 +1,9 @@
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { GoalProgress } from "@/components/goal-progress";
 import { Icon } from "@/components/icon";
 import { Screen } from "@/components/screen";
 import { formatMonthYear } from "@/domain/dates";
-import { canStep, stepGoal } from "@/domain/goal";
 import {
   radii,
   screenMargin,
@@ -16,12 +13,9 @@ import {
   useTheme,
 } from "@/theme";
 
-import { useProfile } from "../usecases/use-profile";
-import { useReviewsToday } from "../usecases/use-reviews-today";
-import { useStats } from "../usecases/use-stats";
-import { useUpdateProfile } from "../usecases/use-update-profile";
-import { GENERIC_ERROR } from "./name-errors";
+import type { ProfileStats } from "../interfaces";
 import { StatsSection } from "./stats-section";
+import { useProfileScreen } from "./use-profile-screen";
 
 function StepButton({
   label,
@@ -42,45 +36,49 @@ function StepButton({
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
-      style={[styles.step, { backgroundColor: colors.surface2, opacity: disabled ? 0.5 : 1 }]}
+      style={[
+        styles.step,
+        { backgroundColor: colors.surface2, opacity: disabled ? 0.5 : 1 },
+      ]}
     >
       <Icon name={icon} color={colors.text} />
     </Pressable>
   );
 }
 
+function StatsBlock({
+  stats,
+  failed,
+  dailyGoal,
+}: {
+  stats?: ProfileStats;
+  failed: boolean;
+  dailyGoal: number;
+}) {
+  const { colors } = useTheme();
+  if (stats) return <StatsSection stats={stats} dailyGoal={dailyGoal} />;
+  if (!failed) return null;
+  return (
+    <Text style={[typography.body, { color: colors.text2 }]}>
+      Não foi possível carregar as estatísticas.
+    </Text>
+  );
+}
+
 export function ProfileScreen() {
   const { colors } = useTheme();
-  const profile = useProfile().data;
-  const reviewsQuery = useReviewsToday();
-  const reviewsToday = reviewsQuery.data ?? 0;
-  const { refetch: refetchReviews } = reviewsQuery;
-  const statsQuery = useStats();
-  const { refetch: refetchStats } = statsQuery;
-  const update = useUpdateProfile();
-  const [error, setError] = useState<string>();
-  const busy = useRef(false);
-
-  // HOM-07: numbers follow the recorded reviews whenever the screen refocuses.
-  useFocusEffect(
-    useCallback(() => {
-      void refetchReviews();
-      void refetchStats();
-    }, [refetchReviews, refetchStats]),
-  );
-
-  async function step(direction: 1 | -1) {
-    if (!profile || busy.current) return;
-    busy.current = true;
-    setError(undefined);
-    try {
-      await update.mutateAsync({ dailyGoal: stepGoal(profile.dailyGoal, direction) });
-    } catch {
-      setError(GENERIC_ERROR);
-    } finally {
-      busy.current = false;
-    }
-  }
+  const {
+    profile,
+    reviewsToday,
+    stats,
+    statsError,
+    error,
+    canDecrease,
+    canIncrease,
+    decrease,
+    increase,
+    editName,
+  } = useProfileScreen();
 
   return (
     <Screen testID="profile-screen" style={styles.body}>
@@ -95,7 +93,7 @@ export function ProfileScreen() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={`Editar nome, ${profile.name}`}
-            onPress={() => router.push("/edit-name")}
+            onPress={editName}
             style={styles.identity}
           >
             <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
@@ -134,20 +132,24 @@ export function ProfileScreen() {
                 <StepButton
                   label="Diminuir meta"
                   icon="minus"
-                  disabled={!canStep(profile.dailyGoal, -1)}
-                  onPress={() => step(-1)}
+                  disabled={!canDecrease}
+                  onPress={decrease}
                 />
                 <Text
                   accessibilityLabel={`Meta diária, ${profile.dailyGoal} revisões por dia`}
-                  style={[typography.section, styles.value, { color: colors.text }]}
+                  style={[
+                    typography.section,
+                    styles.value,
+                    { color: colors.text },
+                  ]}
                 >
                   {profile.dailyGoal}
                 </Text>
                 <StepButton
                   label="Aumentar meta"
                   icon="plus"
-                  disabled={!canStep(profile.dailyGoal, 1)}
-                  onPress={() => step(1)}
+                  disabled={!canIncrease}
+                  onPress={increase}
                 />
               </View>
             </View>
@@ -166,13 +168,11 @@ export function ProfileScreen() {
               suffix=""
             />
           </View>
-          {statsQuery.data ? (
-            <StatsSection stats={statsQuery.data} dailyGoal={profile.dailyGoal} />
-          ) : statsQuery.isError ? (
-            <Text style={[typography.body, { color: colors.text2 }]}>
-              Não foi possível carregar as estatísticas.
-            </Text>
-          ) : null}
+          <StatsBlock
+            stats={stats}
+            failed={statsError}
+            dailyGoal={profile.dailyGoal}
+          />
         </>
       ) : null}
     </Screen>

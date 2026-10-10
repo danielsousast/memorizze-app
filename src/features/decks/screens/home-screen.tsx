@@ -1,5 +1,6 @@
 import { router } from "expo-router";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useCallback } from "react";
+import { FlatList, type ListRenderItemInfo, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
@@ -26,13 +27,30 @@ function accessibilityLabel(deck: Deck): string {
   return parts.join(", ");
 }
 
+function openStudyAll() {
+  router.push("/study");
+}
+
+function deckKey(deck: Deck): string {
+  return deck.id;
+}
+
+function DeckBadge({ deck }: { deck: Deck }) {
+  if (deck.dueCount > 0) return <Badge tone="accent" text={`${deck.dueCount} hoje`} />;
+  if (deck.cardCount > 0) return <Badge tone="neutral" icon="check" text="Em dia" />;
+  return null;
+}
+
 function DeckItem({ deck }: { deck: Deck }) {
   const { colors } = useTheme();
+  const open = useCallback(() => {
+    router.push(`/decks/${deck.id}`);
+  }, [deck.id]);
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel(deck)}
-      onPress={() => router.push(`/decks/${deck.id}`)}
+      onPress={open}
       style={[styles.item, { backgroundColor: colors.surface, borderColor: colors.border }]}
     >
       <DeckIcon name={deck.name} />
@@ -44,13 +62,13 @@ function DeckItem({ deck }: { deck: Deck }) {
           {plural(deck.cardCount, "cartão", "cartões")}
         </Text>
       </View>
-      {deck.dueCount > 0 ? (
-        <Badge tone="accent" text={`${deck.dueCount} hoje`} />
-      ) : deck.cardCount > 0 ? (
-        <Badge tone="neutral" icon="check" text="Em dia" />
-      ) : null}
+      <DeckBadge deck={deck} />
     </Pressable>
   );
+}
+
+function renderDeck({ item }: ListRenderItemInfo<Deck>) {
+  return <DeckItem deck={item} />;
 }
 
 export function HomeScreen() {
@@ -96,14 +114,14 @@ export function HomeScreen() {
     <Screen testID="home-screen">
       <FlatList
         data={data}
-        keyExtractor={(deck) => deck.id}
-        renderItem={({ item }) => <DeckItem deck={item} />}
+        keyExtractor={deckKey}
+        renderItem={renderDeck}
         ListHeaderComponent={
           <>
             {header}
             <StreakCard>
               <View style={styles.study}>
-                <Button label="Estudar tudo" onPress={() => router.push("/study")} />
+                <Button label="Estudar tudo" onPress={openStudyAll} />
                 {totalDue > 0 ? (
                   <Badge tone="accent" text={plural(totalDue, "cartão", "cartões")} />
                 ) : null}

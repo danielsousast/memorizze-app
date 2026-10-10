@@ -1,6 +1,4 @@
-import { router } from "expo-router";
-import { useState } from "react";
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, type ListRenderItemInfo, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
@@ -9,16 +7,14 @@ import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
-import { cardStage, stageLabel } from "@/domain/stage";
-import { matches, plural } from "@/domain/text";
-import { useCards, type Card } from "@/features/cards";
-import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
+import { plural } from "@/domain/text";
+import type { Card } from "@/features/cards";
+import { screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useDeck, useDeleteDeck, type Deck } from "@/features/decks";
 
-function goHome() {
-  router.dismissTo("/");
-}
+import { CardRow } from "./card-row";
+import { goHome, useDeckScreen } from "./use-deck-screen";
 
 type Props = { deckId: string };
 
@@ -35,44 +31,21 @@ export function DeckScreen({ deckId }: Props) {
       </Screen>
     );
   }
-  return <DeckDetail deck={deck} onDelete={() => remove.mutate(deck.id, { onSuccess: goHome })} />;
+  return <DeckDetail deck={deck} remove={remove} />;
 }
 
-function confirmDelete(deck: Deck, onDelete: () => void) {
-  const message =
-    deck.cardCount === 0
-      ? undefined
-      : deck.cardCount === 1
-        ? "O único cartão deste baralho também será excluído."
-        : `Os ${deck.cardCount} cartões deste baralho também serão excluídos.`;
-  Alert.alert(`Excluir “${deck.name}”?`, message, [
-    { text: "Cancelar", style: "cancel" },
-    { text: "Excluir", style: "destructive", onPress: onDelete },
-  ]);
+function cardKey(card: Card): string {
+  return card.id;
 }
 
-function openOptions(deck: Deck, onDelete: () => void) {
-  Alert.alert(deck.name, undefined, [
-    {
-      text: "Editar baralho",
-      onPress: () => router.push(`/decks/${deck.id}/edit`),
-    },
-    {
-      text: "Excluir baralho",
-      style: "destructive",
-      onPress: () => confirmDelete(deck, onDelete),
-    },
-    { text: "Cancelar", style: "cancel" },
-  ]);
+function renderCard({ item }: ListRenderItemInfo<Card>) {
+  return <CardRow card={item} />;
 }
 
-function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
+function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof useDeleteDeck> }) {
   const { colors } = useTheme();
-  const { data: cards } = useCards(deck.id);
-  const [query, setQuery] = useState("");
-  const all = cards ? [...cards].reverse() : undefined;
-  const rows = all?.filter((c) => matches(query, c.front, c.back));
-  const matureCount = cards ? cards.filter((c) => cardStage(c) === "mature").length : 0;
+  const screen = useDeckScreen(deck, remove);
+  const { all, matureCount } = screen;
 
   const header = (
     <View style={styles.headerContent}>
@@ -91,15 +64,10 @@ function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
         {deck.dueCount > 0 ? <Badge tone="accent" text={`${deck.dueCount} para hoje`} /> : null}
         {matureCount > 0 ? <Badge tone="outline" text={`${matureCount} maduros`} /> : null}
       </View>
-      <Button
-        label={
-          deck.dueCount > 0 ? `Estudar · ${plural(deck.dueCount, "cartão", "cartões")}` : "Estudar"
-        }
-        onPress={() => router.push(`/decks/${deck.id}/study`)}
-      />
+      <Button label={screen.studyLabel} onPress={screen.study} />
       {all && all.length > 0 ? (
         <>
-          <TextField label="Buscar cartões" value={query} onChangeText={setQuery} />
+          <TextField label="Buscar cartões" value={screen.query} onChangeText={screen.setQuery} />
           <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
             Cartões
           </Text>
@@ -114,7 +82,7 @@ function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Início"
-          onPress={goHome}
+          onPress={screen.goHome}
           hitSlop={8}
           style={styles.back}
         >
@@ -124,7 +92,7 @@ function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Opções do baralho"
-          onPress={() => openOptions(deck, onDelete)}
+          onPress={screen.openOptions}
           hitSlop={8}
           style={styles.more}
         >
@@ -132,10 +100,10 @@ function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
         </Pressable>
       </View>
       <FlatList
-        data={rows ?? []}
-        keyExtractor={(card) => card.id}
+        data={screen.rows}
+        keyExtractor={cardKey}
         ListHeaderComponent={header}
-        renderItem={({ item }) => <CardRow card={item} />}
+        renderItem={renderCard}
         keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
           all ? (
@@ -147,37 +115,9 @@ function DeckDetail({ deck, onDelete }: { deck: Deck; onDelete: () => void }) {
         contentContainerStyle={styles.list}
       />
       <View style={styles.fab}>
-        <Fab label="Adicionar cartão" onPress={() => router.push(`/decks/${deck.id}/cards/new`)} />
+        <Fab label="Adicionar cartão" onPress={screen.addCard} />
       </View>
     </Screen>
-  );
-}
-
-function CardRow({ card }: { card: Card }) {
-  const { colors } = useTheme();
-  const stage = cardStage(card);
-  return (
-    <Pressable
-      testID="card-row"
-      accessibilityRole="button"
-      accessibilityLabel={`${card.front}, ${card.back.replace(/\s*\r?\n\s*/g, " ")}`}
-      onPress={() => router.push(`/cards/${card.id}/edit`)}
-      style={[styles.row, { backgroundColor: colors.surface, borderColor: colors.border }]}
-    >
-      <View style={styles.rowText}>
-        <Text
-          testID="card-front"
-          numberOfLines={1}
-          style={[typography.button, { color: colors.text }]}
-        >
-          {card.front}
-        </Text>
-        <Text numberOfLines={1} style={[typography.caption, { color: colors.text2 }]}>
-          {card.back.replace(/\s*\r?\n\s*/g, " ")}
-        </Text>
-      </View>
-      <Badge tone={stage === "new" ? "accent" : "neutral"} text={stageLabel[stage]} />
-    </Pressable>
   );
 }
 
@@ -210,16 +150,4 @@ const styles = StyleSheet.create({
   titleBlock: { gap: spacing.sm },
   badges: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   empty: { textAlign: "center", paddingVertical: spacing.xl },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: spacing.md,
-    minHeight: sizes.deckCard,
-    paddingHorizontal: spacing.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radii.card,
-    marginBottom: spacing.sm,
-  },
-  rowText: { flex: 1 },
 });

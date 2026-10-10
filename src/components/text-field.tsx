@@ -1,5 +1,11 @@
-import { useState, type Ref } from "react";
-import { StyleSheet, Text, TextInput, View, type TextInputProps } from "react-native";
+import { useCallback, useState, type Ref } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type TextInputProps,
+} from "react-native";
 
 import { sizes, spacing, typography, useTheme } from "@/theme";
 
@@ -10,10 +16,47 @@ type Props = Omit<TextInputProps, "accessibilityLabel"> & {
   inputRef?: Ref<TextInput>;
 };
 
-export function TextField({ label, hint, error, multiline, inputRef, onFocus, onBlur, style, ...rest }: Props) {
+type FocusEvent = Parameters<NonNullable<TextInputProps["onFocus"]>>[0];
+type BlurEvent = Parameters<NonNullable<TextInputProps["onBlur"]>>[0];
+
+function borderColorFor(
+  error: string | undefined,
+  focused: boolean,
+  colors: ReturnType<typeof useTheme>["colors"],
+) {
+  if (error) return colors.grade.again.text;
+  if (focused) return colors.accent;
+  return colors.border;
+}
+
+export function TextField({
+  label,
+  hint,
+  error,
+  multiline,
+  inputRef,
+  onFocus,
+  onBlur,
+  style,
+  ...rest
+}: Props) {
   const { colors } = useTheme();
   const [focused, setFocused] = useState(false);
-  const borderColor = error ? colors.grade.again.text : focused ? colors.accent : colors.border;
+  const borderColor = borderColorFor(error, focused, colors);
+  const handleFocus = useCallback(
+    (e: FocusEvent) => {
+      setFocused(true);
+      onFocus?.(e);
+    },
+    [onFocus],
+  );
+  const handleBlur = useCallback(
+    (e: BlurEvent) => {
+      setFocused(false);
+      onBlur?.(e);
+    },
+    [onBlur],
+  );
 
   return (
     <View style={styles.wrapper}>
@@ -23,14 +66,8 @@ export function TextField({ label, hint, error, multiline, inputRef, onFocus, on
         accessibilityLabel={label}
         multiline={multiline}
         placeholderTextColor={colors.text2}
-        onFocus={(e) => {
-          setFocused(true);
-          onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setFocused(false);
-          onBlur?.(e);
-        }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         style={[
           typography.body,
           styles.input,
@@ -46,11 +83,18 @@ export function TextField({ label, hint, error, multiline, inputRef, onFocus, on
         {...rest}
       />
       {error ? (
-        <Text accessibilityRole="alert" style={[typography.caption, { color: colors.grade.again.text }]}>
+        <Text
+          accessibilityRole="alert"
+          style={[typography.caption, { color: colors.grade.again.text }]}
+        >
           {error}
         </Text>
       ) : null}
-      {hint ? <Text style={[typography.caption, { color: colors.text2 }]}>{hint}</Text> : null}
+      {hint ? (
+        <Text style={[typography.caption, { color: colors.text2 }]}>
+          {hint}
+        </Text>
+      ) : null}
     </View>
   );
 }

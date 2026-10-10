@@ -4,18 +4,12 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { GoalProgress } from "@/components/goal-progress";
 import { Icon } from "@/components/icon";
-import { plural } from "@/domain/text";
+import { streakSubtitle, streakTitle } from "@/domain/labels";
 import { useReviewsToday, useProfile } from "@/features/profile";
 import { useStreak } from "@/features/study";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 const DEFAULT_GOAL = 20;
-
-function subtitle(streak: number, reviewedToday: boolean): string {
-  if (streak === 0) return "Sua sequência começa no primeiro estudo";
-  if (reviewedToday) return "Você já estudou hoje";
-  return `Estude hoje para chegar a ${streak + 1}`;
-}
 
 export function StreakCard({ children }: { children?: ReactNode }) {
   const { colors } = useTheme();
@@ -53,10 +47,10 @@ export function StreakCard({ children }: { children?: ReactNode }) {
         </View>
         <View style={styles.topText}>
           <Text style={[typography.title, { color: colors.text }]}>
-            {plural(streak, "dia seguido", "dias seguidos")}
+            {streakTitle(streak)}
           </Text>
           <Text style={[typography.caption, { color: colors.text2 }]}>
-            {subtitle(streak, reviewsToday > 0)}
+            {streakSubtitle(streak, reviewsToday > 0)}
           </Text>
         </View>
       </View>

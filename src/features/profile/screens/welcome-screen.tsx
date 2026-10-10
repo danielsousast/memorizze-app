@@ -1,4 +1,3 @@
-import { useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
@@ -7,34 +6,13 @@ import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
 import { radii, screenMargin, spacing, typography, useTheme } from "@/theme";
 
-import { useCreateProfile } from "../usecases/use-create-profile";
-import { GENERIC_ERROR, nameErrorMessage } from "./name-errors";
+import { useWelcomeForm } from "./use-welcome-form";
 
 const NAME_MAX = 30;
 
 export function WelcomeScreen() {
   const { colors } = useTheme();
-  const create = useCreateProfile();
-  const [name, setName] = useState("");
-  const [nameError, setNameError] = useState<string>();
-  const [formError, setFormError] = useState<string>();
-  const busy = useRef(false);
-
-  async function start() {
-    if (busy.current) return;
-    busy.current = true;
-    setNameError(undefined);
-    setFormError(undefined);
-    try {
-      await create.mutateAsync(name);
-    } catch (error) {
-      const message = nameErrorMessage(error);
-      if (message) setNameError(message);
-      else setFormError(GENERIC_ERROR);
-    } finally {
-      busy.current = false;
-    }
-  }
+  const form = useWelcomeForm();
 
   return (
     <Screen keyboardAvoiding>
@@ -75,19 +53,19 @@ export function WelcomeScreen() {
         <TextField
           label="Como podemos te chamar?"
           placeholder="Seu nome ou apelido"
-          value={name}
-          onChangeText={setName}
+          value={form.name}
+          onChangeText={form.setName}
           maxLength={NAME_MAX}
-          error={nameError}
+          error={form.nameError}
           returnKeyType="done"
-          onSubmitEditing={start}
+          onSubmitEditing={form.submit}
         />
-        {formError ? (
+        {form.formError ? (
           <Text accessibilityRole="alert" style={[typography.caption, { color: colors.grade.again.text }]}>
-            {formError}
+            {form.formError}
           </Text>
         ) : null}
-        <Button label="Começar" disabled={create.isPending} onPress={start} />
+        <Button label="Começar" disabled={form.pending} onPress={form.submit} />
       </ScrollView>
     </Screen>
   );

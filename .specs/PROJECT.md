@@ -51,6 +51,7 @@ Planned additions (more of `src/domain`): see [ARCHITECTURE.md](../ARCHITECTURE.
 - Never hand-edit `ios/` or `android/`; configure via `app.json` and config plugins (`AGENTS.md`).
 - Path alias `@/*` → `src/*` (`tsconfig.json`).
 - Run lint and typecheck before declaring a task done (`AGENTS.md`).
+- No nested ternaries; no inline functions in component props; no business logic in screens/components, extract it to hooks (AD-005, `AGENTS.md` Code Rules). Lint: `no-nested-ternary`, `react/jsx-no-bind`.
 - Accessibility labels on all buttons, touch targets ≥ 44pt; lists use `FlatList`; dates in the local timezone via one module (PROJECT-SPEC §8).
 
 ## Quality
