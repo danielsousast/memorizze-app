@@ -117,6 +117,11 @@ describe("HomeScreen", () => {
   it("HOME-06 shows the empty state without a FAB and opens the create form", async () => {
     const rendered = await renderRouterWithProviders(routes, realm);
     expect(await screen.findByText("Nenhum baralho ainda")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Crie seu primeiro baralho e adicione alguns cartões. Cinco minutos por dia já fazem diferença.",
+      ),
+    ).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Criar baralho" })).toBeNull();
     await fireEvent.press(screen.getByRole("button", { name: "Criar primeiro baralho" }));
     await waitFor(() => expect(rendered).toHavePathname("/decks/new"));

@@ -85,6 +85,43 @@ describe("DeckFormScreen", () => {
     await rendered.unmount();
   });
 
+  it("DFM-01 stores a whitespace-only description as absent and trims a real one", async () => {
+    const first = await openNew();
+    await fireEvent.changeText(screen.getByLabelText("Nome"), "Vazio");
+    await fireEvent.changeText(screen.getByLabelText("Descrição"), "   ");
+    await fireEvent.press(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(names()).toEqual(["Vazio"]));
+    expect(realm.objects(Deck)[0].description ?? undefined).toBeUndefined();
+    await first.unmount();
+
+    const second = await openNew();
+    await fireEvent.changeText(screen.getByLabelText("Nome"), "Cheio");
+    await fireEvent.changeText(screen.getByLabelText("Descrição"), " texto ");
+    await fireEvent.press(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(names()).toEqual(["Vazio", "Cheio"]));
+    expect(realm.objects(Deck)[1].description).toBe("texto");
+    await second.unmount();
+  });
+
+  it("DFM-03 edit stores a whitespace-only description as absent and trims a real one", async () => {
+    const deck = createDeckRepository(realm).create({ name: "Inglês", description: "Vocabulário" });
+    const rendered = await renderRouterWithProviders(routes, realm, `/decks/${deck.id}`);
+    await act(async () => router.push(`/decks/${deck.id}/edit`));
+    await screen.findByText("Editar baralho");
+    await fireEvent.changeText(screen.getByLabelText("Descrição"), "   ");
+    await fireEvent.press(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(rendered).toHavePathname(`/decks/${deck.id}`));
+    expect(realm.objects(Deck)[0].description ?? undefined).toBeUndefined();
+
+    await act(async () => router.push(`/decks/${deck.id}/edit`));
+    await screen.findByText("Editar baralho");
+    await fireEvent.changeText(screen.getByLabelText("Descrição"), " texto ");
+    await fireEvent.press(screen.getByRole("button", { name: "Salvar" }));
+    await waitFor(() => expect(rendered).toHavePathname(`/decks/${deck.id}`));
+    expect(realm.objects(Deck)[0].description).toBe("texto");
+    await rendered.unmount();
+  });
+
   it("DFM-04 Cancelar closes without saving", async () => {
     const rendered = await openNew();
     await fireEvent.changeText(screen.getByLabelText("Nome"), "Rascunho");

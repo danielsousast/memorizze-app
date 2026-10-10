@@ -379,7 +379,7 @@ Mutações sugeridas ao verificador:
   - SPEC ERR-01 · screen — Editor em modo edição: `realm.write` lança `Error` ao salvar → mensagem genérica de salvar; ao excluir → `Não foi possível excluir. Tente de novo.` (mensagem sem AC; registrada no validation.md como extra aceito)
 - **Done when**: tests above pass; o teste de descrição falha sem o trim (M7); full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

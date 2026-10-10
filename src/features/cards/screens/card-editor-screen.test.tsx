@@ -359,6 +359,36 @@ describe("CardEditorScreen (edit)", () => {
     await rendered.unmount();
   });
 
+  it("ERR-01 edit mode: a write failure on save shows the generic message and stays", async () => {
+    const rendered = await openEditor();
+    jest.spyOn(realm, "write").mockImplementation(() => {
+      throw new Error("disk full");
+    });
+    await fireEvent.changeText(screen.getByLabelText("Verso"), "outro");
+    await press("Salvar");
+    expect(await screen.findByText("Não foi possível salvar. Tente de novo.")).toBeTruthy();
+    expect(rendered).toHavePathname(editUrl());
+    expect(stored()?.back).toBe("esquecer");
+    await rendered.unmount();
+  });
+
+  it("ERR-01 edit mode: a write failure on delete shows the delete message and keeps the card", async () => {
+    const alert = jest.spyOn(Alert, "alert").mockImplementation(() => {});
+    const rendered = await openEditor();
+    jest.spyOn(realm, "write").mockImplementation(() => {
+      throw new Error("disk full");
+    });
+    await press("Excluir cartão");
+    const buttons = alert.mock.calls[0][2];
+    await act(async () => {
+      buttons?.find((b) => b.text === "Excluir")?.onPress?.();
+    });
+    expect(await screen.findByText("Não foi possível excluir. Tente de novo.")).toBeTruthy();
+    expect(rendered).toHavePathname(editUrl());
+    expect(stored()).not.toBeNull();
+    await rendered.unmount();
+  });
+
   it("EDT-09 unknown card shows Cartão não encontrado with Voltar", async () => {
     const rendered = await renderRouterWithProviders(
       editRoutes,
