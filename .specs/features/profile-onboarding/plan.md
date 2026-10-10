@@ -198,7 +198,7 @@ Mutações sugeridas ao verificador:
   - SPEC A11Y-01 · tela — `Começar` com role `button`, label e altura ≥ 44
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — App abre na Boas-vindas sem perfil e na Início com perfil
 
