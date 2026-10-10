@@ -50,7 +50,8 @@
     "ios": "yarn ios:pods:update-expo && DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer npx expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "jest"
+    "test": "jest",
+    "ci": "expo lint && tsc --noEmit && jest --coverage"
   },
   "jest": {
     "preset": "jest-expo",
@@ -66,7 +67,19 @@
       "/example/",
       "/ios/",
       "/android/"
-    ]
+    ],
+    "collectCoverageFrom": [
+      "src/domain/**/*.ts",
+      "!src/domain/**/*.test.ts"
+    ],
+    "coverageThreshold": {
+      "./src/domain/": {
+        "statements": 90,
+        "branches": 90,
+        "functions": 90,
+        "lines": 90
+      }
+    }
   },
   "private": true
 }

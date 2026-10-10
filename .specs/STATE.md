@@ -59,9 +59,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: code-rules-refactor (MEDIUM) — T1–T8 implementadas e commitadas localmente; verificada por agente independente (PASS); full gate verde (448 testes, lint 0 problemas, tsc); 3 mutações do plano detectadas
-- **Where**: feature concluída; nenhuma asserção de teste existente foi alterada
-- **Next step**: UAT de profile-stats em dispositivo segue pendente. Push só com go-ahead explícito
+- **Feature**: ci-pipeline (MEDIUM) — T1–T3 implementadas; `npm run ci` sai 0 (448 testes, cobertura de `domain/` 100%, threshold 90); mutações do threshold e do lint detectadas; YAML validado por parse. Falta o verify independente
+- **Where**: `.github/workflows/ci.yml`, `package.json` (script `ci`, `coverageThreshold`), README, `.specs/PROJECT.md`
+- **Next step**: verify; o primeiro run real no GitHub exige `git push` com go-ahead explícito. UAT de profile-stats em dispositivo segue pendente
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-10

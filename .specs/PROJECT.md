@@ -61,9 +61,10 @@ Planned additions (more of `src/domain`): see [ARCHITECTURE.md](../ARCHITECTURE.
 | Tests | `npm test` | `package.json` (`test`) |
 | Lint | `npx expo lint` | `package.json` (`lint`), `AGENTS.md` |
 | Typecheck | `npx tsc --noEmit` | `AGENTS.md` |
+| Full gate | `npm run ci` (lint + typecheck + tests with ≥ 90% coverage on `src/domain/`) | `package.json` (`ci`) |
 | Start | `npx expo start` | `package.json` |
 
-No CI workflow exists yet (PROJECT-SPEC plans GitHub Actions: lint + typecheck + tests).
+CI: `.github/workflows/ci.yml` runs `npm run ci` on push to `main` and on pull requests (feature `ci-pipeline`).
 
 ## Constraints
 
