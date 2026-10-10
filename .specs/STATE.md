@@ -23,9 +23,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: deck-card-crud — T1–T8 e F1–F5 feitas; Verify FAIL no round 3/3 (verificador independente), escalado ao usuário
-- **Where**: único gap é HK-03 dos hooks de baralho (`useDeck`, `useUpdateDeck`, `useDeleteDeck` sem teste offline; 3 mutantes `networkMode: "online"` sobreviveram). Ver `validation.md`
-- **Next step**: usuário decide sobre F6 (estender o teste HK-03 de baralhos, padrão de F5) + round 4 de verificação
+- **Feature**: deck-card-crud — T1–T8 e F1–F6 feitas; Verify PASS no round 4 (verificador independente, 20/20 mutantes mortos)
+- **Where**: feature completa e com commits locais em `main`; nada foi enviado ao remoto. Lição L-001 registrada como candidata
+- **Next step**: decidir sobre `git push` (exige aprovação explícita) e iniciar a próxima feature do PROJECT-SPEC.md (telas de baralho/cartão ou M3 study)
 - **Open amendments**: none
-- **Blockers**: limite de 3 rounds de fix → re-verify atingido
+- **Blockers**: none
 - **Updated**: 2026-10-09

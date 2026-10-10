@@ -3,6 +3,25 @@
   "window_days": 60,
   "quarantine_threshold": 2,
   "schema": 1,
-  "next_id": 1,
-  "lessons": []
+  "next_id": 2,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "surviving_mutant::uma ac que vale para todos os hooks ex hk 03 offline precisa de assercao por hook montar um hook sem afirmar nada sobre ele deixa mutantes vivos teste cada hook de leitura e escrita da feature",
+      "text": "Uma AC que vale para todos os hooks (ex.: HK-03 offline) precisa de asserção por hook. Montar um hook sem afirmar nada sobre ele deixa mutantes vivos; teste cada hook de leitura e escrita da feature.",
+      "signal": "surviving_mutant",
+      "scope": "src/features/**/usecases/*.test.tsx",
+      "status": "candidate",
+      "features": [
+        "deck-card-crud"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "deck-card-crud: validation.md round 3 M1-M3"
+      ],
+      "created": "2026-10-10T02:01:10Z",
+      "last_seen": "2026-10-10T02:01:10Z"
+    }
+  ]
 }

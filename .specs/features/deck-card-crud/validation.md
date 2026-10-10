@@ -1,18 +1,18 @@
 # Deck & Card CRUD — Validation
 
-**Verdict**: FAIL
+**Verdict**: PASS
 **Risk**: HIGH (from spec)
 **Verifier**: independent sub-agent
-**Diff range**: `7e36c93..a2601a5`
+**Diff range**: `7e36c93..06a05de`
 **Date**: 2026-10-09
-**Round**: fix → re-verify 3 de 3 (final) — escalar ao usuário
+**Round**: 4 — F6 aprovado pelo usuário após o escalonamento do round 3
 
 ## Gate
 
 - **Command**: full gate (plan.md → Verification Commands): `npm test && npx tsc --noEmit && npx expo lint`
-- **Result**: 60 passed, 0 failed, 0 skipped (11 suites) @ `a2601a5`; `tsc --noEmit` exit 0; `expo lint` exit 0
+- **Result**: 60 passed, 0 failed, 0 skipped (11 suites) @ `06a05de` (round 4); `tsc --noEmit` exit 0; `expo lint` exit 0
 - **Estabilidade**: `npm test` executado 6 vezes seguidas na árvore real → 6/6 verdes (60/60 em todas). Nenhuma falha intermitente observada; o race de HK-03 (F4) não reapareceu.
-- **Test count**: 60 @ `a2601a5` (feature: 48 testes em `src/features/**`)
+- **Test count**: 60 @ `06a05de` (feature: 48 testes em `src/features/**`)
 - **Skips**: none
 
 ## Acceptance Criteria Evidence
@@ -39,7 +39,7 @@
 | CRD-08 | logs do cartão excluído intactos | `src/features/cards/repository.test.ts:191` — 2 logs; `:192` — todos com `cardId` do cartão | SPEC | ✅ |
 | HK-01 | toda leitura/escrita como hook | `src/features/decks/usecases/decks.test.tsx:48`–`:69` (list, item, create, update, remove); `src/features/cards/usecases/cards.test.tsx:63`–`:87` (list, item, create, update, remove) | SPEC | ✅ |
 | HK-02 | leituras montadas atualizam sem remontar (tabela) | baralho: `src/features/decks/usecases/decks.test.tsx:97` (criar → lista), `:103`/`:104` (atualizar → item + lista), `:109`/`:110` (excluir → item + lista); cartão: `src/features/cards/usecases/cards.test.tsx:101`/`:102` e `:107`/`:108` (criar/excluir → `cardCount` + lista), `:119`/`:120` (editar → item + lista), `:131`/`:132` (excluir baralho → cartões) | SPEC | ✅ |
-| HK-03 | offline: hooks de leitura **e** escrita executam, nada pausado | cartões: `src/features/cards/usecases/cards.test.tsx:153`/`:154` + `:167`/`:169` (useCards, useCard, useDecks, create/update/delete) ✅; baralhos: `src/features/decks/usecases/decks.test.tsx:118`–`:123` cobre só `useDecks` e `useCreateDeck`. `useDeck` é montado mas nunca afirmado; `useUpdateDeck` e `useDeleteDeck` nunca rodam offline → mutantes M1–M3 sobrevivem | SPEC | ❌ gap |
+| HK-03 | offline: hooks de leitura **e** escrita executam, nada pausado | cartões: `src/features/cards/usecases/cards.test.tsx:153`/`:154` + `:167`/`:169` (useCards, useCard, useDecks, create/update/delete) ✅; baralhos (F6, round 4): `src/features/decks/usecases/decks.test.tsx:119`–`:124` (`useDecks`/`useDeck` `isSuccess`, `fetchStatus` ≠ `"paused"`), `:132`–`:135` (create/update/delete `isSuccess`), `:136` (`realm.objects(Deck)` = `["Arte"]`); 5/5 execuções verdes | SPEC | ✅ |
 | HK-04 | erro exposto com `error.code` | `src/features/decks/usecases/decks.test.tsx:138` — `error?.code` `toBe("DECK_NAME_EMPTY")`; `src/features/cards/usecases/cards.test.tsx:183` — `toBe("CARD_FRONT_EMPTY")` | SPEC | ✅ |
 | HK-05 | objetos simples, legíveis após exclusão | `src/features/decks/usecases/decks.test.tsx:79` — `not.toBeInstanceOf(Realm.Object)`, `:84` — `kept.name`; `src/features/cards/usecases/cards.test.tsx:140`, `:146` | SPEC | ✅ |
 | HK-06 | após escrita rejeitada, leituras montadas iguais | `src/features/decks/usecases/decks.test.tsx:139` — `list.data` `toBe(before)`; `src/features/cards/usecases/cards.test.tsx:206`–`:208` — decks, list, item `toBe(before.*)` | SPEC | ✅ |
@@ -61,9 +61,9 @@
 
 | # | Location | Mutation | Killed |
 | --- | --- | --- | --- |
-| M1 | `src/features/decks/usecases/use-deck.ts:10` | `networkMode: "online"` no `useQuery` | ❌ survived (não equivalente: sonda offline → `item.isSuccess` nunca `true`) |
-| M2 | `src/features/decks/usecases/use-update-deck.ts:17` | `networkMode: "online"` no `useMutation` | ❌ survived (não equivalente: sonda offline → `mutateAsync` pausa, timeout 5 s) |
-| M3 | `src/features/decks/usecases/use-delete-deck.ts:14` | `networkMode: "online"` no `useMutation` | ❌ survived (não equivalente: sonda offline → timeout 5 s) |
+| M1 | `src/features/decks/usecases/use-deck.ts:10` | `networkMode: "online"` no `useQuery` | ✅ round 4 (HK-03 decks, asserção `item.isSuccess`) |
+| M2 | `src/features/decks/usecases/use-update-deck.ts:17` | `networkMode: "online"` no `useMutation` | ✅ round 4 (HK-03 decks, timeout 5 s) |
+| M3 | `src/features/decks/usecases/use-delete-deck.ts:14` | `networkMode: "online"` no `useMutation` | ✅ round 4 (HK-03 decks, timeout 5 s) |
 | M4 | `src/features/decks/usecases/use-decks.ts:10` | `networkMode: "online"` | ✅ (HK-03 decks + cards) |
 | M5 | `src/features/decks/usecases/use-create-deck.ts:13` | `networkMode: "online"` | ✅ (HK-03 decks) |
 | M6 | `src/features/cards/usecases/use-cards.ts:10` | `networkMode: "online"` | ✅ (HK-03 cards) |
@@ -80,8 +80,9 @@
 | M17 | `src/features/cards/repository.ts:59` | `push` → `unshift` | ✅ (CRD-01, CRD-02, HK-02) |
 | M18 | `src/features/decks/adapters.ts:9` | `?? undefined` → `?? ""` | ✅ (A-01) |
 | M19 | `src/features/cards/repository.ts:72` | edição também reescreve `dueDate` | ✅ (CRD-04) |
+| M20 | `src/lib/query-client.ts` | `mutations.networkMode` `"always"` → `"online"` | ✅ round 4 (HK-03 decks, timeout 5 s) |
 
-**Result**: 19 injected · 16 killed · 3 survived · 0 equivalent
+**Result**: 20 injected · 20 killed · 0 survived · 0 equivalent (round 4 re-aplicou M1–M5 e adicionou M20 em `scratchpad/verify4`; árvore real intocada)
 **Isolation**: worktree `verify-wt3` em `a2601a5` (scratchpad), `node_modules` por symlink; mutantes e sondas revertidos e worktree removida com `git worktree remove --force`; porcelain da árvore real igual à linha de base (só `validation.md` alterado).
 
 ## Amendments Reconciled
@@ -101,7 +102,7 @@ Não executado (sem telas nesta feature; HIGH sem UAT previsto no plan).
 - No drive-by changes, debug leftovers, secrets or disabled tests: ✅ (busca por `.only`, `.skip`, `xit(`, `console.log`, `debugger` em `src/features`, `src/lib`, `src/testing`: nenhum resultado)
 - Tests anchored and necessary: ✅, com a exceção de HK-03 em baralhos (ver Gaps)
 - Observações não bloqueantes:
-  1. `.specs/STATE.md` Handoff está desatualizado: diz "Verify PASS HIGH, verificação pelo autor com reset de contexto", o que não bate com os rounds de verificação independente nem com este FAIL. Atualizar no handoff.
+  1. ~~Handoff do `.specs/STATE.md` desatualizado~~ — atualizado no fechamento do round 4.
   2. INV-02 é exercitado só com operações de baralho (`repository.test.ts:235`–`:261`); operações de cartão aparecem no teste de INV-03 sem checar órfãos. O código de cartão não cria órfãos (`push` na mesma escrita), então é só adequação.
   3. `DeckInput.name` é obrigatório no update: para mudar só a descrição a tela precisa reenviar o nome atual. Compatível com DCK-04 ("name e/ou description"), mas vale registrar para as telas.
   4. Chaves cruzadas entre features são literais (`["cards"]` em `use-delete-deck.ts:18`, `["decks"]` em `use-create-card.ts:22`/`use-delete-card.ts:18`) para não importar entre features. Aceitável; se uma chave mudar, a invalidação quebra sem aviso de tipo.
@@ -109,4 +110,7 @@ Não executado (sem telas nesta feature; HIGH sem UAT previsto no plan).
 
 ## Gaps & Fix Tasks
 
-1. **HK-03 (baralhos), mutantes M1–M3 sobrevivem.** O teste `src/features/decks/usecases/decks.test.tsx:114`–`:125` só afirma `useDecks` e `useCreateDeck` offline. Um `networkMode: "online"` por hook em `useDeck`, `useUpdateDeck` ou `useDeleteDeck` pausa o hook offline (confirmado por sonda: item não chega a `isSuccess`; update/delete dão timeout) e a suíte segue verde. Correção sugerida: estender o teste HK-03 de baralhos para montar com um id existente, esperar `item.isSuccess` com `fetchStatus` diferente de `"paused"` e executar `update` e `remove` offline até `isSuccess`. É o mesmo padrão de F5 para cartões. → F6 (proposto). **Este é o round 3 de 3: escalar ao usuário em vez de abrir outro ciclo automático.**
+Nenhum gap bloqueante após o round 4.
+
+- Resolvido: HK-03 de baralhos (round 3, M1–M3) → F6 `06a05de`; M1–M3 mortos.
+- Não bloqueante: M2, M3, M5 e M20 morrem por timeout de 5 s, não por asserção. A falha não diz qual mutação pausou. Melhoria opcional: checar `isPaused === false` ou usar um timeout curto por `mutateAsync`.

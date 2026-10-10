@@ -373,7 +373,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - SPEC HK-03 · integration — `onlineManager.setOnline(false)` → `useDecks`/`useDeck` chegam a `isSuccess` sem `fetchStatus` `"paused"`; `useCreateDeck`, `useUpdateDeck`, `useDeleteDeck` concluem
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done (06a05de)
 
 ## Execution Waves
 
