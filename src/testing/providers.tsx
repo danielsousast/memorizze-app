@@ -12,9 +12,10 @@ export async function renderHookWithProviders<Result>(
 ) {
   const queryClient = createQueryClient();
   // gcTime: Infinity keeps React Query from scheduling timers that hold Jest open.
+  const { queries, mutations } = queryClient.getDefaultOptions();
   queryClient.setDefaultOptions({
-    ...queryClient.getDefaultOptions(),
-    queries: { ...queryClient.getDefaultOptions().queries, gcTime: Infinity },
+    queries: { ...queries, gcTime: Infinity },
+    mutations: { ...mutations, gcTime: Infinity },
   });
 
   function Wrapper({ children }: { children: ReactNode }) {
