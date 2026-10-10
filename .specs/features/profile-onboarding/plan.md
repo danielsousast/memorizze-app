@@ -265,7 +265,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · tela — selo `N cartões` de ENT-02 do M3 e navegação para `/study` seguem iguais
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T8 — Aba Perfil mostra quem estuda, desde quando e a meta do dia
 

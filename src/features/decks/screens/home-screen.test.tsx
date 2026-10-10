@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { act, fireEvent, screen, waitFor, within } from "expo-router/testing-library";
 import { StyleSheet, Text } from "react-native";
 import Realm, { BSON } from "realm";
@@ -54,10 +55,13 @@ describe("HomeScreen", () => {
     });
   }
 
-  it("HOME-01 shows today's long date and the greeting", async () => {
+  it("HOM-01 shows today's long date and greets the profile by name", async () => {
+    realm.write(() =>
+      realm.create(Profile, { name: "Marina", dailyGoal: 20, createdAt: new Date() }),
+    );
     const rendered = await renderRouterWithProviders(routes, realm);
     expect(screen.getByText(formatLongDate(new Date()))).toBeTruthy();
-    expect(screen.getByText("Olá")).toBeTruthy();
+    expect(await screen.findByText("Olá, Marina")).toBeTruthy();
     await rendered.unmount();
   });
 
@@ -181,7 +185,7 @@ describe("HomeScreen", () => {
     for (const n of ["3", "4", "5"]) cards().create(b.id, { front: n, back: n });
     const rendered = await renderRouterWithProviders(routes, realm);
     expect(await screen.findByRole("button", { name: "Estudar tudo" })).toBeTruthy();
-    expect(within(screen.getByTestId("study-all")).getByText("5 cartões")).toBeTruthy();
+    expect(within(screen.getByTestId("streak-card")).getByText("5 cartões")).toBeTruthy();
     await rendered.unmount();
   });
 
@@ -190,7 +194,7 @@ describe("HomeScreen", () => {
     cards().create(a.id, { front: "1", back: "1" });
     const rendered = await renderRouterWithProviders(routes, realm);
     await screen.findByRole("button", { name: "Estudar tudo" });
-    expect(within(screen.getByTestId("study-all")).getByText("1 cartão")).toBeTruthy();
+    expect(within(screen.getByTestId("streak-card")).getByText("1 cartão")).toBeTruthy();
     await rendered.unmount();
   });
 
@@ -200,7 +204,7 @@ describe("HomeScreen", () => {
     postpone();
     const rendered = await renderRouterWithProviders(routes, realm);
     await screen.findByRole("button", { name: "Estudar tudo" });
-    expect(within(screen.getByTestId("study-all")).queryByText(/cartão|cartões/)).toBeNull();
+    expect(within(screen.getByTestId("streak-card")).queryByText(/cartão|cartões/)).toBeNull();
     await rendered.unmount();
   });
 
@@ -208,6 +212,46 @@ describe("HomeScreen", () => {
     const rendered = await renderRouterWithProviders(routes, realm);
     await screen.findByText("Nenhum baralho ainda");
     expect(screen.queryByRole("button", { name: "Estudar tudo" })).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("HOM-06 puts Estudar tudo inside the streak card only with decks", async () => {
+    decks().create({ name: "A" });
+    const rendered = await renderRouterWithProviders(routes, realm);
+    const card = await screen.findByTestId("streak-card");
+    expect(within(card).getByRole("button", { name: "Estudar tudo" })).toBeTruthy();
+    await rendered.unmount();
+  });
+
+  it("HOM-06 has no Estudar tudo in the card without decks", async () => {
+    const rendered = await renderRouterWithProviders(routes, realm);
+    expect(await screen.findByText("Nenhum baralho ainda")).toBeTruthy();
+    expect(
+      within(screen.getByTestId("streak-card")).queryByRole("button", { name: "Estudar tudo" }),
+    ).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("HOM-07 refreshes streak and reviews when coming back from study", async () => {
+    decks().create({ name: "A" });
+    const rendered = await renderRouterWithProviders(routes, realm);
+    expect(await screen.findByText("0 de 20 revisões")).toBeTruthy();
+    await fireEvent.press(await screen.findByRole("button", { name: "Estudar tudo" }));
+    await waitFor(() => expect(rendered).toHavePathname("/study"));
+    await act(async () =>
+      realm.write(() => {
+        realm.create(ReviewLog, {
+          cardId: new BSON.ObjectId(),
+          deckId: new BSON.ObjectId(),
+          reviewedAt: new Date(),
+          grade: 3,
+        });
+      }),
+    );
+    await act(async () => router.back());
+    await waitFor(() => expect(rendered).toHavePathname("/"));
+    expect(await screen.findByText("1 de 20 revisões")).toBeTruthy();
+    expect(screen.getByText("Você já estudou hoje")).toBeTruthy();
     await rendered.unmount();
   });
 
