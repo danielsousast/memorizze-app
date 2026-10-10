@@ -85,9 +85,16 @@ describe("StudyScreen answering", () => {
     const rendered = await open(deck.id);
     await reveal();
     const bom = await screen.findByRole("button", { name: /^Bom, / });
+    // Two taps before React re-renders are concurrent by design, so RNTL's own act()
+    // calls overlap. Silence only that warning for this test.
+    const consoleError = console.error;
+    jest.spyOn(console, "error").mockImplementation((message, ...rest) => {
+      if (!String(message).includes("overlapping act()")) consoleError(message, ...rest);
+    });
+    const { onClick: onPress } = bom.props;
     await act(async () => {
-      fireEvent.press(bom);
-      fireEvent.press(bom);
+      onPress();
+      onPress();
     });
     await screen.findByText("b");
     expect(logs().length).toBe(1);

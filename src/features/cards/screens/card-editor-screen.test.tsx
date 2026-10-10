@@ -165,9 +165,10 @@ describe("CardEditorScreen (create)", () => {
     await screen.findByText("Novo cartão");
     await fill("a", "b");
     const save = screen.getByRole("button", { name: "Salvar" });
+    const { onClick: onPress } = save.props;
     await act(async () => {
-      fireEvent.press(save);
-      fireEvent.press(save);
+      onPress();
+      onPress();
     });
     await waitFor(() => expect(rendered).toHavePathname(`/decks/${deckId}`));
     expect(cardCount()).toBe(1);
