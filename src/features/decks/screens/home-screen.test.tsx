@@ -1,6 +1,6 @@
 import { act, fireEvent, screen, waitFor, within } from "expo-router/testing-library";
 import { StyleSheet, Text } from "react-native";
-import Realm from "realm";
+import Realm, { BSON } from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
 import { formatLongDate } from "@/domain/dates";
@@ -217,5 +217,85 @@ describe("HomeScreen", () => {
     await fireEvent.press(await screen.findByRole("button", { name: "Estudar tudo" }));
     expect(rendered).toHavePathname("/study");
     await rendered.unmount();
+  });
+
+  describe("streak card", () => {
+    const log = (daysAgo: number, n = 1) =>
+      realm.write(() => {
+        for (let i = 0; i < n; i++) {
+          realm.create(ReviewLog, {
+            cardId: new BSON.ObjectId(),
+            deckId: new BSON.ObjectId(),
+            reviewedAt: new Date(Date.now() - daysAgo * day),
+            grade: 3,
+          });
+        }
+      });
+    const setGoal = (dailyGoal: number) =>
+      realm.write(() =>
+        realm.create(Profile, {
+          name: "Marina",
+          dailyGoal,
+          createdAt: new Date(),
+        }),
+      );
+
+    it("HOM-02 shows the streak count for consecutive days", async () => {
+      log(2);
+      log(1);
+      log(0);
+      const rendered = await renderRouterWithProviders(routes, realm);
+      expect(await screen.findByText("3 dias seguidos")).toBeTruthy();
+      await rendered.unmount();
+    });
+
+    it("HOM-02 uses the singular and shows the card without decks", async () => {
+      log(0);
+      const rendered = await renderRouterWithProviders(routes, realm);
+      expect(await screen.findByText("1 dia seguido")).toBeTruthy();
+      expect(screen.getByText("Nenhum baralho ainda")).toBeTruthy();
+      await rendered.unmount();
+    });
+
+    it("HOM-03 shows the subtitle for no streak", async () => {
+      const rendered = await renderRouterWithProviders(routes, realm);
+      expect(await screen.findByText("Sua sequência começa no primeiro estudo")).toBeTruthy();
+      await rendered.unmount();
+    });
+
+    it("HOM-03 invites to study today when the streak is open", async () => {
+      log(2);
+      log(1);
+      const rendered = await renderRouterWithProviders(routes, realm);
+      expect(await screen.findByText("Estude hoje para chegar a 3")).toBeTruthy();
+      await rendered.unmount();
+    });
+
+    it("HOM-03 confirms that the user already studied today", async () => {
+      log(1);
+      log(0);
+      const rendered = await renderRouterWithProviders(routes, realm);
+      expect(await screen.findByText("Você já estudou hoje")).toBeTruthy();
+      await rendered.unmount();
+    });
+
+    it("HOM-04 shows the daily goal progress", async () => {
+      setGoal(30);
+      log(0, 18);
+      const rendered = await renderRouterWithProviders(routes, realm);
+      expect(await screen.findByText("18 de 30 revisões")).toBeTruthy();
+      expect(screen.getByText("Meta diária")).toBeTruthy();
+      const bar = screen.getByTestId("goal-progress-bar");
+      expect(StyleSheet.flatten(bar.props.style).width).toBe("60%");
+      await rendered.unmount();
+    });
+
+    it("THM-01 paints the card with the dark surface in dark mode", async () => {
+      scheme().mockReturnValue("dark");
+      const rendered = await renderRouterWithProviders(routes, realm);
+      const card = await screen.findByTestId("streak-card");
+      expect(StyleSheet.flatten(card.props.style).backgroundColor).toBe(darkColors.surface);
+      await rendered.unmount();
+    });
   });
 });

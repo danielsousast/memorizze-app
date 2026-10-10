@@ -12,6 +12,8 @@ import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/the
 
 import { useDecks, type Deck } from "@/features/decks";
 
+import { StreakCard } from "./streak-card";
+
 function openCreate() {
   router.push("/decks/new");
 }
@@ -73,6 +75,7 @@ export function HomeScreen() {
     return (
       <Screen testID="home-screen">
         {header}
+        <StreakCard />
         <View style={styles.empty}>
           <Text style={[typography.title, { color: colors.text }]}>Nenhum baralho ainda</Text>
           <Text style={[typography.body, styles.emptyText, { color: colors.text2 }]}>
@@ -96,6 +99,7 @@ export function HomeScreen() {
         ListHeaderComponent={
           <>
             {header}
+            <StreakCard />
             <View testID="study-all" style={styles.study}>
               <Button label="Estudar tudo" onPress={() => router.push("/study")} />
               {totalDue > 0 ? (

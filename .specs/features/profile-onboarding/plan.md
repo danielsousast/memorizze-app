@@ -249,7 +249,7 @@ Mutações sugeridas ao verificador:
   - SPEC THM-01 · tela — esquema escuro → fundo do cartão `darkColors.surface`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T7 — Início cumprimenta pelo nome, leva `Estudar tudo` no cartão e se atualiza ao voltar
 
