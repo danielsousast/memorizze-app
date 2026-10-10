@@ -115,12 +115,18 @@ describe("DeckFormScreen", () => {
     const rendered = await openNew();
     await fireEvent.changeText(screen.getByLabelText("Nome"), "Física");
     const { onClick: onPress } = screen.getByRole("button", { name: "Salvar" }).props;
+    const write = jest.spyOn(realm, "write");
     await act(async () => {
       onPress();
       onPress();
     });
     await waitFor(() => expect(rendered).not.toHavePathname("/decks/new"));
     expect(realm.objects(Deck)).toHaveLength(1);
+    expect(write).toHaveBeenCalledTimes(1);
+    // The duplicate-name rule would reject a second attempt before it writes, so
+    // count the mutations themselves: the busy guard must stop the second one.
+    expect(rendered.queryClient.getMutationCache().getAll()).toHaveLength(1);
+    expect(screen.queryByText("Já existe um baralho com esse nome.")).toBeNull();
     await rendered.unmount();
   });
 

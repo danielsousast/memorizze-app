@@ -351,7 +351,7 @@ Mutações sugeridas ao verificador:
   - SPEC DFM-06 · screen — dois `press` em `Salvar` no mesmo `act` → 1 baralho no Realm, nenhuma mensagem `Já existe um baralho com esse nome.` e a gravação chamada uma só vez (`jest.spyOn(realm, "write")` conta 1 escrita de criação)
 - **Done when**: o teste falha com o guard `busy` removido (M5) e passa com ele; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### F2 — Alvos de toque das telas têm papel, rótulo e tamanho testados
 
