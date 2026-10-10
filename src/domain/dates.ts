@@ -36,6 +36,10 @@ export function formatLongDate(d: Date): string {
   return `${WEEKDAYS[d.getDay()]}, ${d.getDate()} de ${MONTHS[d.getMonth()]}`;
 }
 
+export function formatMonthYear(d: Date): string {
+  return `${MONTHS[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
 export function startOfLocalDay(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }

@@ -1,6 +1,6 @@
 import { createRandom } from "@/testing/random";
 
-import { addLocalDays, endOfLocalDay, formatLongDate, isDue, startOfLocalDay } from "./dates";
+import { addLocalDays, endOfLocalDay, formatLongDate, formatMonthYear, isDue, startOfLocalDay } from "./dates";
 
 describe("endOfLocalDay", () => {
   it("returns 23:59:59.999 of the local day (DAT-01)", () => {
@@ -71,5 +71,12 @@ describe("startOfLocalDay and addLocalDays", () => {
     expect(addLocalDays(new Date(2026, 11, 31), 1)).toEqual(new Date(2027, 0, 1));
     expect(addLocalDays(new Date(2026, 9, 10), -10)).toEqual(new Date(2026, 8, 30));
     expect(addLocalDays(new Date(2026, 9, 10, 8, 30), 0)).toEqual(new Date(2026, 9, 10, 8, 30));
+  });
+});
+
+describe("formatMonthYear", () => {
+  it("writes the month in full and the year (PRF-01)", () => {
+    expect(formatMonthYear(new Date(2026, 2, 15))).toBe("março de 2026");
+    expect(formatMonthYear(new Date(2025, 11, 31))).toBe("dezembro de 2025");
   });
 });
