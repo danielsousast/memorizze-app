@@ -338,7 +338,7 @@ Mutações sugeridas ao verificador:
   - SPEC DECK-08 · screen — toque no cartão → `/cards/<cardId>/edit`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

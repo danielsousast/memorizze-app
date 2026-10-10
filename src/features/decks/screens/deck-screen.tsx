@@ -1,12 +1,15 @@
 import { router } from "expo-router";
+import { useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Badge } from "@/components/badge";
+import { Fab } from "@/components/fab";
 import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
+import { TextField } from "@/components/text-field";
 import { cardStage, stageLabel } from "@/domain/stage";
-import { plural } from "@/domain/text";
+import { matches, plural } from "@/domain/text";
 import { useCards, type Card } from "@/features/cards";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
@@ -34,7 +37,9 @@ export function DeckScreen({ deckId }: Props) {
 function DeckDetail({ deck }: { deck: Deck }) {
   const { colors } = useTheme();
   const { data: cards } = useCards(deck.id);
-  const rows = cards ? [...cards].reverse() : undefined;
+  const [query, setQuery] = useState("");
+  const all = cards ? [...cards].reverse() : undefined;
+  const rows = all?.filter((c) => matches(query, c.front, c.back));
   const matureCount = cards ? cards.filter((c) => cardStage(c) === "mature").length : 0;
 
   const header = (
@@ -54,10 +59,13 @@ function DeckDetail({ deck }: { deck: Deck }) {
         {deck.dueCount > 0 ? <Badge tone="accent" text={`${deck.dueCount} para hoje`} /> : null}
         {matureCount > 0 ? <Badge tone="outline" text={`${matureCount} maduros`} /> : null}
       </View>
-      {rows && rows.length > 0 ? (
-        <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
-          Cartões
-        </Text>
+      {all && all.length > 0 ? (
+        <>
+          <TextField label="Buscar cartões" value={query} onChangeText={setQuery} />
+          <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
+            Cartões
+          </Text>
+        </>
       ) : null}
     </View>
   );
@@ -90,15 +98,22 @@ function DeckDetail({ deck }: { deck: Deck }) {
         keyExtractor={(card) => card.id}
         ListHeaderComponent={header}
         renderItem={({ item }) => <CardRow card={item} />}
+        keyboardShouldPersistTaps="handled"
         ListEmptyComponent={
-          rows ? (
+          all ? (
             <Text style={[typography.body, styles.empty, { color: colors.text2 }]}>
-              Nenhum cartão ainda
+              {all.length === 0 ? "Nenhum cartão ainda" : "Nenhum cartão encontrado"}
             </Text>
           ) : null
         }
         contentContainerStyle={styles.list}
       />
+      <View style={styles.fab}>
+        <Fab
+          label="Adicionar cartão"
+          onPress={() => router.push(`/decks/${deck.id}/cards/new`)}
+        />
+      </View>
     </Screen>
   );
 }
@@ -107,8 +122,10 @@ function CardRow({ card }: { card: Card }) {
   const { colors } = useTheme();
   const stage = cardStage(card);
   return (
-    <View
+    <Pressable
       testID="card-row"
+      accessibilityRole="button"
+      onPress={() => router.push(`/cards/${card.id}/edit`)}
       style={[styles.row, { backgroundColor: colors.surface, borderColor: colors.border }]}
     >
       <View style={styles.rowText}>
@@ -124,7 +141,7 @@ function CardRow({ card }: { card: Card }) {
         </Text>
       </View>
       <Badge tone={stage === "new" ? "accent" : "neutral"} text={stageLabel[stage]} />
-    </View>
+    </Pressable>
   );
 }
 
@@ -143,7 +160,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  list: { paddingHorizontal: screenMargin, paddingBottom: spacing.xl },
+  list: { paddingHorizontal: screenMargin, paddingBottom: sizes.fab + spacing.xxxl },
+  fab: { position: "absolute", right: screenMargin, bottom: screenMargin },
   headerContent: { gap: spacing.xl, paddingBottom: spacing.lg },
   titleBlock: { gap: spacing.sm },
   badges: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },

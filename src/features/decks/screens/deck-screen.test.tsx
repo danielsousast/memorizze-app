@@ -35,6 +35,9 @@ const models = [Profile, Deck, Card, ReviewLog] as unknown as Realm.ObjectClass[
 const routes = {
   index: () => <Text>Início-home</Text>,
   "decks/[deckId]/index": DeckRoute,
+  "decks/[deckId]/cards/new": () => <Text>Editor-novo</Text>,
+  "decks/[deckId]/edit": () => <Text>Form-editar</Text>,
+  "cards/[cardId]/edit": () => <Text>Editor-editar</Text>,
 };
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -137,6 +140,53 @@ describe("DeckScreen", () => {
     expect(stages).toEqual(["Novo", "Aprendendo", "Maduro"]);
     await rendered.unmount();
   });
+
+  it("DECK-04 search filters by front or back ignoring case and accents", async () => {
+    const deck = seedDeck();
+    seedCard(deck.id, "forget", "esquecer");
+    seedCard(deck.id, "easy", "fácil");
+    seedCard(deck.id, "other", "outro");
+    const rendered = await open(deck.id);
+    const field = await screen.findByLabelText("Buscar cartões");
+    const fronts = () => screen.getAllByTestId("card-front").map((n) => n.props.children);
+    await fireEvent.changeText(field, "ESQUE");
+    expect(fronts()).toEqual(["forget"]);
+    await fireEvent.changeText(field, "facil");
+    expect(fronts()).toEqual(["easy"]);
+    await fireEvent.changeText(field, "  ");
+    expect(fronts()).toEqual(["other", "easy", "forget"]);
+    await fireEvent.changeText(field, "");
+    expect(fronts()).toHaveLength(3);
+    await rendered.unmount();
+  });
+
+  it("DECK-05 search without results shows not-found text", async () => {
+    const deck = seedDeck();
+    seedCard(deck.id, "a", "b");
+    const rendered = await open(deck.id);
+    await fireEvent.changeText(await screen.findByLabelText("Buscar cartões"), "zzz");
+    expect(screen.getByText("Nenhum cartão encontrado")).toBeTruthy();
+    expect(screen.queryByText("Nenhum cartão ainda")).toBeNull();
+    await rendered.unmount();
+  });
+
+  it("DECK-07 add card button opens the editor in create mode", async () => {
+    const deck = seedDeck();
+    const rendered = await open(deck.id);
+    await fireEvent.press(await screen.findByRole("button", { name: "Adicionar cartão" }));
+    expect(rendered).toHavePathname(`/decks/${deck.id}/cards/new`);
+    await rendered.unmount();
+  });
+
+  it("DECK-08 pressing a card opens the editor in edit mode", async () => {
+    const deck = seedDeck();
+    const card = seedCard(deck.id, "a", "b");
+    const rendered = await open(deck.id);
+    await fireEvent.press(await screen.findByText("a"));
+    expect(rendered).toHavePathname(`/cards/${card.id}/edit`);
+    await rendered.unmount();
+  });
+
 
   it("DECK-06 empty deck shows empty state and no search field", async () => {
     const deck = seedDeck();
