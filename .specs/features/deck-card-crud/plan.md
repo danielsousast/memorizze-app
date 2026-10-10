@@ -336,6 +336,32 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
 - **Gate**: full
 - **Status**: [x] done
 
+### F4 — Teste HK-03 de baralhos sem corrida
+
+- **Covers**: HK-03
+- **Depends on**: none
+- **Risk**: inherit
+- **Touches**: `src/features/decks/usecases/decks.test.tsx`
+- **Change**: só teste; `create.isSuccess` lido via `waitFor` após o `act`.
+- **Tests**:
+  - SPEC HK-03 · integration — mesmo teste, estável em execuções repetidas
+- **Done when**: tests above pass; quick gate green
+- **Gate**: quick
+- **Status**: [ ] pending
+
+### F5 — Hooks de cartão rodam offline
+
+- **Covers**: HK-03
+- **Depends on**: none
+- **Risk**: inherit
+- **Touches**: `src/features/cards/usecases/cards.test.tsx`
+- **Change**: só teste.
+- **Tests**:
+  - SPEC HK-03 · integration — `onlineManager.setOnline(false)` → `useCards`/`useCard` chegam a `isSuccess` sem `fetchStatus` `"paused"`; `useCreateCard`, `useUpdateCard`, `useDeleteCard` concluem
+- **Done when**: tests above pass; quick gate green
+- **Gate**: quick
+- **Status**: [ ] pending
+
 ## Execution Waves
 
 - **Wave 1**: T1 ∥ T2
@@ -344,6 +370,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
 - **Wave 4**: T7
 - **Wave 5**: T8
 - **Wave 6**: F1 ∥ F2 ∥ F3
+- **Wave 7**: F4 ∥ F5
 
 ## Deferred
 
