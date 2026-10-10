@@ -7,12 +7,12 @@ Expo app with the data layer for decks, cards and the profile, and the screens t
 | Part | Path | Contents |
 | --- | --- | --- |
 | Root layout | `src/app/_layout.tsx` | `RealmErrorBoundary` → `RealmProvider` → `QueryClientProvider` → `RootStack` (`src/navigation/root-stack.tsx`) |
-| Routes | `src/app/` | Thin files that read params and render a screen: `welcome`, `edit-name` (modal), `(tabs)/index` and `(tabs)/profile` (tab group, `Tabs` from `expo-router/js-tabs`), `decks/[deckId]/index`, `study` and `decks/[deckId]/study` (study session), and four more modals (`decks/new`, `decks/[deckId]/edit`, `decks/[deckId]/cards/new`, `cards/[cardId]/edit`), declared with `presentation: "modal"` in `RootStack`. `RootStack` uses `Stack.Protected`: `welcome` exists only without a profile, everything else only with one. Routes not declared there (`study`, `decks/[deckId]`, `decks/[deckId]/study`) are auto-registered and not guarded |
+| Routes | `src/app/` | Thin files that read params and render a screen: `welcome`, `edit-name` (modal), `settings` (Ajustes, opened by the Profile gear), `(tabs)/index` and `(tabs)/profile` (tab group, `Tabs` from `expo-router/js-tabs`), `decks/[deckId]/index`, `study` and `decks/[deckId]/study` (study session), and four more modals (`decks/new`, `decks/[deckId]/edit`, `decks/[deckId]/cards/new`, `cards/[cardId]/edit`), declared with `presentation: "modal"` in `RootStack`. `RootStack` uses `Stack.Protected`: `welcome` exists only without a profile, everything else only with one. Routes not declared there (`study`, `decks/[deckId]`, `decks/[deckId]/study`) are auto-registered and not guarded |
 | Screens | `src/features/<feature>/screens/` | One `<name>-screen.tsx` per screen ([AD-003](.specs/STATE.md#ad-003)); they use only the public hooks of `@/features/*` |
-| Shared UI | `src/components/` | `Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon` (`expo-symbols`), `Screen`, `NotFound`; one file each, theme tokens, accessibility role and label, touch target ≥ 44 |
-| Database | `src/db/` | Realm schemas (Profile, Deck, Card, ReviewLog), `realmConfig`, `RealmErrorBoundary` |
+| Shared UI | `src/components/` | `Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon` (`expo-symbols`), `Screen`, `NotFound`, `SegmentedControl`, `SettingsRow`; one file each, theme tokens, accessibility role and label, touch target ≥ 44 |
+| Database | `src/db/` | Realm schemas (Profile, Deck, Card, ReviewLog), `realmConfig` (`schemaVersion` 4; `onMigration` fills `Profile.themePreference = "system"` and `newCardsPerDay = 10` on files older than v4), `RealmErrorBoundary` |
 | Query client | `src/lib/query-client.ts` | `createQueryClient()`: `networkMode: "always"`, `retry: false`, `staleTime: Infinity` |
-| Domain | `src/domain/` | Pure, no Realm or React: `errors.ts` (`AppError<C>` with a typed `code`), `dates.ts` (end of local day, `isDue`, long pt-BR date), `stage.ts` (`new` / `learning` / `mature`), `text.ts` (initials, plural, accent-insensitive search); `schedule.ts` (SM-2, interval label), `streak.ts` (current streak), `session.ts` (in-memory session progress); `dates.ts` also has `startOfLocalDay` and `addLocalDays` |
+| Domain | `src/domain/` | Pure, no Realm or React: `errors.ts` (`AppError<C>` with a typed `code`), `dates.ts` (end of local day, `isDue`, long pt-BR date), `stage.ts` (`new` / `learning` / `mature`), `text.ts` (initials, plural, accent-insensitive search); `schedule.ts` (SM-2, interval label), `streak.ts` (current streak), `session.ts` (in-memory session progress); `dates.ts` also has `startOfLocalDay` and `addLocalDays`; `preferences.ts` (theme and new-cards-limit options, `colorSchemeFor`), `new-cards.ts` (`selectQueue`, the daily new-card budget) |
 | Features | `src/features/decks/`, `src/features/cards/`, `src/features/study/` | Repositories and React Query hooks (see [Feature modules](#feature-modules)) |
 | Path alias | `tsconfig.json` | `@/*` → `./src/*`, `@/assets/*` → `./assets/*` |
 | Compiler | `app.json` | `typedRoutes` and `reactCompiler` experiments on |
@@ -67,7 +67,7 @@ export function useCreateDeck() {
 | Create or delete card (changes `cardCount`) | `["cards"]`, `["decks"]` |
 | Edit card | `["cards"]` |
 | Answer a card (updates the card, creates a `ReviewLog`) | `["cards"]`, `["decks"]`, `["study"]`, `["profile"]` |
-| Create or update profile (name, daily goal) | `["profile"]` |
+| Create or update profile (name, daily goal, theme, new-cards limit) | `["profile"]` |
 
 `ReviewLog` is never touched by deck or card operations. It survives the deletion of its card or deck.
 
@@ -76,6 +76,13 @@ export function useCreateDeck() {
 `study` ([study-session spec](.specs/features/study-session/spec.md)) reads the due queue and writes answers. `repository.answer` applies `schedule()` and creates the `ReviewLog` in one `realm.write`; the deck of a card comes from the backlink (`linkingObjects(Deck, "cards")`), so the schema has no `deck` field on `Card`.
 
 The queue is a snapshot: `study` queries use `gcTime: 0` so each session opens with a fresh read, and `StudyScreen` keeps the first read in state so later invalidations do not change the queue mid-session (QUE-02). One route per scope (`/study`, `/decks/<id>/study`) switches phase: loading, not found, empty, studying, summary. The summary replaces the session in the same route, so going back leaves it.
+
+## Preferences
+
+`Profile` holds two preferences ([settings spec](.specs/features/settings-and-preferences/spec.md)): `themePreference` (`"system" | "light" | "dark"`) and `newCardsPerDay` (int; `0` = no limit, mapped to `null` in the domain). `ProfileRepository.update` rejects values outside the option lists with `PROFILE_PREFERENCE_INVALID`, writing nothing.
+
+- **Theme.** `useApplyTheme` (`src/navigation/use-apply-theme.ts`), mounted in `RootStack`, calls `Appearance.setColorScheme` in a layout effect: `"light"`/`"dark"` force the scheme, `"unspecified"` hands it back to the system (also with no profile, so Sair restores the system theme). `useTheme` and every `useColorScheme` caller are unchanged.
+- **Daily new-card budget.** `StudyRepository.queue` (all decks or one) reads the oldest profile and applies `selectQueue` after the usual order (`dueDate`, `createdAt`). A card is "introduced today" when its first `ReviewLog` ever falls on the current local day; one budget covers all decks. Non-new cards are never cut, a new card introduced today (and failed) stays free, and no profile or limit `0` keeps every due card. The "due today" counts on Home and Deck are unchanged.
 
 ## Planned Architecture
 
@@ -87,7 +94,7 @@ Source: [PROJECT-SPEC.md](PROJECT-SPEC.md) (draft v0.1). Partly implemented (Rea
 - `src/db/` schemas and repositories; screens reach the database only through hooks/repositories
 - `src/features/` (decks, cards, study, profile), `src/components/`, `src/theme/`
 - Streak and stats derived from `ReviewLog`, never stored
-- Light/dark theme following the system
+- Light/dark theme following the system, with an Automático/Claro/Escuro override (implemented, see [Preferences](#preferences))
 
 ## Documentation Drift
 
@@ -96,5 +103,4 @@ Source: [PROJECT-SPEC.md](PROJECT-SPEC.md) (draft v0.1). Partly implemented (Rea
 
 ## Open Architectural Questions
 
-- Limit of new cards per day (spec §13)
 - UI language: pt-BR only or pt-BR + en (spec §13)

@@ -160,8 +160,13 @@ describe("study repository", () => {
       setLimit(2);
       logFirst("An0", day(9, 8));
       logFirst("An0", day(10, 8));
+      realm.write(() => {
+        const card = realm.objects(Card).filtered("front == 'An0'")[0];
+        card.repetitions = 1;
+        card.dueDate = day(20);
+      });
 
-      expect(repo().queue()!).toHaveLength(2);
+      expect(repo().queue()!.map((c) => c.front)).toEqual(["An1", "An2"]);
     });
 
     it("NEW-04 a card introduced today and failed stays without spending budget", () => {

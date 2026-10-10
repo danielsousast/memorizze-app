@@ -28,9 +28,9 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Path | Contents |
 | --- | --- |
 | `src/app/` | Expo Router routes (`_layout.tsx`, `index.tsx`) |
-| `src/components/` | Shared accessible UI (`Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon`, `Screen`, `NotFound`, `ConfirmDialog`, `BottomSheet`, `Toast`/`ToastProvider`), one file per component, theme tokens only |
+| `src/components/` | Shared accessible UI (`Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon`, `Screen`, `NotFound`, `SegmentedControl`, `SettingsRow`, `ConfirmDialog`, `BottomSheet`, `Toast`/`ToastProvider`), one file per component, theme tokens only |
 | `src/db/` | Realm schemas, config and error boundary |
-| `src/domain/` | Pure logic; today only `errors.ts` (`AppError`) |
+| `src/domain/` | Pure logic (`schedule`, `streak`, `stats`, `preferences`, `new-cards`, ...); see [ARCHITECTURE.md](../ARCHITECTURE.md) |
 | `src/features/` | Feature modules (`decks`, `cards`): repository + React Query hooks, and `screens/` with one screen per file ([layout](../ARCHITECTURE.md#feature-modules)) |
 | `src/lib/` | App-wide setup (`query-client.ts`) |
 | `src/testing/` | Test helpers (`realm.ts`, `providers.tsx`, `random.ts`) |
@@ -70,7 +70,7 @@ CI: `.github/workflows/ci.yml` runs `npm run ci` on push to `main` and on pull r
 
 - 100% offline; no network calls.
 - Smooth with 1,000 cards in one deck.
-- Light/dark theme follows the system.
+- Light/dark theme follows the system unless the user picks Claro or Escuro in Ajustes.
 - Domain logic coverage ≥ 90% (PROJECT-SPEC §10).
 - Screens to implement match the PNGs in `design/`.
 

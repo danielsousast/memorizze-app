@@ -79,20 +79,12 @@
 
 
 ## Handoff
-- **Feature**: deck-menu-and-delete (F2, MEDIUM) feita e commitada; `npm run ci` sai 0 (525 testes), lint e `tsc` limpos, 5 mutações (1 sobreviveu, teste corrigido e agora detecta). Verificação pelo autor. F7 segue parcial (falta verificador independente e UAT)
-- **Where**: `src/features/decks/{repository.ts,usecases/use-reset-deck-progress.ts,screens/use-deck-screen.ts,screens/deck-screen.tsx}`, `.specs/features/deck-menu-and-delete/`
-- **Next step**: emenda em PROJECT-SPEC §2 e §13 (decisão 1), depois F5 `settings-and-preferences` (HIGH), depois F6. Rodar o skill `adaptive-spec-driven` primeiro. UAT em dispositivo pendente: F2 (folha 3c, diálogo 3d, redefinir, Editar na folha), F4, F7, F8
-- **Roteiro** (análise de `design/`, novos PNGs 3b, 3c, 3d, 5c, 7b, 9, 10, Componentes 2, ícone do app):
-  - F2 `deck-menu-and-delete` (MEDIUM, FEITA 2026-10-10): menu 3c em `BottomSheet` (Adicionar cartão, Redefinir progresso, Excluir baralho); excluir 3d em `ConfirmDialog`; toast "Baralho excluído"; novo método de repositório e hook `useResetDeckProgress`. Troca o `Alert` de `use-deck-screen.ts`
-  - F3 `deck-all-cards` (MEDIUM, FEITA): rota `decks/[deckId]/cards/index.tsx` (3b) com busca; Baralho (3) mostra só os 5 primeiros + "Ver todos >"; excluir cartão do editor passa a `ConfirmDialog`; checar 1.000 cartões
-  - F4 `study-onboarding-and-exit` (MEDIUM, FEITA): folha "Como responder" (5c) na 1ª sessão, flag persistida no `Profile` (migração Realm); sair da sessão em `ConfirmDialog`; conferir visual de 5a/5b/6/8
-  - F5 `settings-and-preferences` (HIGH): rota `/settings` (9) via engrenagem do Perfil; novo `Switch`, `SegmentedControl`, `SettingsRow`; schema com tema, lembrete, horário, novos por dia; `useTheme` com preferência; "novos por dia" altera a fila (RF4); lembrete com `expo-notifications` (talvez `daily-reminder` separada, HIGH)
-  - F6 `backup-restore` (HIGH): tela 10; `src/domain/backup.ts` (serializar, validar, versionar), exportar JSON (`expo-file-system` + `expo-sharing`), importar (`expo-document-picker`) substituindo tudo numa transação; data do último backup
-  - F7 `sign-out-wipe` (HIGH, PARCIAL 2026-10-10, ver `.specs/features/sign-out-wipe/`): botão Sair + `ConfirmDialog` 7b + `ProfileRepository.wipe()` (`deleteAll` numa transação) + `useSignOut`; volta à Boas-vindas (AD-004); falha mostra toast. Falta o atalho "Fazer backup antes" (depende da F6) e limpar preferências (F5).
-  - F8 `app-branding` (LOW, FEITA): ícone novo (iOS claro/escuro/tingido, Android adaptativo) em `app.json` e `assets/`; splash
-  - F9 `profile-redesign` (LOW, FEITA 2026-10-10; engrenagem adicionada, inerte até a F5 — `openSettings` em `use-profile-screen.ts`): "meta 30" e rótulo "Estudando desde março de 2026" já conferem; a engrenagem falta e só faz sentido com a rota `/settings` (F5), então entra em F5. Tiles de acerto removidos por decisão do usuário; `accuracy7`/`accuracy30` seguem em `repository.ts`/`interfaces.ts` sem uso na UI (sinalizado, não removido)
-- **Decisões pendentes do usuário**: nenhuma (1, 2, 3 e 5 resolvidas em AD-008; 4 resolvida antes)
-- **Notas**: `design/` tem PNGs novos e alterados sem commit; não entraram nos commits de F1. UAT de profile-stats em dispositivo segue pendente; o primeiro run do CI no GitHub exige `git push` com go-ahead
+- **Feature**: settings-and-preferences (F5, HIGH) T1..T5 feitas e commitadas; `npm run ci` sai 0 (588 testes), lint e `tsc` limpos, 7 mutações mortas. Verificação pelo autor (`validation.md`); falta verificador independente e UAT em dispositivo. Lembrete diário fica para `daily-reminder`
+- **Where**: `src/domain/{preferences,new-cards}.ts`, `src/db/{realm.ts,schemas/profile.ts}` (Realm 4), `src/features/{profile,study}/repository.ts`, `src/navigation/use-apply-theme.ts`, `src/components/{segmented-control,settings-row}.tsx`, `src/features/profile/screens/{settings-screen.tsx,use-settings-screen.ts}`, `src/app/settings.tsx`, `.specs/features/settings-and-preferences/`
+- **Next step**: verificador independente de settings-and-preferences, depois F6 `backup-restore` (HIGH) e `daily-reminder`. Rodar o skill `adaptive-spec-driven` primeiro. UAT em dispositivo pendente: F2, F4, F5, F7, F8
+- **Roteiro**: F1..F4, F8, F9 feitas (ver commits). F5 `settings-and-preferences` FEITA 2026-10-10 (tema Automático/Claro/Escuro, novos por dia 5..50 ou sem limite, orçamento diário na fila, rota `/settings`; `Appearance.setColorScheme` com `'unspecified'`). F6 `backup-restore` (HIGH): tela 10; `src/domain/backup.ts`, exportar JSON, importar substituindo tudo numa transação. F7 `sign-out-wipe` (HIGH, PARCIAL): o Sair já apaga preferências e devolve o tema ao sistema; falta "Fazer backup antes" (F6), verificador independente e UAT. `daily-reminder` (HIGH, nova): lembrete, horário, `Switch`, `expo-notifications`
+- **Decisões pendentes do usuário**: nenhuma
+- **Notas**: `design/` tem PNGs novos e alterados sem commit. NEW-09 lido como: cartão redefinido entra como novo dentro do orçamento e não conta como introduzido hoje. O primeiro run do CI no GitHub exige `git push` com go-ahead
 - **Open amendments**: none
-- **Blockers**: emenda do PROJECT-SPEC (decisão 1) para F5 e F6
+- **Blockers**: none
 - **Updated**: 2026-10-10

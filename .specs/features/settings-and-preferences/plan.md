@@ -2,7 +2,7 @@
 
 **Spec**: [spec.md](spec.md)
 **Risk**: HIGH (from spec)
-**Status**: Draft
+**Status**: Approved
 
 ## Approach
 
@@ -123,7 +123,7 @@ Domínio puro (`new-cards`, `preferences`) com tabelas e INVARIANT de 100 opera�
   - SPEC SET-04 · profile repository — valor inválido rejeitado sem gravar
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Componentes e aplicação do tema
 
@@ -170,7 +170,7 @@ Domínio puro (`new-cards`, `preferences`) com tabelas e INVARIANT de 100 opera�
 - **Tests**: none — documentation change only
 - **Done when**: `validate_state.py` sai 0
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

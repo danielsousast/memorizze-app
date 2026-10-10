@@ -111,4 +111,4 @@ Repositório (SOUT-02..04), domínio (SOUT-02), fluxo completo pelo `RootStack` 
 | Item | Reason | Where it goes |
 | --- | --- | --- |
 | Atalho "Fazer backup antes" | Depende da F6 | F6 |
-| Apagar preferências e tema | Não existem | F5 |
+| Apagar preferências e tema | Feito: moram no `Profile`, o wipe as apaga e `useApplyTheme` devolve o tema ao sistema (settings-and-preferences, THM-05) | F5 (feito) |
