@@ -2,7 +2,7 @@
 
 **Spec**: [spec.md](spec.md)
 **Risk**: HIGH (from spec)
-**Status**: Approved
+**Status**: Done (author verification; independent verifier and UAT pending)
 
 ## Approach
 
