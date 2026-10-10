@@ -2,20 +2,22 @@
 
 ## Current Architecture
 
-Expo app with the data layer for decks and cards. No screens beyond the router shell yet.
+Expo app with the data layer for decks and cards and the screens that use it: Home, Deck, Deck form and Card editor. Tab bar, study session and profile are not built yet.
 
 | Part | Path | Contents |
 | --- | --- | --- |
 | Root layout | `src/app/_layout.tsx` | `RealmErrorBoundary` → `RealmProvider` → `QueryClientProvider` → Expo Router `Stack` |
-| Home route | `src/app/index.tsx` | Placeholder screen |
+| Routes | `src/app/` | Thin files that read params and render a screen: `index`, `decks/[deckId]/index`, and four modals (`decks/new`, `decks/[deckId]/edit`, `decks/[deckId]/cards/new`, `cards/[cardId]/edit`), declared with `presentation: "modal"` in the root `Stack` |
+| Screens | `src/features/<feature>/screens/` | One `<name>-screen.tsx` per screen ([AD-003](.specs/STATE.md#ad-003)); they use only the public hooks of `@/features/*` |
+| Shared UI | `src/components/` | `Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon` (`expo-symbols`), `Screen`, `NotFound`; one file each, theme tokens, accessibility role and label, touch target ≥ 44 |
 | Database | `src/db/` | Realm schemas (Profile, Deck, Card, ReviewLog), `realmConfig`, `RealmErrorBoundary` |
 | Query client | `src/lib/query-client.ts` | `createQueryClient()`: `networkMode: "always"`, `retry: false`, `staleTime: Infinity` |
-| Domain errors | `src/domain/errors.ts` | `AppError<C>` with a typed `code`; pure, no Realm or React |
+| Domain | `src/domain/` | Pure, no Realm or React: `errors.ts` (`AppError<C>` with a typed `code`), `dates.ts` (end of local day, `isDue`, long pt-BR date), `stage.ts` (`new` / `learning` / `mature`), `text.ts` (initials, plural, accent-insensitive search) |
 | Features | `src/features/decks/`, `src/features/cards/` | Repositories and React Query hooks (see [Feature modules](#feature-modules)) |
 | Path alias | `tsconfig.json` | `@/*` → `./src/*`, `@/assets/*` → `./assets/*` |
 | Compiler | `app.json` | `typedRoutes` and `reactCompiler` experiments on |
 
-Navigation is file-based (Expo Router).
+Navigation is file-based (Expo Router). `Deck.dueCount` is derived at read time by the deck adapter (cards due by the end of the local day, using the repository's `now`); it is never stored. Screen tests use `renderRouterWithProviders` (`src/testing/router.tsx`) with an in-memory Realm and a real `QueryClient`.
 
 ## Feature modules
 

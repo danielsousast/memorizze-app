@@ -32,9 +32,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: deck-card-screens (HIGH) — telas Início, Baralho, Form de baralho e Editor de cartão; fecha o M2
-- **Where**: spec aprovado (com A-01); plan.md em Draft, validado (10 tasks, 4 waves), aguardando aprovação. deck-card-crud completa, commits locais em `main` sem push
-- **Next step**: aprovar o plano, depois Execute pela Wave 1 (T1 ∥ T3)
+- **Feature**: deck-card-screens (HIGH) — telas Início, Baralho, Form de baralho e Editor de cartão; fecha o M2 em código
+- **Where**: implementado e verificado (PASS na rodada 2, verificador independente, 52/52 ACs com evidência, 11/11 mutantes mortos, 179 testes). Commits locais em `main`, sem push. `validation.md` e `ARCHITECTURE.md` atualizados
+- **Next step**: UAT em development build (iOS e Android): foco em `Frente` (EDT-03), autofoco do Nome (DFM-01), gesto de voltar nos modais, `Alert` nativo, teclado, 44pt em layout real e visual contra `design/` claro e escuro. Depois, push/PR só com go-ahead explícito; então M3 (sessão de estudo)
 - **Open amendments**: none
 - **Blockers**: none
-- **Updated**: 2026-10-09
+- **Updated**: 2026-10-10

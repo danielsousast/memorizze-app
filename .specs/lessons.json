@@ -3,7 +3,7 @@
   "window_days": 60,
   "quarantine_threshold": 2,
   "schema": 1,
-  "next_id": 2,
+  "next_id": 5,
   "lessons": [
     {
       "id": "L-001",
@@ -22,6 +22,60 @@
       ],
       "created": "2026-10-10T02:01:10Z",
       "last_seen": "2026-10-10T02:01:10Z"
+    },
+    {
+      "id": "L-002",
+      "key": "ac_gap::uma ac transversal a11y offline tema exige assercao em cada tela ou hook que ela toca testar so o componente base deixa a unidade sem cobertura",
+      "text": "Uma AC transversal (A11Y, offline, tema) exige asserção em cada tela ou hook que ela toca; testar só o componente base deixa a unidade sem cobertura",
+      "signal": "ac_gap",
+      "scope": "src/features/**/screens",
+      "status": "candidate",
+      "features": [
+        "deck-card-screens"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "deck-card-screens: validation.md round 1, A11Y-01 (deck-screen.tsx card row)"
+      ],
+      "created": "2026-10-10T05:36:26Z",
+      "last_seen": "2026-10-10T05:36:26Z"
+    },
+    {
+      "id": "L-003",
+      "key": "surviving_mutant::teste de dupla pressao deve provar que a escrita ocorreu uma vez sem depender de regra de negocio que ja rejeita a duplicata",
+      "text": "Teste de dupla pressão deve provar que a escrita ocorreu uma vez, sem depender de regra de negócio que já rejeita a duplicata",
+      "signal": "surviving_mutant",
+      "scope": "src/features/**/screens",
+      "status": "candidate",
+      "features": [
+        "deck-card-screens"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "deck-card-screens: validation.md round 1, M5 (deck-form-screen busy guard)"
+      ],
+      "created": "2026-10-10T05:36:26Z",
+      "last_seen": "2026-10-10T05:36:26Z"
+    },
+    {
+      "id": "L-004",
+      "key": "surviving_mutant::toda normalizacao de entrada trim minusculas precisa de um teste que falhe sem ela com entrada so de espacos e com espacos nas pontas",
+      "text": "Toda normalização de entrada (trim, minúsculas) precisa de um teste que falhe sem ela, com entrada só de espaços e com espaços nas pontas",
+      "signal": "surviving_mutant",
+      "scope": "src/features/**/screens",
+      "status": "candidate",
+      "features": [
+        "deck-card-screens"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "deck-card-screens: validation.md round 1, M7 (deck-form-screen description trim)"
+      ],
+      "created": "2026-10-10T05:36:26Z",
+      "last_seen": "2026-10-10T05:36:26Z"
     }
   ]
 }
