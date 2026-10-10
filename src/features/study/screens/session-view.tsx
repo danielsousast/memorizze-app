@@ -1,4 +1,4 @@
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Button } from "@/components/button";
@@ -7,7 +7,12 @@ import { gradeLabel, intervalLabel, schedule, type Grade } from "@/domain/schedu
 import { answerSession, skipCurrent, startSession, type SessionState } from "@/domain/session";
 import { radii, screenMargin, sizes, spacing, tabularNums, typography, useTheme } from "@/theme";
 
+import { useCard } from "@/features/cards";
+
 import type { StudyCard } from "../interfaces";
+import { useAnswerCard } from "../usecases/use-answer-card";
+
+const SAVE_ERROR = "Não foi possível salvar a resposta. Tente de novo.";
 
 export type SessionAction =
   | { type: "answer"; updated: StudyCard; grade: Grade; now: Date }
@@ -30,11 +35,41 @@ type Props = { cards: StudyCard[] };
 export function SessionView({ cards }: Props) {
   const { colors } = useTheme();
   // The queue is a snapshot: started once from the first read (QUE-02).
-  const [state] = useReducer(sessionReducer, cards, (initial) => startSession(initial, new Date()));
-  const [revealed, setRevealed] = useState(false);
+  const [state, dispatch] = useReducer(sessionReducer, cards, (initial) => startSession(initial, new Date()));
+  const [revealedId, setRevealedId] = useState<string | null>(null);
   const card = state.queue[0];
   const position = state.completed + 1;
-  const reveal = () => setRevealed(true);
+  const revealed = card !== undefined && revealedId === card.id;
+  const reveal = () => setRevealedId(card?.id ?? null);
+  const answer = useAnswerCard();
+  const busy = useRef(false);
+  const [error, setError] = useState(false);
+  // QUE-05: a card deleted during the session is skipped without an answer.
+  const { data: stored } = useCard(card?.id ?? "");
+  useEffect(() => {
+    if (card && stored === null) {
+      dispatch({ type: "skip" });
+    }
+  }, [card, stored]);
+
+  function onAnswer(grade: Grade) {
+    if (busy.current || !card) return;
+    busy.current = true;
+    setError(false);
+    answer.mutate(
+      { cardId: card.id, grade },
+      {
+        onSuccess: (updated) => {
+          dispatch({ type: "answer", updated, grade, now: new Date() });
+          setRevealedId(null);
+        },
+        onError: () => setError(true),
+        onSettled: () => {
+          busy.current = false;
+        },
+      },
+    );
+  }
 
   const labels = useMemo(() => {
     if (!card) return [];
@@ -42,7 +77,20 @@ export function SessionView({ cards }: Props) {
     return grades.map((g) => intervalLabel(schedule(card, g, now).intervalDays));
   }, [card]);
 
-  if (!card) return null;
+  // Placeholder for the summary phase; T11 replaces it.
+  if (!card) {
+    const n = state.completed;
+    return (
+      <View style={styles.root}>
+        <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
+          Sessão concluída
+        </Text>
+        <Text style={[typography.button, { color: colors.text2 }]}>
+          {`${n} ${n === 1 ? "cartão revisto" : "cartões revistos"}`}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.root}>
@@ -117,6 +165,11 @@ export function SessionView({ cards }: Props) {
             <Text style={[typography.button, styles.center, { color: colors.text2 }]}>
               Como foi lembrar?
             </Text>
+            {error ? (
+              <Text accessibilityRole="alert" style={[typography.button, styles.center, { color: colors.grade.again.text }]}>
+                {SAVE_ERROR}
+              </Text>
+            ) : null}
             <View style={styles.answers}>
               {grades.map((g) => {
                 const tone = colors.grade[gradeTone[g]];
@@ -125,7 +178,8 @@ export function SessionView({ cards }: Props) {
                     key={g}
                     accessibilityRole="button"
                     accessibilityLabel={`${gradeLabel[g]}, ${labels[g]}`}
-                    onPress={() => {}} // T8 wires answering
+                    disabled={answer.isPending}
+                    onPress={() => onAnswer(g)}
                     style={[styles.answer, { backgroundColor: tone.background }]}
                   >
                     <Text style={[typography.button, { color: tone.text }]}>{gradeLabel[g]}</Text>
