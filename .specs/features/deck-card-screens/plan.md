@@ -169,7 +169,7 @@ Mutações sugeridas ao verificador:
   - INVARIANT INV-02 · unit — 1.000 pares aleatórios (`createRandom`, seed fixa) em ±400 dias → `isDue(d, n)` ⇔ (ano, mês, dia locais de `d`) ≤ (de `n`)
 - **Done when**: tests above pass; cobertura de `src/domain/` ≥ 90%; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T2 — Baralhos informam quantos cartões vencem hoje
 
