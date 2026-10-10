@@ -24,8 +24,8 @@
 - **useResetDeckProgress** (`usecases/use-reset-deck-progress.ts`): mutação; `onSuccess` invalida `deckKeys.all` e `["cards"]`.
 - **deckMessages**: `deleteDeckMessage(name, count)` devolve o texto completo de DEL-01; `deckSheetSubtitle(cardCount, dueCount)`.
 - **Icon**: novo `pencil` (`pencil` / `edit`) e `reset` (`arrow.counterclockwise` / `restart_alt`).
-- **useDeckScreen**: `menuOpen`, `openMenu`, `closeMenu`, `deleteOpen`, `cancelDelete`, `confirmDelete`, `sheetActions` (memo), `editDeck`, `reset`. Falhas mostram toast (MENU-04, DEL-04); sucesso de exclusão chama `goHome` e depois o toast.
-- **DeckDetail**: botão `Editar baralho` ao lado de "...", `BottomSheet`, `ConfirmDialog` (`tone="destructive"`, ícone `trash`).
+- **useDeckScreen**: `menuOpen`, `openMenu`, `closeMenu`, `deleteOpen`, `cancelDelete`, `confirmDelete`, `sheetActions` (memo), `editDeck` (ação da folha), `reset`. Falhas mostram toast (MENU-04, DEL-04); sucesso de exclusão chama `goHome` e depois o toast.
+- **DeckDetail**: `BottomSheet` (com `Editar baralho`), `ConfirmDialog` (`tone="destructive"`, ícone `trash`).
 
 ### Error handling
 
@@ -102,11 +102,11 @@ Repositório com Realm em memória: reset zera só agendamento e preserva `Revie
 - **Depends on**: T1, T2
 - **Risk**: inherit
 - **Touches**: `src/features/decks/screens/{use-deck-screen.ts,deck-screen.tsx,deck-screen.test.tsx}`
-- **Change**: `BottomSheet` no lugar do `Alert` de opções; botão Editar; redefinição com toast; migra os testes do menu.
+- **Change**: `BottomSheet` no lugar do `Alert` de opções; redefinição com toast; migra os testes do menu.
 - **Tests**:
   - SPEC MENU-01 · screen — "..." abre a folha com título, subtítulo, três ações e Cancelar
   - SPEC MENU-02 · screen — `Adicionar cartão` navega para `cards/new`
-  - SPEC MENU-03 · screen — `Editar baralho` navega para `edit`; `Alert.alert` nunca é chamado
+  - SPEC MENU-03 · screen — `Editar baralho` na folha navega para `edit`; sem botão de editar no cabeçalho; `Alert.alert` nunca é chamado
   - SPEC RST-01 · screen — `Redefinir progresso` zera os cartões e mantém `ReviewLog`
   - SPEC RST-02 · screen — após redefinir, o toast `Progresso redefinido` aparece e a contagem "para hoje" atualiza
   - SPEC MENU-04 · screen — falha injetada mostra o toast de erro e mantém os dados

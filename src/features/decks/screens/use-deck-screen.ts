@@ -69,6 +69,7 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
   const sheetActions = useMemo<SheetAction[]>(
     () => [
       { label: "Adicionar cartão", icon: "plus", onPress: addCard },
+      { label: "Editar baralho", icon: "pencil", onPress: editDeck },
       {
         label: "Redefinir progresso",
         subtitle: "Todos os cartões voltam a ser novos",
@@ -77,7 +78,7 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
       },
       { label: "Excluir baralho", icon: "trash", destructive: true, onPress: askDelete },
     ],
-    [addCard, resetProgress, askDelete],
+    [addCard, editDeck, resetProgress, askDelete],
   );
   const sheetSubtitle = deckSheetSubtitle(deck.cardCount, deck.dueCount);
   const deleteMessage = deleteDeckMessage(deck.name, deck.cardCount);
@@ -99,7 +100,6 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
     studyLabel,
     study,
     addCard,
-    editDeck,
     menuOpen,
     openMenu,
     closeMenu,

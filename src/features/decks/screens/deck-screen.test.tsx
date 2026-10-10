@@ -255,6 +255,7 @@ describe("DeckScreen", () => {
     expect(screen.getAllByText("Inglês").length).toBeGreaterThan(1);
     expect(screen.getByText("2 cartões · 1 para hoje")).toBeTruthy();
     expect(screen.getAllByRole("button", { name: "Adicionar cartão" })).toHaveLength(2);
+    expect(screen.getByRole("button", { name: "Editar baralho" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Redefinir progresso" })).toBeTruthy();
     expect(screen.getByText("Todos os cartões voltam a ser novos")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Excluir baralho" })).toBeTruthy();
@@ -272,11 +273,14 @@ describe("DeckScreen", () => {
     await rendered.unmount();
   });
 
-  it("MENU-03 the header edit button opens the form and no Alert is used", async () => {
+  it("MENU-03 Editar baralho in the sheet opens the form, there is no header edit button and no Alert is used", async () => {
     const deck = seedDeck();
     const alert = jest.spyOn(Alert, "alert").mockImplementation(() => undefined);
     const rendered = await open(deck.id);
-    await fireEvent.press(await screen.findByRole("button", { name: "Editar baralho" }));
+    await screen.findByRole("button", { name: "Opções do baralho" });
+    expect(screen.queryByRole("button", { name: "Editar baralho" })).toBeNull();
+    await openMenu();
+    await fireEvent.press(screen.getByRole("button", { name: "Editar baralho" }));
     expect(rendered).toHavePathname(`/decks/${deck.id}/edit`);
     expect(alert).not.toHaveBeenCalled();
     await rendered.unmount();
@@ -461,7 +465,6 @@ describe("DeckScreen", () => {
       screen.getByRole("button", { name: "Ver todos" }),
       screen.getByRole("button", { name: "Início" }),
       screen.getByRole("button", { name: "Opções do baralho" }),
-      screen.getByRole("button", { name: "Editar baralho" }),
       screen.getByRole("button", { name: "Adicionar cartão" }),
     ];
     for (const target of targets) {

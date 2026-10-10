@@ -14,7 +14,7 @@ O menu "..." do Baralho e a exclusão ainda usam `Alert.alert`, que AD-007 apose
 - Menu 3c em `BottomSheet`: Adicionar cartão, Redefinir progresso, Excluir baralho.
 - Exclusão 3d em `ConfirmDialog`; toast "Baralho excluído" ao voltar ao Início.
 - Redefinir progresso: método de repositório e hook `useResetDeckProgress`.
-- Botão "Editar baralho" no cabeçalho, ao lado do "...".
+- "Editar baralho" como ação da folha do menu.
 
 ### Out of scope
 
@@ -47,9 +47,9 @@ O menu "..." do Baralho e a exclusão ainda usam `Alert.alert`, que AD-007 apose
 
 ### P1 — Menu do baralho
 
-- **MENU-01** — WHEN o usuário toca em `Opções do baralho` THEN o app SHALL abrir o `BottomSheet` com título igual ao nome do baralho, subtítulo `N cartões · M para hoje` (só `N cartões` se `M` é 0) e as ações `Adicionar cartão` (ícone `plus`), `Redefinir progresso` (subtítulo `Todos os cartões voltam a ser novos`) e `Excluir baralho` (destrutivo, ícone `trash`).
+- **MENU-01** — WHEN o usuário toca em `Opções do baralho` THEN o app SHALL abrir o `BottomSheet` com título igual ao nome do baralho, subtítulo `N cartões · M para hoje` (só `N cartões` se `M` é 0) e as ações `Adicionar cartão` (ícone `plus`), `Editar baralho` (ícone `pencil`), `Redefinir progresso` (subtítulo `Todos os cartões voltam a ser novos`) e `Excluir baralho` (destrutivo, ícone `trash`).
 - **MENU-02** — `Adicionar cartão` fecha a folha e abre `decks/[deckId]/cards/new`.
-- **MENU-03** — WHEN o usuário toca em `Editar baralho` no cabeçalho (label de acessibilidade igual) THEN o app SHALL abrir `decks/[deckId]/edit`. O alerta antigo de opções deixa de existir.
+- **MENU-03** — WHEN o usuário toca em `Editar baralho` na folha THEN a folha SHALL fechar e o app abrir `decks/[deckId]/edit`. O cabeçalho não tem botão de editar e o alerta antigo de opções deixa de existir.
 
 ### P1 — Redefinir progresso
 
@@ -67,7 +67,7 @@ O menu "..." do Baralho e a exclusão ainda usam `Alert.alert`, que AD-007 apose
 
 - **MENU-04** — IF redefinir falha THEN o app SHALL mostrar o toast `Não foi possível redefinir o progresso` e manter os dados.
 - **DEL-04** — IF excluir falha THEN o diálogo fecha, a tela segue no Baralho e o toast `Não foi possível excluir o baralho` aparece.
-- **MENU-05** — O botão `Editar baralho` e as linhas da folha têm role `button` e altura ≥ 44 pt.
+- **MENU-05** — As linhas da folha têm role `button` e altura ≥ 44 pt.
 
 Other dimensions: input bounds N/A; idempotency: redefinir duas vezes dá o mesmo estado; auth N/A porque perfil local; concurrency N/A porque usuário único; observability N/A porque app offline; data lifecycle: exclusão já em cascata (`deck-card-crud`).
 
@@ -76,9 +76,9 @@ Other dimensions: input bounds N/A; idempotency: redefinir duas vezes dá o mesm
 | Assumption / decision | Chosen default | Rationale | Confirmed |
 | --- | --- | --- | --- |
 | Sem "Desfazer" no toast | Sim | Decisão 2 | yes |
-| Editar no cabeçalho | Ícone ao lado do "..." | Decisão 3 | yes |
+| Editar na folha | Linha `Editar baralho` entre Adicionar e Redefinir | Decisão 3, revista pelo usuário em 2026-10-10 | yes |
 | `ReviewLog` ficam | Sim | Decisão 5 | yes |
-| Ícone de editar | Novo `pencil` em `Icon` | Não há ícone de edição hoje | no |
+| Ícone de editar | Novo `pencil` em `Icon` (linha da folha) | Não há ícone de edição hoje | no |
 | Redefinir pede confirmação | Não; só o menu e o subtítulo avisam | Design 3c não mostra diálogo | no |
 
 **Open questions**: none

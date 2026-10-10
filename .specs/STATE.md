@@ -68,7 +68,7 @@
 - **Status**: active
 
 ### AD-008
-- **Decision**: Backup/importação, lembrete (notificação local), tema escolhido e "novos por dia" entram no MVP. Exclusão de baralho sem "Desfazer". "Editar baralho" é um botão no cabeçalho do Baralho, ao lado do "...". "Redefinir progresso" zera só o agendamento e mantém os `ReviewLog`.
+- **Decision**: Backup/importação, lembrete (notificação local), tema escolhido e "novos por dia" entram no MVP. Exclusão de baralho sem "Desfazer". "Editar baralho" é uma ação da folha do menu 3c (revisto em 2026-10-10: o botão no cabeçalho saiu). "Redefinir progresso" zera só o agendamento e mantém os `ReviewLog`.
 - **Reason**: Respostas do usuário às decisões 1, 2, 3 e 5 do handoff.
 - **Trade-off**: A decisão 1 exige emenda em PROJECT-SPEC §2 e §13 antes de F5 e F6.
 - **Scope**: F2, F5, F6, F7
@@ -81,7 +81,7 @@
 ## Handoff
 - **Feature**: deck-menu-and-delete (F2, MEDIUM) feita e commitada; `npm run ci` sai 0 (525 testes), lint e `tsc` limpos, 5 mutações (1 sobreviveu, teste corrigido e agora detecta). Verificação pelo autor. F7 segue parcial (falta verificador independente e UAT)
 - **Where**: `src/features/decks/{repository.ts,usecases/use-reset-deck-progress.ts,screens/use-deck-screen.ts,screens/deck-screen.tsx}`, `.specs/features/deck-menu-and-delete/`
-- **Next step**: emenda em PROJECT-SPEC §2 e §13 (decisão 1), depois F5 `settings-and-preferences` (HIGH), depois F6. Rodar o skill `adaptive-spec-driven` primeiro. UAT em dispositivo pendente: F2 (folha 3c, diálogo 3d, redefinir, botão Editar), F4, F7, F8
+- **Next step**: emenda em PROJECT-SPEC §2 e §13 (decisão 1), depois F5 `settings-and-preferences` (HIGH), depois F6. Rodar o skill `adaptive-spec-driven` primeiro. UAT em dispositivo pendente: F2 (folha 3c, diálogo 3d, redefinir, Editar na folha), F4, F7, F8
 - **Roteiro** (análise de `design/`, novos PNGs 3b, 3c, 3d, 5c, 7b, 9, 10, Componentes 2, ícone do app):
   - F2 `deck-menu-and-delete` (MEDIUM, FEITA 2026-10-10): menu 3c em `BottomSheet` (Adicionar cartão, Redefinir progresso, Excluir baralho); excluir 3d em `ConfirmDialog`; toast "Baralho excluído"; novo método de repositório e hook `useResetDeckProgress`. Troca o `Alert` de `use-deck-screen.ts`
   - F3 `deck-all-cards` (MEDIUM, FEITA): rota `decks/[deckId]/cards/index.tsx` (3b) com busca; Baralho (3) mostra só os 5 primeiros + "Ver todos >"; excluir cartão do editor passa a `ConfirmDialog`; checar 1.000 cartões

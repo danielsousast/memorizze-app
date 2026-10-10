@@ -103,26 +103,15 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
           <Icon name="chevron-left" size={20} color={colors.accentInk} />
           <Text style={[typography.button, { color: colors.accentInk }]}>Início</Text>
         </Pressable>
-        <View style={styles.actions}>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Editar baralho"
-            onPress={screen.editDeck}
-            hitSlop={8}
-            style={styles.more}
-          >
-            <Icon name="pencil" size={22} color={colors.text} />
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Opções do baralho"
-            onPress={screen.openMenu}
-            hitSlop={8}
-            style={styles.more}
-          >
-            <Icon name="more" size={24} color={colors.text} />
-          </Pressable>
-        </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Opções do baralho"
+          onPress={screen.openMenu}
+          hitSlop={8}
+          style={styles.more}
+        >
+          <Icon name="more" size={24} color={colors.text} />
+        </Pressable>
       </View>
       <FlatList
         data={screen.rows}
@@ -177,7 +166,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     minHeight: sizes.minTouch,
   },
-  actions: { flexDirection: "row", alignItems: "center" },
   more: {
     minHeight: sizes.minTouch,
     minWidth: sizes.minTouch,
