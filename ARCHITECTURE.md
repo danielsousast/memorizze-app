@@ -2,12 +2,12 @@
 
 ## Current Architecture
 
-Expo app with the data layer for decks and cards and the screens that use it: Home, Deck, Deck form, Card editor and the study session (session, empty state, summary). Tab bar and profile are not built yet.
+Expo app with the data layer for decks, cards and the profile, and the screens that use it: Welcome, Home (streak and daily-goal card), Profile (name, goal stepper), Edit name, Deck, Deck form, Card editor and the study session (session, empty state, summary). Entry is gated by the profile ([AD-004](.specs/STATE.md#ad-004)); Home and Profile are tabs.
 
 | Part | Path | Contents |
 | --- | --- | --- |
-| Root layout | `src/app/_layout.tsx` | `RealmErrorBoundary` → `RealmProvider` → `QueryClientProvider` → Expo Router `Stack` |
-| Routes | `src/app/` | Thin files that read params and render a screen: `index`, `decks/[deckId]/index`, `study` and `decks/[deckId]/study` (study session), and four modals (`decks/new`, `decks/[deckId]/edit`, `decks/[deckId]/cards/new`, `cards/[cardId]/edit`), declared with `presentation: "modal"` in the root `Stack` |
+| Root layout | `src/app/_layout.tsx` | `RealmErrorBoundary` → `RealmProvider` → `QueryClientProvider` → `RootStack` (`src/navigation/root-stack.tsx`) |
+| Routes | `src/app/` | Thin files that read params and render a screen: `welcome`, `edit-name` (modal), `(tabs)/index` and `(tabs)/profile` (tab group, `Tabs` from `expo-router/js-tabs`), `decks/[deckId]/index`, `study` and `decks/[deckId]/study` (study session), and four more modals (`decks/new`, `decks/[deckId]/edit`, `decks/[deckId]/cards/new`, `cards/[cardId]/edit`), declared with `presentation: "modal"` in `RootStack`. `RootStack` uses `Stack.Protected`: `welcome` exists only without a profile, everything else only with one. Routes not declared there (`study`, `decks/[deckId]`, `decks/[deckId]/study`) are auto-registered and not guarded |
 | Screens | `src/features/<feature>/screens/` | One `<name>-screen.tsx` per screen ([AD-003](.specs/STATE.md#ad-003)); they use only the public hooks of `@/features/*` |
 | Shared UI | `src/components/` | `Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon` (`expo-symbols`), `Screen`, `NotFound`; one file each, theme tokens, accessibility role and label, touch target ≥ 44 |
 | Database | `src/db/` | Realm schemas (Profile, Deck, Card, ReviewLog), `realmConfig`, `RealmErrorBoundary` |
@@ -64,7 +64,8 @@ export function useCreateDeck() {
 | Delete deck (cascades to its cards) | `["decks"]`, `["cards"]` |
 | Create or delete card (changes `cardCount`) | `["cards"]`, `["decks"]` |
 | Edit card | `["cards"]` |
-| Answer a card (updates the card, creates a `ReviewLog`) | `["cards"]`, `["decks"]`, `["study"]` |
+| Answer a card (updates the card, creates a `ReviewLog`) | `["cards"]`, `["decks"]`, `["study"]`, `["profile"]` |
+| Create or update profile (name, daily goal) | `["profile"]` |
 
 `ReviewLog` is never touched by deck or card operations. It survives the deletion of its card or deck.
 

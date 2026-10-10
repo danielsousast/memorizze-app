@@ -42,6 +42,13 @@ describe("profile repository", () => {
     expect(repository.countReviewsToday()).toBe(2);
   });
 
+  it("REV-02 does not count a review at the next day's midnight", () => {
+    const repository = createProfileRepository(realm, () => now);
+    seedLogs([new Date(2026, 9, 11, 0, 0), new Date(2026, 9, 10, 23, 59)]);
+
+    expect(repository.countReviewsToday()).toBe(1);
+  });
+
   it("REV-02 counts repeated reviews of the same card", () => {
     const repository = createProfileRepository(realm, () => now);
     const cardId = new Realm.BSON.ObjectId();

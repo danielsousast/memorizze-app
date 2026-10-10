@@ -41,9 +41,9 @@
 - **Status**: active
 
 ## Handoff
-- **Feature**: profile-onboarding (HIGH) — primeira metade do M4 (Boas-vindas, entrada, abas, cartão de streak/meta na Início, Perfil com nome e meta). A segunda metade, `profile-stats`, ainda não foi especificada
-- **Where**: spec aprovado; plan.md (10 tasks, 8 waves) em Draft, aguardando aprovação. study-session (M3) segue verificada; UAT em dispositivo ainda pendente (deslizar para voltar no iOS, visual 5a/5b/6/8)
-- **Next step**: aprovar o plano e executar a Wave 1 (T1 ∥ T2); push só com go-ahead explícito
-- **Open amendments**: none (SUM-03 corrigido para 89% em 2026-10-10)
+- **Feature**: profile-onboarding (HIGH) — 10/10 tasks implementadas e commitadas em `main` (local, sem push). Verificação independente: PASS-WITH-GAPS (`validation.md`); gate completo verde (363 testes, tsc, lint)
+- **Where**: falta UAT em development build (Boas-vindas, cartão de streak, Perfil, barra de abas real, voltar no iOS/Android, teclado, claro/escuro vs `design/`). M3 study-session segue com UAT pendente. `profile-stats` (segunda metade do M4) ainda não especificado
+- **Next step**: decidir F2 (rotas `study`/`decks/[deckId]` fora do guard do `RootStack`: proteger via amendment ou aceitar); UAT; push só com go-ahead explícito
+- **Open amendments**: none (F2 aguarda decisão do usuário)
 - **Blockers**: none
 - **Updated**: 2026-10-10
