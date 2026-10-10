@@ -2,25 +2,40 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { radii, sizes, spacing, typography, useTheme } from "@/theme";
 
-type Props = { done: number; goal: number };
+type Props = {
+  done: number;
+  goal: number;
+  /** Row title; defaults to `Meta diária`. */
+  label?: string;
+  /** Text after `done de goal`; defaults to ` revisões`. */
+  suffix?: string;
+};
 
 /** Daily goal bar: `done de goal revisões`, filled in `min(done, goal) / goal`. */
-export function GoalProgress({ done, goal }: Props) {
+export function GoalProgress({
+  done,
+  goal,
+  label = "Meta diária",
+  suffix = " revisões",
+}: Props) {
   const { colors } = useTheme();
   const ratio = goal > 0 ? Math.min(done, goal) / goal : 0;
 
   return (
     <View style={styles.root}>
       <View style={styles.row}>
-        <Text style={[typography.button, { color: colors.text }]}>Meta diária</Text>
+        <Text style={[typography.button, { color: colors.text }]}>{label}</Text>
         <Text style={[typography.caption, { color: colors.text2 }]}>
-          {`${done} de ${goal} revisões`}
+          {`${done} de ${goal}${suffix}`}
         </Text>
       </View>
       <View style={[styles.track, { backgroundColor: colors.surface2 }]}>
         <View
           testID="goal-progress-bar"
-          style={[styles.fill, { width: `${ratio * 100}%`, backgroundColor: colors.accent }]}
+          style={[
+            styles.fill,
+            { width: `${ratio * 100}%`, backgroundColor: colors.accent },
+          ]}
         />
       </View>
     </View>

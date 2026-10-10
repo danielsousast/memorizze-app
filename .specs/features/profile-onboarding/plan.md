@@ -280,7 +280,7 @@ Mutações sugeridas ao verificador:
   - SPEC PRF-03 · tela — cabeçalho com role `button` e label `Editar nome, marina`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T9 — Tocar no nome abre o modal e salva o nome novo
 
