@@ -170,7 +170,7 @@ As regras de negócio ficam no repositório. Os testes de hook provam só a fia�
   - REGRESSION · suíte existente verde (`realm-error-boundary.test.tsx`, `schemas.test.ts`)
 - **Done when**: tests above pass; full gate green (lockfile muda)
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T2 — Criar, listar e obter baralhos com nome validado
 
