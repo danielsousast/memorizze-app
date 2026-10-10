@@ -1,12 +1,12 @@
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
-import { Text } from "react-native";
-import { useReducedMotion } from "react-native-reanimated";
+import { AccessibilityInfo, Text } from "react-native";
+import { withTiming } from "react-native-reanimated";
 
 import { FlipCard } from "./flip-card";
 
 jest.mock("react-native-reanimated", () => {
   const actual = jest.requireActual("react-native-reanimated");
-  return { ...actual, useReducedMotion: jest.fn(() => false) };
+  return { ...actual, __esModule: true, withTiming: jest.fn(actual.withTiming) };
 });
 
 const view = (flipped: boolean, onPress = jest.fn(), disabled = false) => (
@@ -23,9 +23,13 @@ const view = (flipped: boolean, onPress = jest.fn(), disabled = false) => (
 describe("FlipCard", () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    (useReducedMotion as jest.Mock).mockReturnValue(false);
+    jest.spyOn(AccessibilityInfo, "isReduceMotionEnabled").mockResolvedValue(false);
+    (withTiming as jest.Mock).mockClear();
   });
-  afterEach(() => jest.useRealTimers());
+  afterEach(() => {
+    jest.useRealTimers();
+    jest.restoreAllMocks();
+  });
 
   it("FLP-01/02 keeps the front until 150 ms, then shows the back", async () => {
     const { rerender } = await render(view(false));
@@ -42,18 +46,12 @@ describe("FlipCard", () => {
     expect(screen.queryByText("frente")).toBeNull();
   });
 
-  it("FLP-01 rotates Y through 90deg and back to 0 in 300 ms", async () => {
+  it("FLP-01 rotates Y to 90deg and back to 0, 150 ms each half", async () => {
     const { rerender } = await render(view(false));
+    expect(withTiming).not.toHaveBeenCalled();
     await rerender(view(true));
-    const angle = () => JSON.stringify(screen.getByTestId("card").parent?.props.style);
-    await act(async () => {
-      jest.advanceTimersByTime(150);
-    });
-    expect(angle()).toContain("90");
-    await act(async () => {
-      jest.advanceTimersByTime(160);
-    });
-    expect(angle()).toMatch(/rotateY\W+0deg/);
+    expect(withTiming).toHaveBeenNthCalledWith(1, 90, { duration: 150 });
+    expect(withTiming).toHaveBeenNthCalledWith(2, 0, { duration: 150 });
   });
 
   it("FLP-05 shows the front at once when flipped goes back to false", async () => {
@@ -67,8 +65,9 @@ describe("FlipCard", () => {
   });
 
   it("FLP-06 swaps at once with reduced motion", async () => {
-    (useReducedMotion as jest.Mock).mockReturnValue(true);
+    jest.spyOn(AccessibilityInfo, "isReduceMotionEnabled").mockResolvedValue(true);
     const { rerender } = await render(view(false));
+    await act(async () => {});
     await rerender(view(true));
     expect(screen.getByText("verso")).toBeTruthy();
   });

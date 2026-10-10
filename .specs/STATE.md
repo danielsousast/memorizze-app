@@ -34,7 +34,7 @@
 ## Handoff
 - **Feature**: study-session (HIGH) — M3 implementado em 2026-10-10; sessão de estudo, Nada para revisar e Resumo
 - **Where**: verificada (PASS, verificador independente, 51/51 ACs, 7/7 mutantes mortos, 283 testes). Commits locais em `main`, sem push. UAT em dispositivo pendente: deslizar para voltar desativado na sessão (iOS) e visual contra os PNGs 5a/5b/6/8, claro e escuro
-- **Next step**: UAT em development build; depois M4 (perfil, streak e meta na Início); push só com go-ahead explícito
+- **Next step**: UAT em development build (inclui o flip animado do cartão, feature study-card-flip, MEDIUM, implementada em 2026-10-10: 290 testes, lint e tsc verdes); depois M4 (perfil, streak e meta na Início); push só com go-ahead explícito
 - **Open amendments**: none (SUM-03 corrigido para 89% em 2026-10-10)
 - **Blockers**: none
 - **Updated**: 2026-10-10

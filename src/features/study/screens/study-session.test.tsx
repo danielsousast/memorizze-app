@@ -95,19 +95,29 @@ describe("StudyScreen session", () => {
     await rendered.unmount();
   });
 
+  it("FLP-03 grade buttons appear at the start of the flip, before the back face", async () => {
+    const deck = seedDeck();
+    seedDue(deck.id, "choose", "escolher");
+    await open(`/decks/${deck.id}/study`);
+    await fireEvent.press(await screen.findByTestId("study-card"));
+    expect(screen.getByText("Como foi lembrar?")).toBeTruthy();
+    expect(screen.queryByText("VERSO")).toBeNull();
+    expect(await screen.findByText("VERSO")).toBeTruthy();
+  });
+
   it("SES-04 tapping the card or Mostrar resposta reveals the back", async () => {
     const deck = seedDeck();
     seedDue(deck.id, "choose", "escolher");
     const rendered = await open(`/decks/${deck.id}/study`);
     await fireEvent.press(await screen.findByTestId("study-card"));
-    expect(screen.getByText("VERSO")).toBeTruthy();
+    expect(await screen.findByText("VERSO")).toBeTruthy();
     expect(screen.getByText("escolher")).toBeTruthy();
     expect(screen.getByText("Como foi lembrar?")).toBeTruthy();
     await rendered.unmount();
 
     const again = await open(`/decks/${deck.id}/study`);
     await fireEvent.press(await screen.findByRole("button", { name: "Mostrar resposta" }));
-    expect(screen.getByText("VERSO")).toBeTruthy();
+    expect(await screen.findByText("VERSO")).toBeTruthy();
     expect(screen.getByText("Como foi lembrar?")).toBeTruthy();
     await again.unmount();
   });

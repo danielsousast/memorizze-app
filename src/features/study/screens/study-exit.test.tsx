@@ -68,7 +68,7 @@ describe("StudyScreen exit", () => {
 
     await close();
     await act(async () => buttons(alert)[0].onPress?.());
-    expect(screen.getByText("VERSO")).toBeTruthy();
+    expect(await screen.findByText("VERSO")).toBeTruthy();
     expect(screen.getByText("b")).toBeTruthy();
 
     await act(async () => buttons(alert)[1].onPress?.());

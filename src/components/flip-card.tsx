@@ -1,15 +1,28 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Pressable, type StyleProp, type ViewStyle } from "react-native";
+import { AccessibilityInfo, Pressable, type StyleProp, type ViewStyle } from "react-native";
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withSequence,
   withTiming,
 } from "react-native-reanimated";
 
 const HALF_MS = 150;
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    let active = true;
+    AccessibilityInfo.isReduceMotionEnabled().then((value) => active && setReduced(value));
+    const subscription = AccessibilityInfo.addEventListener("reduceMotionChanged", setReduced);
+    return () => {
+      active = false;
+      subscription.remove();
+    };
+  }, []);
+  return reduced;
+}
 
 type Props = {
   flipped: boolean;

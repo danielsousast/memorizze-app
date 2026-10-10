@@ -54,6 +54,7 @@
   },
   "jest": {
     "preset": "jest-expo",
+    "resolver": "react-native-worklets/jest/resolver",
     "moduleNameMapper": {
       "^@realm/fetch$": "<rootDir>/node_modules/@realm/fetch/dist/node-cjs/node.js"
     },

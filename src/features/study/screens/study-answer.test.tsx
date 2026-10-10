@@ -111,7 +111,7 @@ describe("StudyScreen answering", () => {
     });
     await grade("Bom");
     expect(await screen.findByText("Não foi possível salvar a resposta. Tente de novo.")).toBeTruthy();
-    expect(screen.getByText("VERSO")).toBeTruthy();
+    expect(await screen.findByText("VERSO")).toBeTruthy();
     expect(screen.getByText("a-verso")).toBeTruthy();
     expect(screen.getByText("1 de 2")).toBeTruthy();
     expect(logs().length).toBe(0);

@@ -2,7 +2,7 @@
 
 **Spec**: [spec.md](spec.md)
 **Risk**: MEDIUM (from spec)
-**Status**: Draft
+**Status**: Done
 
 ## Approach
 
@@ -65,7 +65,7 @@ Testes usam `jest.useFakeTimers()` para avançar os 150 ms; `useReducedMotion` �
   - SPEC FLP-04 · unit — `disabled` bloqueia `onPress`
 - **Done when**: testes passam; quick gate verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T2 — Sessão usa o flip
 
@@ -80,7 +80,7 @@ Testes usam `jest.useFakeTimers()` para avançar os 150 ms; `useReducedMotion` �
   - REGRESSION · screen — suítes `study-*.test.tsx` atualizadas para aguardar a troca de face
 - **Done when**: testes passam; full gate verde
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 
