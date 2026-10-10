@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AppError } from "@/domain/errors";
 import type { Grade } from "@/domain/schedule";
 import { cardKeys } from "@/features/cards";
+import { profileKeys } from "@/features/profile";
 
 import type { StudyCard, StudyErrorCode } from "../interfaces";
 import { useStudyRepository } from "../repository";
@@ -18,6 +19,7 @@ export function useAnswerCard() {
         queryClient.invalidateQueries({ queryKey: cardKeys.all }),
         queryClient.invalidateQueries({ queryKey: ["decks"] }),
         queryClient.invalidateQueries({ queryKey: studyKeys.all }),
+        queryClient.invalidateQueries({ queryKey: profileKeys.all }),
       ]),
   });
 }
