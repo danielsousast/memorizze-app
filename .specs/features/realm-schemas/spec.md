@@ -1,6 +1,6 @@
 # Realm Schemas — Spec
 
-**Status**: Draft
+**Status**: Approved
 **Date**: 2026-10-09
 
 ## Problem
