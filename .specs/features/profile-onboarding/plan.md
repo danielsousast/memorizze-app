@@ -180,7 +180,7 @@ Mutações sugeridas ao verificador:
   - REGRESSION · unit — `architecture.test.ts` verde com a feature nova
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Boas-vindas cria o perfil com o nome digitado
 

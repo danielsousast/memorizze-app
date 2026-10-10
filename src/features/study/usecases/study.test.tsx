@@ -77,4 +77,18 @@ describe("study hooks", () => {
     await waitFor(() => expect(rendered.result.current.streak.data).toBe(1));
     await rendered.unmount();
   });
+
+  it("REGRESSION answering invalidates profile, cards, decks and study", async () => {
+    const cardId = realm.objects(Card)[0]._id.toHexString();
+    const rendered = await renderHookWithProviders(() => useAnswerCard(), realm);
+    const spy = jest.spyOn(rendered.queryClient, "invalidateQueries");
+
+    await act(async () => {
+      await rendered.result.current.mutateAsync({ cardId, grade: 2 });
+    });
+
+    const keys = spy.mock.calls.map(([filters]) => filters?.queryKey?.[0]);
+    expect(keys).toEqual(expect.arrayContaining(["cards", "decks", "study", "profile"]));
+    await rendered.unmount();
+  });
 });
