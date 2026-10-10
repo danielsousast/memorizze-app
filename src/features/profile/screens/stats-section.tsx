@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { Icon } from "@/components/icon";
-import { daysLabel as days, percentLabel as percent } from "@/domain/labels";
+import { daysLabel as days } from "@/domain/labels";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
 import type { ProfileStats } from "../interfaces";
@@ -59,18 +59,6 @@ export function StatsSection({ stats, dailyGoal }: { stats: ProfileStats; dailyG
           accessibilityLabel={`Maior sequência, ${days(stats.longestStreak)}`}
         />
       </View>
-      <View style={styles.row}>
-        <Tile
-          value={percent(stats.accuracy7)}
-          label="Acerto · 7 dias"
-          accessibilityLabel={`Acerto 7 dias, ${percent(stats.accuracy7)}`}
-        />
-        <Tile
-          value={percent(stats.accuracy30)}
-          label="Acerto · 30 dias"
-          accessibilityLabel={`Acerto 30 dias, ${percent(stats.accuracy30)}`}
-        />
-      </View>
       <WeekChart week={stats.week} dailyGoal={dailyGoal} />
       <StageBar stages={stats.stages} />
     </View>
@@ -79,7 +67,7 @@ export function StatsSection({ stats, dailyGoal }: { stats: ProfileStats; dailyG
 
 const styles = StyleSheet.create({
   section: { gap: spacing.md },
-  row: { flexDirection: "row", gap: spacing.md },
+  row: { flexDirection: "row", gap: spacing.md, marginBottom: spacing.md },
   tile: {
     flex: 1,
     padding: spacing.lg,

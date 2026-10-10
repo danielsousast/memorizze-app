@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "memorizze-app",
-    "slug": "memorizze-app",
+    "name": "Memorizze",
+    "slug": "Memorizze",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

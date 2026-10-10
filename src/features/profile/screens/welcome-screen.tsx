@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
@@ -44,12 +43,6 @@ export function WelcomeScreen() {
           </Text>
         </View>
 
-        <View style={styles.badges}>
-          <Badge text="100% offline" tone="outline" icon="check" />
-          <Badge text="Sem login" tone="outline" icon="check" />
-          <Badge text="Dados só no aparelho" tone="outline" icon="check" />
-        </View>
-
         <TextField
           label="Como podemos te chamar?"
           placeholder="Seu nome ou apelido"
@@ -87,6 +80,5 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     gap: spacing.md,
   },
-  copy: { gap: spacing.md },
-  badges: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  copy: { gap: spacing.md, marginBottom: spacing.xl },
 });
