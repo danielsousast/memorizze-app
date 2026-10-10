@@ -233,7 +233,7 @@ Mutações sugeridas ao verificador:
   - INVARIANT INV-01 · integration — 100 respostas aleatórias (seed fixa) em 10 cartões, ~20% com falha injetada no `realm.create` → nº de logs = nº de respostas aceitas; cada log casa com uma mudança do cartão
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T6 — Sessão mostra frente, verso e progresso
 
@@ -255,7 +255,7 @@ Mutações sugeridas ao verificador:
   - SPEC THM-01 · screen — esquema escuro → fundo `darkColors.background`
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T7 — Início e Baralho abrem a sessão
 

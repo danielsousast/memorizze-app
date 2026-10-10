@@ -7,6 +7,9 @@ const symbols = {
   more: { ios: "ellipsis", android: "more_horiz", web: "more_horiz" },
   search: { ios: "magnifyingglass", android: "search", web: "search" },
   check: { ios: "checkmark", android: "check", web: "check" },
+  close: { ios: "xmark", android: "close", web: "close" },
+  calendar: { ios: "calendar", android: "calendar_today", web: "calendar_today" },
+  flame: { ios: "flame", android: "local_fire_department", web: "local_fire_department" },
   bulb: { ios: "lightbulb", android: "lightbulb", web: "lightbulb" },
 } as const;
 
