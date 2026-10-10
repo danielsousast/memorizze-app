@@ -5,7 +5,7 @@
 ## Decisions
 
 ## Handoff
-- **Feature**: test-setup — concluída (T1–T3 feitas; Jest + Realm em memória + smoke de componente)
-- **Next step**: M2 schemas (feature `realm-schemas`, usar `openTestRealm`)
+- **Feature**: realm-schemas — concluída (T1–T3 feitas; Verify PASS MEDIUM)
+- **Next step**: M2 repositórios/hooks CRUD (Deck, Card) sobre `src/db/schemas`
 - **Blockers**: nenhum
 - **Updated**: 2026-10-09

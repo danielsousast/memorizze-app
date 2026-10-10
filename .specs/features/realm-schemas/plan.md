@@ -103,4 +103,4 @@ Migração v1 → v2: só adição de classes; sem `onMigration`.
   - SPEC SCH-07 · runtime — app inicia e mostra a tela inicial
 - **Done when**: evidência registrada no verify
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done — build e app confirmados pelo usuário no simulador (2026-10-09)
