@@ -5,7 +5,7 @@
 ## Decisions
 
 ## Handoff
-- **Feature**: realm-setup — concluída (T1–T3 feitas; RLM-06 emendado com RealmErrorBoundary)
-- **Next step**: M0 restante (test-setup: Jest + Realm em memória), depois M2 schemas; resolver `tsc` vs `example/` (30 erros preexistentes)
-- **Blockers**: nenhum. Pendência menor: texto do boundary não visto no simulador (LogBox em dev)
+- **Feature**: test-setup — concluída (T1–T3 feitas; Jest + Realm em memória + smoke de componente)
+- **Next step**: M2 schemas (feature `realm-schemas`, usar `openTestRealm`)
+- **Blockers**: nenhum
 - **Updated**: 2026-10-09

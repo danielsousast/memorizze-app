@@ -20,7 +20,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Compiler | React Compiler enabled | `app.json` |
 | Package manager | npm | `package-lock.json` |
 | Database | Realm (`realm`, `@realm/react`), local only; requires development build | PROJECT-SPEC §3; `src/db/` |
-| Tests (planned) | Jest + React Native Testing Library | PROJECT-SPEC §3, not installed |
+| Tests | Jest (`jest-expo`) + React Native Testing Library | `package.json`; see [TESTING.md](TESTING.md) |
 
 ## Repository Structure
 
@@ -29,7 +29,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | `src/app/` | Expo Router routes (`_layout.tsx`, `index.tsx`) |
 | `assets/` | Icons, splash and images |
 | `design/` | Screen mockups (PNG, light and dark) and style guide |
-| `example/` | Leftover from the removed reset script; unused |
+| `example/` | Leftover from the removed reset script; unused, excluded from `tsc` and Jest |
 | `PROJECT-SPEC.md` | General app definition (draft v0.1) |
 
 Planned layout (`src/domain`, `src/db`, `src/features`, `src/components`, `src/theme`): see [ARCHITECTURE.md](../ARCHITECTURE.md).
@@ -49,7 +49,7 @@ Planned layout (`src/domain`, `src/db`, `src/features`, `src/components`, `src/t
 
 | Check | Command | Source |
 | --- | --- | --- |
-| Tests | Unknown: no test runner installed yet | — |
+| Tests | `npm test` | `package.json` (`test`) |
 | Lint | `npx expo lint` | `package.json` (`lint`), `AGENTS.md` |
 | Typecheck | `npx tsc --noEmit` | `AGENTS.md` |
 | Start | `npx expo start` | `package.json` |
