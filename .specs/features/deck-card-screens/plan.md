@@ -229,7 +229,7 @@ Mutações sugeridas ao verificador:
   - SPEC LOAD-01 · screen — antes de `useDecks` resolver, `Nenhum baralho ainda` não aparece
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T5 — Criar e editar baralho pelo form modal
 
