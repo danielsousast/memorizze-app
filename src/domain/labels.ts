@@ -16,7 +16,7 @@ export function tomorrowSummaryLabel(count: number | undefined): string {
 }
 
 export function signOutMessage(decks: number, cards: number): string {
-  return `O Memorizze não tem conta. Sair apaga seus ${plural(decks, "baralho", "baralhos")}, ${plural(cards, "cartão", "cartões")} e todo o histórico deste aparelho.`;
+  return `Sair apaga seus ${plural(decks, "baralho", "baralhos")}, ${plural(cards, "cartão", "cartões")} e todo o histórico deste aparelho.`;
 }
 
 export function studyTimeLabel(minutes: number): string {
