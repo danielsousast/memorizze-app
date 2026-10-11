@@ -37,6 +37,7 @@ export function RootStack() {
         <Stack.Screen name="cards/[cardId]/edit" options={{ presentation: "modal" }} />
         <Stack.Screen name="edit-name" options={{ presentation: "modal" }} />
         <Stack.Screen name="settings" />
+        <Stack.Screen name="backup" />
       </Stack.Protected>
     </Stack>
   );

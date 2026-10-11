@@ -62,7 +62,7 @@ describe("feature architecture", () => {
     it("ARC-01 has interfaces and repository, and only allowed files at the root", () => {
       const files = filesIn(dir);
       expect(files).toEqual(expect.arrayContaining(["interfaces.ts", "repository.ts"]));
-      const allowed = ["interfaces.ts", "adapters.ts", "repository.ts", "index.ts"];
+      const allowed = ["interfaces.ts", "adapters.ts", "repository.ts", "index.ts", "files.ts"];
       const unexpected = files.filter(
         (f) => !allowed.includes(f) && !isHook(f) && !isTest(f),
       );

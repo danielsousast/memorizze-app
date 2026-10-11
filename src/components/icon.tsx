@@ -7,6 +7,8 @@ const symbols = {
   "chevron-right": { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
   more: { ios: "ellipsis", android: "more_horiz", web: "more_horiz" },
   search: { ios: "magnifyingglass", android: "search", web: "search" },
+  upload: { ios: "square.and.arrow.up", android: "upload", web: "upload" },
+  download: { ios: "square.and.arrow.down", android: "download", web: "download" },
   check: { ios: "checkmark", android: "check", web: "check" },
   close: { ios: "xmark", android: "close", web: "close" },
   calendar: { ios: "calendar", android: "calendar_today", web: "calendar_today" },

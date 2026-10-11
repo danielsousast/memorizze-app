@@ -15,6 +15,8 @@ export type BackupRepository = {
   counts(): BackupCounts;
   lastBackup(): LastBackup;
   snapshot(): BackupSnapshot;
+  /** Moves `lastBackupAt` to `previousBackupAt` and stamps `at` as the new last backup. */
+  markBackedUp(at: Date): void;
   /** All or nothing: replaces profile, decks, cards and review logs in one transaction. */
   restore(backup: BackupFile): void;
 };

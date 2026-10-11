@@ -4,6 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { SegmentOption } from "@/components/segmented-control";
 import type { SheetAction } from "@/components/bottom-sheet";
+import { settingsBackupSubtitle } from "@/domain/backup";
+import { useLastBackup } from "@/features/backup";
 import { useToast } from "@/components/toast-provider";
 import {
   NEW_CARDS_OPTIONS,
@@ -27,6 +29,10 @@ const themeSegments: SegmentOption<ThemePreference>[] = THEME_OPTIONS.map((value
   icon: value === "system" ? undefined : THEME_ICONS[value],
 }));
 
+function openBackup() {
+  router.push("/backup");
+}
+
 function goBack() {
   if (router.canGoBack()) router.back();
   else router.replace("/profile");
@@ -34,6 +40,7 @@ function goBack() {
 
 export function useSettingsScreen() {
   const profile = useProfile().data;
+  const lastBackup = useLastBackup().data;
   const update = useUpdateProfile();
   const toast = useToast();
   const [limitOpen, setLimitOpen] = useState(false);
@@ -68,6 +75,8 @@ export function useSettingsScreen() {
     limitActions,
     openLimit,
     closeLimit,
+    backupSubtitle: settingsBackupSubtitle(lastBackup?.last ?? null),
+    openBackup,
     version: Constants.expoConfig?.version,
     goBack,
   };

@@ -3,7 +3,11 @@ import {
   BACKUP_VERSION,
   MAX_BACKUP_BYTES,
   backupFileName,
+  backupStatusLabel,
   buildBackup,
+  formatCount,
+  previousBackupLabel,
+  settingsBackupSubtitle,
   parseBackup,
   type BackupFile,
   type BackupSnapshot,
@@ -266,5 +270,34 @@ describe("backup domain", () => {
       expect(parseBackup(JSON.stringify(file))).toEqual({ ok: false, reason: "invalid" });
     }
     expect(mutations).toBeGreaterThan(50);
+  });
+});
+
+describe("backup labels", () => {
+  const now = new Date(2026, 9, 10, 18, 0);
+
+  it("BKP-07 labels today with the time, other days with the date, none without a backup", () => {
+    expect(backupStatusLabel(new Date(2026, 9, 10, 16, 4), now)).toBe("Backup feito hoje, 16:04");
+    expect(backupStatusLabel(new Date(2026, 9, 10, 9, 5), now)).toBe("Backup feito hoje, 09:05");
+    expect(backupStatusLabel(new Date(2026, 9, 2, 16, 4), now)).toBe("Backup feito em 2 de outubro");
+    expect(backupStatusLabel(new Date(2025, 9, 10, 16, 4), now)).toBe("Backup feito em 10 de outubro");
+    expect(backupStatusLabel(null, now)).toBe("Nenhum backup ainda");
+  });
+
+  it("BKP-07 shows the previous backup line only when there is one", () => {
+    expect(previousBackupLabel(new Date(2026, 9, 2))).toBe("Anterior: 2 de outubro");
+    expect(previousBackupLabel(null)).toBeNull();
+  });
+
+  it("BKP-09 settings subtitle", () => {
+    expect(settingsBackupSubtitle(new Date(2026, 9, 2, 8))).toBe("Último backup: 2 de outubro");
+    expect(settingsBackupSubtitle(null)).toBe("Nenhum backup ainda");
+  });
+
+  it("BKP-08 counts use a dot as the thousands separator", () => {
+    expect(formatCount(0)).toBe("0");
+    expect(formatCount(492)).toBe("492");
+    expect(formatCount(3418)).toBe("3.418");
+    expect(formatCount(1234567)).toBe("1.234.567");
   });
 });

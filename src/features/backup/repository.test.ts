@@ -297,4 +297,18 @@ describe("backup repository", () => {
 
     expect(repository.snapshot()).toEqual(before);
   });
+
+  it("BKP-04 markBackedUp moves the last backup to previous and stamps the new one", () => {
+    const first = new Date("2026-10-02T12:00:00.000Z");
+    const second = new Date("2026-10-10T19:04:00.000Z");
+    realm.write(() => {
+      realm.create(Profile, { name: "Ana", createdAt: new Date() });
+    });
+    const repository = createBackupRepository(realm);
+
+    repository.markBackedUp(first);
+    expect(repository.lastBackup()).toEqual({ last: first, previous: null });
+    repository.markBackedUp(second);
+    expect(repository.lastBackup()).toEqual({ last: second, previous: first });
+  });
 });

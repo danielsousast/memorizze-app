@@ -50,6 +50,15 @@ export function createBackupRepository(realm: Realm): BackupRepository {
       };
     },
 
+    markBackedUp(at: Date) {
+      const profile = oldest();
+      if (!profile) return;
+      realm.write(() => {
+        profile.previousBackupAt = profile.lastBackupAt;
+        profile.lastBackupAt = at;
+      });
+    },
+
     // One transaction: any exception rolls everything back (INV-01, BKP-18). Each model
     // is cleared on its own, so a future model is never erased by accident.
     restore(backup: BackupFile) {

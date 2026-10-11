@@ -63,6 +63,19 @@ export function SettingsScreen() {
           </View>
         </View>
 
+        <View style={styles.section}>
+          <Text style={[typography.label, styles.sectionLabel, { color: colors.text2 }]}>
+            Dados
+          </Text>
+          <View style={[styles.card, card]}>
+            <SettingsRow
+              title="Backup e restauração"
+              subtitle={settings.backupSubtitle}
+              onPress={settings.openBackup}
+            />
+          </View>
+        </View>
+
         {settings.version ? (
           <Text style={[typography.caption, styles.version, { color: colors.text2 }]}>
             {`Memorizze ${settings.version}`}

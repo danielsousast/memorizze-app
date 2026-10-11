@@ -1,3 +1,4 @@
+import { formatDayMonth } from "./dates";
 import { isNewCardsLimit, parseTheme, type ThemePreference } from "./preferences";
 
 export const BACKUP_VERSION = 1;
@@ -81,6 +82,37 @@ export function backupFileName(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `memorizze-${date.getFullYear()}-${month}-${day}.json`;
+}
+
+export const NO_BACKUP_LABEL = "Nenhum backup ainda";
+
+function isSameLocalDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+  );
+}
+
+function pad(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+export function backupStatusLabel(last: Date | null, now: Date): string {
+  if (!last) return NO_BACKUP_LABEL;
+  if (isSameLocalDay(last, now)) return `Backup feito hoje, ${pad(last.getHours())}:${pad(last.getMinutes())}`;
+  return `Backup feito em ${formatDayMonth(last)}`;
+}
+
+export function previousBackupLabel(previous: Date | null): string | null {
+  return previous ? `Anterior: ${formatDayMonth(previous)}` : null;
+}
+
+export function settingsBackupSubtitle(last: Date | null): string {
+  return last ? `Último backup: ${formatDayMonth(last)}` : NO_BACKUP_LABEL;
+}
+
+// Thousands separator by hand (pt-BR "3.418"): same result on Hermes and Jest, no Intl.
+export function formatCount(n: number): string {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 type Raw = Record<string, unknown>;

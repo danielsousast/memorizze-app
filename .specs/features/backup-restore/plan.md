@@ -182,7 +182,8 @@ Discriminação (Verify): ≥ 5 mutações manuais, zero sobreviventes. Alvos: `
   - REGRESSION · screen — Ajustes continua com tema, limite e versão (suíte existente)
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
+- **Note**: AD-001 pede um método de repositório por hook, então `markBackedUp` ganhou o hook `use-mark-backed-up` e o hook de tela compõe export → marcar data → toast. `files.ts` entrou na lista de arquivos de raiz permitidos em `architecture.test.ts`.
 
 ### T4 — Importar backup substituindo tudo
 
