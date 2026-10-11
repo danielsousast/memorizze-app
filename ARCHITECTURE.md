@@ -84,6 +84,15 @@ The queue is a snapshot: `study` queries use `gcTime: 0` so each session opens w
 - **Theme.** `useApplyTheme` (`src/navigation/use-apply-theme.ts`), mounted in `RootStack`, calls `Appearance.setColorScheme` in a layout effect: `"light"`/`"dark"` force the scheme, `"unspecified"` hands it back to the system (also with no profile, so Sair restores the system theme). `useTheme` and every `useColorScheme` caller are unchanged.
 - **Daily new-card budget.** `StudyRepository.queue` (all decks or one) reads the oldest profile and applies `selectQueue` after the usual order (`dueDate`, `createdAt`). A card is "introduced today" when its first `ReviewLog` ever falls on the current local day; one budget covers all decks. Non-new cards are never cut, a new card introduced today (and failed) stays free, and no profile or limit `0` keeps every due card. The "due today" counts on Home and Deck are unchanged.
 
+## Backup and restore
+
+`backup` ([spec](.specs/features/backup-restore/spec.md)) exports and imports the whole database as one JSON file. `src/domain/backup.ts` is pure: `buildBackup`, `parseBackup` (validates the whole file, ids, dates, grades and references, and reports `invalid` or `newer`), file name, date labels and counts. `src/features/backup/files.ts` is the only code that touches `expo-file-system`, `expo-sharing` and `expo-document-picker`; tests replace it with `jest.mock`.
+
+- **Export.** `use-export-backup` writes `cache/backups/memorizze-AAAA-MM-DD.json` (clearing the previous export) and opens the system share sheet; the screen hook then calls `use-mark-backed-up`, which moves `Profile.lastBackupAt` to `previousBackupAt` (`shareAsync` does not report a cancelled sheet, so the date is stamped when it resolves, A-01). A failed write or share deletes the temp file and leaves the dates alone.
+- **Import.** `use-import-flow` (shared by the Backup and welcome screens) picks the file, refuses more than 20 MB by its reported size, parses and validates it, and only then opens the destructive `ConfirmDialog`. `repository.restore` deletes the four models and recreates them from the file in one `realm.write`; any exception rolls back everything. The restore hook invalidates every query, so the profile read re-applies the theme and releases the welcome guard ([AD-004](.specs/STATE.md#ad-004)).
+- **Schema.** `Profile.lastBackupAt` and `previousBackupAt` (optional dates), Realm `schemaVersion` 5. Realm cannot downgrade: reverting the code keeps version 5.
+- **Routes.** `/backup` is protected like the rest of the app; Ajustes links to it.
+
 ## Planned Architecture
 
 Source: [PROJECT-SPEC.md](PROJECT-SPEC.md) (draft v0.1). Partly implemented (Realm, decks, cards).

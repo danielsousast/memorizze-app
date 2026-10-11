@@ -79,12 +79,12 @@
 
 
 ## Handoff
-- **Feature**: settings-and-preferences (F5, HIGH) T1..T5 feitas e commitadas; `npm run ci` sai 0 (588 testes), lint e `tsc` limpos, 7 mutações mortas. Verificação pelo autor (`validation.md`); falta verificador independente e UAT em dispositivo. Lembrete diário fica para `daily-reminder`
-- **Where**: `src/domain/{preferences,new-cards}.ts`, `src/db/{realm.ts,schemas/profile.ts}` (Realm 4), `src/features/{profile,study}/repository.ts`, `src/navigation/use-apply-theme.ts`, `src/components/{segmented-control,settings-row}.tsx`, `src/features/profile/screens/{settings-screen.tsx,use-settings-screen.ts}`, `src/app/settings.tsx`, `.specs/features/settings-and-preferences/`
-- **Next step**: verificador independente de settings-and-preferences, depois F6 `backup-restore` (HIGH) e `daily-reminder`. Rodar o skill `adaptive-spec-driven` primeiro. UAT em dispositivo pendente: F2, F4, F5, F7, F8
-- **Roteiro**: F1..F4, F8, F9 feitas (ver commits). F5 `settings-and-preferences` FEITA 2026-10-10 (tema Automático/Claro/Escuro, novos por dia 5..50 ou sem limite, orçamento diário na fila, rota `/settings`; `Appearance.setColorScheme` com `'unspecified'`). F6 `backup-restore` (HIGH): tela 10; `src/domain/backup.ts`, exportar JSON, importar substituindo tudo numa transação. F7 `sign-out-wipe` (HIGH, PARCIAL): o Sair já apaga preferências e devolve o tema ao sistema; falta "Fazer backup antes" (F6), verificador independente e UAT. `daily-reminder` (HIGH, nova): lembrete, horário, `Switch`, `expo-notifications`
-- **Decisões pendentes do usuário**: nenhuma
-- **Notas**: `design/` tem PNGs novos e alterados sem commit. NEW-09 lido como: cartão redefinido entra como novo dentro do orçamento e não conta como introduzido hoje. O primeiro run do CI no GitHub exige `git push` com go-ahead
+- **Feature**: backup-restore (F6, CRITICAL) T1..T5 feitas e commitadas; `npm run ci` sai 0 (693 testes), lint e `tsc` limpos, 12 mutações mortas. Verificação pelo autor (`validation.md`, `ARCHITECTURE.md` atualizado); faltam verificador independente, revisão adversarial, aprovação humana (`**Human sign-off**`) e UAT em dispositivo. settings-and-preferences segue só com verificação do autor
+- **Where**: `src/domain/backup.ts`, `src/features/backup/` (`files.ts`, `repository.ts`, `usecases/`, `screens/`), `src/app/backup.tsx`, `src/db/` (Realm 5), `src/features/profile/screens/welcome-screen.tsx`, `.specs/features/backup-restore/`
+- **Next step**: verificador independente de backup-restore e de settings-and-preferences (peça para eu acionar um subagente), UAT em aparelho com dados descartáveis, depois `daily-reminder` (HIGH) e o fechamento de F7 `sign-out-wipe` ("Fazer backup antes" agora é possível). Rodar o skill `adaptive-spec-driven` primeiro. UAT pendente: F2, F4, F5, F6, F7, F8
+- **Roteiro**: F1..F6, F8, F9 feitas (ver commits). F7 `sign-out-wipe` (HIGH, PARCIAL): o Sair apaga preferências e devolve o tema ao sistema; falta "Fazer backup antes", verificador independente e UAT. `daily-reminder` (HIGH, nova): lembrete, horário, `Switch`, `expo-notifications`
+- **Decisões pendentes do usuário**: aprovação humana de backup-restore (CRITICAL); autorizar importar sobre dados reais no UAT
+- **Notas**: `design/` tem PNGs novos e alterados sem commit. Toast de exportação diz `Backup exportado` (A-01), não `Backup salvo em Arquivos` como no design 10. `git push` exige go-ahead
 - **Open amendments**: none
 - **Blockers**: none
-- **Updated**: 2026-10-10
+- **Updated**: 2026-10-11
