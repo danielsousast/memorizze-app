@@ -17,6 +17,7 @@ import {
 } from "@/theme";
 
 import type { ProfileStats } from "../interfaces";
+import { BackupBeforeSignOut } from "./backup-before-sign-out";
 import { StatsSection } from "./stats-section";
 import { useProfileScreen } from "./use-profile-screen";
 
@@ -86,6 +87,8 @@ export function ProfileScreen() {
     openSettings,
     signOutOpen,
     signOutMessage,
+    backupSubtitle,
+    backupFirst,
     requestSignOut,
     cancelSignOut,
     confirmSignOut,
@@ -228,7 +231,9 @@ export function ProfileScreen() {
           confirmLabel="Apagar e sair"
           onConfirm={confirmSignOut}
           onCancel={cancelSignOut}
-        />
+        >
+          <BackupBeforeSignOut subtitle={backupSubtitle} onPress={backupFirst} />
+        </ConfirmDialog>
       </ScrollView>
     </Screen>
   );

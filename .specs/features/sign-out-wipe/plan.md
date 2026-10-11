@@ -101,14 +101,30 @@ Repositório (SOUT-02..04), domínio (SOUT-02), fluxo completo pelo `RootStack` 
 - **Gate**: full
 - **Status**: [x] done
 
+### T3 — Linha "Fazer backup antes" (A-01)
+
+- **Covers**: SOUT-06, SOUT-07, SOUT-08
+- **Depends on**: T2
+- **Risk**: inherit
+- **Touches**: `src/components/confirm-dialog.tsx` (slot `children`), `src/features/profile/screens/{use-profile-screen.ts,profile-screen.tsx,backup-before-sign-out.tsx}`, `src/navigation/root-stack.test.tsx`
+- **Change**: `ConfirmDialog` aceita `children` entre mensagem e botões; `useProfileScreen` compõe `useExportBackup` + `useMarkBackedUp` + `useLastBackup`; linha com `settingsBackupSubtitle`.
+- **Tests**:
+  - SPEC SOUT-06 · screen — linha e legenda
+  - SPEC SOUT-07 · screen — exporta, marca data, reabre com legenda nova, dados intactos
+  - SPEC SOUT-08 · screen — falha: toast, diálogo fechado, dados intactos
+- **Done when**: tests above pass; `npm run ci` green; lint limpo
+- **Gate**: full
+- **Status**: [x] done
+
 ## Execution Waves
 
 - **Wave 1**: T1
 - **Wave 2**: T2
+- **Wave 3**: T3
 
 ## Deferred
 
 | Item | Reason | Where it goes |
 | --- | --- | --- |
-| Atalho "Fazer backup antes" | Depende da F6 | F6 |
+| Atalho "Fazer backup antes" | Feito em T3 (A-01) | F7 |
 | Apagar preferências e tema | Feito: moram no `Profile`, o wipe as apaga e `useApplyTheme` devolve o tema ao sistema (settings-and-preferences, THM-05) | F5 (feito) |

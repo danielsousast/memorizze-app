@@ -18,7 +18,7 @@ O app não tem conta. Quem quer recomeçar ou entregar o aparelho não tem como 
 
 | Item | Reason |
 | --- | --- |
-| Linha "Fazer backup antes" do diálogo | Depende da F6 (backup) |
+| ~~Linha "Fazer backup antes" do diálogo~~ | Entrou pela emenda A-01 (F6 pronta) |
 | Apagar preferências e tema | Não existem até a F5 |
 
 ## Risk Assessment
@@ -48,11 +48,15 @@ O app não tem conta. Quem quer recomeçar ou entregar o aparelho não tem como 
 - **SOUT-01** — WHEN o usuário toca em `Sair` no Perfil THEN o app SHALL abrir o `ConfirmDialog` destrutivo, ícone `sign-out`, título `Sair e apagar dados?`, botões `Apagar e sair` e `Cancelar`.
 - **SOUT-02** — A mensagem SHALL ser `O Memorizze não tem conta. Sair apaga seus N baralhos, M cartões e todo o histórico deste aparelho.` com as contagens reais (singular quando 1).
 - **SOUT-03** — WHEN o usuário confirma THEN o app SHALL apagar Profile, Deck, Card e ReviewLog e mostrar a Boas-vindas.
+- **SOUT-06** *(A-01)* — O diálogo SHALL mostrar, entre a mensagem e os botões, a linha `Fazer backup antes` com a legenda `Último backup: D de mês` ou `Nenhum backup ainda` (design 7b).
+- **SOUT-07** *(A-01)* — WHEN o usuário toca em `Fazer backup antes` THEN o app SHALL fechar o diálogo, exportar o backup como em BKP-01/BKP-04 e, ao terminar, reabrir o diálogo com a legenda atualizada; nada é apagado.
 - **SOUT-05** — WHEN o usuário cancela THEN nada é apagado e o Perfil continua aberto.
 
 ## Failure & Edge Behavior
 
 - **SOUT-04** — IF apagar falha THEN nada é apagado (transação única), o diálogo fecha e um toast mostra `Não foi possível apagar os dados.`
+
+- **SOUT-08** *(A-01)* — IF o export falha THEN o diálogo continua fechado, um toast mostra `Não foi possível exportar.` e nada é apagado.
 
 Other dimensions: input bounds N/A; idempotency N/A porque apagar o vazio é inofensivo; auth N/A porque perfil local; concurrency N/A porque usuário único; observability N/A porque app offline.
 
@@ -67,4 +71,11 @@ Other dimensions: input bounds N/A; idempotency N/A porque apagar o vazio é ino
 
 ## Amendments
 
-none
+### A-01 — Linha "Fazer backup antes" no diálogo do Sair
+- **Type**: scope-change
+- **Discovered in**: resume F7 (reservada em BKP "Out of scope" de backup-restore)
+- **Change**: SOUT-06, SOUT-07 e SOUT-08 entram; a linha sai de Out of scope.
+- **Reason**: pedido do usuário ("resume F7"); F6 entregou o export; o design 7b já mostra a linha. O diálogo fecha durante o export porque `Modal` cobre a folha de compartilhamento e o toast (AD-007), e reabre ao terminar para o usuário confirmar com a legenda nova.
+- **Affected**: SOUT-06..08 (new)
+- **Risk impact**: none (HIGH mantido; só reaproveita export já verificado)
+- **Status**: approved

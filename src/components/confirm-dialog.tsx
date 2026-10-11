@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { radii, spacing, typography, useTheme } from "@/theme";
@@ -13,6 +14,7 @@ type Props = {
   cancelLabel?: string;
   icon: IconName;
   tone?: "destructive" | "neutral";
+  children?: ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -25,6 +27,7 @@ export function ConfirmDialog({
   cancelLabel = "Cancelar",
   icon,
   tone = "neutral",
+  children,
   onConfirm,
   onCancel,
 }: Props) {
@@ -48,6 +51,7 @@ export function ConfirmDialog({
           </View>
           <Text style={[typography.section, styles.title, { color: colors.text }]}>{title}</Text>
           <Text style={[typography.body, styles.message, { color: colors.text2 }]}>{message}</Text>
+          {children}
           <View style={styles.actions}>
             <Button
               label={confirmLabel}

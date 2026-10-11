@@ -3,7 +3,9 @@ import { useCallback, useRef, useState } from "react";
 
 import { useToast } from "@/components/toast-provider";
 import { canStep, stepGoal } from "@/domain/goal";
+import { settingsBackupSubtitle } from "@/domain/backup";
 import { signOutMessage } from "@/domain/labels";
+import { useExportBackup, useLastBackup, useMarkBackedUp } from "@/features/backup";
 
 import { useDataCounts } from "../usecases/use-data-counts";
 import { useProfile } from "../usecases/use-profile";
@@ -14,6 +16,7 @@ import { useUpdateProfile } from "../usecases/use-update-profile";
 import { GENERIC_ERROR } from "./name-errors";
 
 const SIGN_OUT_ERROR = "Não foi possível apagar os dados.";
+const EXPORT_ERROR = "Não foi possível exportar.";
 
 function editName() {
   router.push("/edit-name");
@@ -35,6 +38,9 @@ export function useProfileScreen() {
   const signOut = useSignOut();
   const toast = useToast();
   const [signOutOpen, setSignOutOpen] = useState(false);
+  const lastBackup = useLastBackup().data;
+  const exportBackup = useExportBackup();
+  const markBackedUp = useMarkBackedUp();
   const update = useUpdateProfile();
   const [error, setError] = useState<string>();
   const busy = useRef(false);
@@ -75,6 +81,15 @@ export function useProfileScreen() {
     signOut.mutate(undefined, { onError: () => toast.show({ message: SIGN_OUT_ERROR }) });
   }, [signOut, toast]);
 
+  // SOUT-07: the share sheet also sits under the Modal, so the dialog closes and comes back after the export.
+  const backupFirst = useCallback(() => {
+    setSignOutOpen(false);
+    const fail = () => toast.show({ message: EXPORT_ERROR });
+    const reopen = () => setSignOutOpen(true);
+    const record = ({ at }: { at: Date }) => markBackedUp.mutate(at, { onSuccess: reopen, onError: fail });
+    exportBackup.mutate(undefined, { onSuccess: record, onError: fail });
+  }, [exportBackup, markBackedUp, toast]);
+
   return {
     profile,
     reviewsToday,
@@ -89,6 +104,8 @@ export function useProfileScreen() {
     openSettings,
     signOutOpen,
     signOutMessage: signOutMessage(countsQuery.data?.decks ?? 0, countsQuery.data?.cards ?? 0),
+    backupSubtitle: settingsBackupSubtitle(lastBackup?.last ?? null),
+    backupFirst,
     requestSignOut,
     cancelSignOut,
     confirmSignOut,

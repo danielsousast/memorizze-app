@@ -51,3 +51,10 @@
 ## Gaps & Fix Tasks
 
 none
+
+## Amendment A-01 (T3) — verificação do autor
+
+- **Gate**: `npm run ci`, lint e `tsc` limpos; 697 passed, 0 failed (693 → 697)
+- **ACs**: SOUT-06 (`root-stack.test.tsx` "shows the backup row…", "says no backup yet…"), SOUT-07 ("exports, records the date and reopens…"), SOUT-08 ("a failed export keeps the dialog closed…") — todos SPEC
+- **Mutações** em `use-profile-screen.ts` (`backupFirst`): sem reabrir, sem fechar, sem marcar data, sem toast de erro — 4 injetadas, 4 mortas
+- **Pendente**: verificador independente (HIGH) e UAT em dispositivo (share sheet com o diálogo fechado)

@@ -13,7 +13,10 @@ import TabsLayout from "../app/(tabs)/_layout";
 import ProfileRoute from "../app/(tabs)/profile";
 import SettingsRoute from "../app/settings";
 import WelcomeRoute from "../app/welcome";
+import { deleteBackupFile, shareBackupFile, writeBackupFile } from "../features/backup/files";
 import { RootStack } from "./root-stack";
+
+jest.mock("../features/backup/files");
 
 const models = [Profile, Deck, Card, ReviewLog] as unknown as Realm.ObjectClass[];
 
@@ -253,6 +256,67 @@ describe("RootStack", () => {
       expect(realm.objects(Profile).length).toBe(1);
       expect(rendered).toHavePathname("/profile");
       await rendered.unmount();
+    });
+
+    describe("backup first", () => {
+      const URI = "file:///cache/backups/memorizze.json";
+      const backupRow = () => screen.findByRole("button", { name: "Fazer backup antes" });
+
+      beforeEach(() => {
+        jest.mocked(writeBackupFile).mockReturnValue(URI);
+        jest.mocked(shareBackupFile).mockResolvedValue(undefined);
+        jest.mocked(deleteBackupFile).mockReturnValue(undefined);
+      });
+
+      it("SOUT-06 shows the backup row with the last backup date", async () => {
+        realm.write(() => {
+          realm.create(Profile, { name: "Ana", createdAt: new Date(), lastBackupAt: new Date(2026, 9, 2) });
+        });
+        const rendered = await open("/profile");
+        await fireEvent.press(await signOutButton());
+        expect(await backupRow()).toBeTruthy();
+        expect(screen.getByText("Último backup: 2 de outubro")).toBeTruthy();
+        await rendered.unmount();
+      });
+
+      it("SOUT-06 says no backup yet when there is none", async () => {
+        addProfile();
+        const rendered = await open("/profile");
+        await fireEvent.press(await signOutButton());
+        await backupRow();
+        expect(screen.getByText("Nenhum backup ainda")).toBeTruthy();
+        await rendered.unmount();
+      });
+
+      it("SOUT-07 exports, records the date and reopens the dialog without deleting", async () => {
+        addProfile();
+        realm.write(() => {
+          realm.create(Deck, { name: "D", createdAt: new Date() });
+        });
+        const rendered = await open("/profile");
+        await fireEvent.press(await signOutButton());
+        await fireEvent.press(await backupRow());
+        await waitFor(() => expect(jest.mocked(shareBackupFile)).toHaveBeenCalledWith(URI));
+        await waitFor(() => expect(realm.objects(Profile)[0].lastBackupAt).toBeTruthy());
+        expect(await screen.findByText("Sair e apagar dados?")).toBeTruthy();
+        expect(screen.queryByText("Nenhum backup ainda")).toBeNull();
+        expect(realm.objects(Profile)).toHaveLength(1);
+        expect(realm.objects(Deck)).toHaveLength(1);
+        await rendered.unmount();
+      });
+
+      it("SOUT-08 a failed export keeps the dialog closed, shows a toast and keeps the data", async () => {
+        addProfile();
+        jest.mocked(shareBackupFile).mockRejectedValue(new Error("boom"));
+        const rendered = await open("/profile");
+        await fireEvent.press(await signOutButton());
+        await fireEvent.press(await backupRow());
+        expect(await screen.findByText("Não foi possível exportar.")).toBeTruthy();
+        expect(screen.queryByText("Sair e apagar dados?")).toBeNull();
+        expect(realm.objects(Profile)[0].lastBackupAt).toBeNull();
+        expect(realm.objects(Profile)).toHaveLength(1);
+        await rendered.unmount();
+      });
     });
   });
 });
