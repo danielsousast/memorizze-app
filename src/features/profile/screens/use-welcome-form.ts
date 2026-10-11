@@ -1,10 +1,14 @@
 import { useCallback, useRef, useState } from "react";
 
+import { useImportFlow } from "@/features/backup";
+
 import { useCreateProfile } from "../usecases/use-create-profile";
 import { GENERIC_ERROR, nameErrorMessage } from "./name-errors";
 
 export function useWelcomeForm() {
   const create = useCreateProfile();
+  const importFlow = useImportFlow();
+  const { start: startImport } = importFlow;
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string>();
   const [formError, setFormError] = useState<string>();
@@ -26,5 +30,17 @@ export function useWelcomeForm() {
     }
   }, [create, name]);
 
-  return { name, nameError, formError, pending: create.isPending, setName, submit };
+  const importBackup = useCallback(() => void startImport(), [startImport]);
+
+  return {
+    importBackup,
+    importBusy: importFlow.busy,
+    importDialog: importFlow.dialog,
+    name,
+    nameError,
+    formError,
+    pending: create.isPending,
+    setName,
+    submit,
+  };
 }

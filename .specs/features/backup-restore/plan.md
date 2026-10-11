@@ -221,7 +221,7 @@ Discriminação (Verify): ≥ 5 mutações manuais, zero sobreviventes. Alvos: `
   - REGRESSION · screen — criar perfil pelo nome continua funcionando (suíte existente de Boas-vindas)
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

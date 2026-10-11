@@ -6,7 +6,13 @@ import { Card, Deck, Profile, ReviewLog } from "@/db";
 import { openTestRealm } from "@/testing/realm";
 import { renderRouterWithProviders } from "@/testing/router";
 
+import { buildBackup } from "@/domain/backup";
+import { pickBackupText } from "@/features/backup/files";
+import { RootStack } from "@/navigation/root-stack";
+
 import WelcomeRoute from "../../../app/welcome";
+
+jest.mock("@/features/backup/files");
 
 const models = [Profile, Deck, Card, ReviewLog] as unknown as Realm.ObjectClass[];
 const routes = { welcome: WelcomeRoute };
@@ -98,5 +104,75 @@ describe("WelcomeScreen", () => {
     const button = screen.getByRole("button", { name: "Começar" });
     expect(StyleSheet.flatten(button.props.style).minHeight).toBeGreaterThanOrEqual(44);
     await rendered.unmount();
+  });
+
+  describe("import from a backup", () => {
+    const ID = (n: number) => n.toString(16).padStart(24, "0");
+    const fileText = () =>
+      JSON.stringify(
+        buildBackup(
+          {
+            profile: {
+              id: ID(1),
+              name: "Bia",
+              dailyGoal: 12,
+              createdAt: "2026-01-01T00:00:00.000Z",
+              studyTutorialSeen: true,
+              themePreference: "system",
+              newCardsPerDay: 10,
+            },
+            decks: [{ id: ID(2), name: "A", description: null, createdAt: "2026-01-02T00:00:00.000Z" }],
+            cards: [],
+            reviewLogs: [],
+          },
+          new Date(2026, 9, 10),
+        ),
+      );
+    const pickMock = jest.mocked(pickBackupText);
+    const openEntry = () =>
+      renderRouterWithProviders({ ...routes, index: () => null }, realm, "/welcome", {
+        navigator: RootStack,
+      });
+
+    beforeEach(() => {
+      pickMock.mockReset().mockResolvedValue(null);
+    });
+
+    it("BKP-15 shows the link, and a valid file opens the confirmation", async () => {
+      pickMock.mockResolvedValue(fileText());
+      const rendered = await open();
+      await fireEvent.press(screen.getByRole("button", { name: "Já tenho um backup" }));
+
+      expect(pickMock).toHaveBeenCalledTimes(1);
+      expect(
+        await screen.findByText("Substituir 1 baralho, 0 cartões e 0 revisões pelos do arquivo?"),
+      ).toBeTruthy();
+      expect(profiles()).toHaveLength(0);
+      await rendered.unmount();
+    });
+
+    it("BKP-26 confirming with no profile creates the file's profile and goes to Início", async () => {
+      pickMock.mockResolvedValue(fileText());
+      const rendered = await openEntry();
+      await fireEvent.press(await screen.findByRole("button", { name: "Já tenho um backup" }));
+      await fireEvent.press(await screen.findByRole("button", { name: "Substituir" }));
+
+      await waitFor(() => expect(rendered).toHavePathname("/"));
+      expect(profiles()).toHaveLength(1);
+      expect(profiles()[0].name).toBe("Bia");
+      expect(realm.objects(Deck)).toHaveLength(1);
+      await rendered.unmount();
+    });
+
+    it("BKP-14 cancelling the dialog stays on the welcome screen", async () => {
+      pickMock.mockResolvedValue(fileText());
+      const rendered = await openEntry();
+      await fireEvent.press(await screen.findByRole("button", { name: "Já tenho um backup" }));
+      await fireEvent.press(await screen.findByRole("button", { name: "Cancelar" }));
+
+      expect(rendered).toHavePathname("/welcome");
+      expect(profiles()).toHaveLength(0);
+      await rendered.unmount();
+    });
   });
 });

@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button } from "@/components/button";
 import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
+import { ImportConfirmDialog } from "@/features/backup";
 import { radii, screenMargin, spacing, typography, useTheme } from "@/theme";
 
 import { useWelcomeForm } from "./use-welcome-form";
@@ -59,7 +60,14 @@ export function WelcomeScreen() {
           </Text>
         ) : null}
         <Button label="Começar" disabled={form.pending} onPress={form.submit} />
+        <Button
+          label="Já tenho um backup"
+          variant="text"
+          disabled={form.pending || form.importBusy}
+          onPress={form.importBackup}
+        />
       </ScrollView>
+      <ImportConfirmDialog dialog={form.importDialog} />
     </Screen>
   );
 }
