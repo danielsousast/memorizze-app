@@ -115,6 +115,17 @@ export function formatCount(n: number): string {
   return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+function plural(n: number, one: string, many: string): string {
+  return `${formatCount(n)} ${n === 1 ? one : many}`;
+}
+
+export function replaceMessage(backup: BackupFile): string {
+  const decks = plural(backup.decks.length, "baralho", "baralhos");
+  const cards = plural(backup.cards.length, "cartão", "cartões");
+  const reviews = plural(backup.reviewLogs.length, "revisão", "revisões");
+  return `Substituir ${decks}, ${cards} e ${reviews} pelos do arquivo?`;
+}
+
 type Raw = Record<string, unknown>;
 
 function isRecord(value: unknown): value is Raw {

@@ -9,6 +9,7 @@ import {
   previousBackupLabel,
   settingsBackupSubtitle,
   parseBackup,
+  replaceMessage,
   type BackupFile,
   type BackupSnapshot,
 } from "./backup";
@@ -299,5 +300,25 @@ describe("backup labels", () => {
     expect(formatCount(492)).toBe("492");
     expect(formatCount(3418)).toBe("3.418");
     expect(formatCount(1234567)).toBe("1.234.567");
+  });
+});
+
+describe("replaceMessage", () => {
+  const file = (decks: number, cards: number, logs: number) =>
+    ({ decks: Array(decks), cards: Array(cards), reviewLogs: Array(logs) }) as unknown as BackupFile;
+
+  it("BKP-25 counts what the file holds", () => {
+    expect(replaceMessage(file(2, 10, 30))).toBe(
+      "Substituir 2 baralhos, 10 cartões e 30 revisões pelos do arquivo?",
+    );
+  });
+
+  it("BKP-25 uses the singular and the thousands separator", () => {
+    expect(replaceMessage(file(1, 1, 3418))).toBe(
+      "Substituir 1 baralho, 1 cartão e 3.418 revisões pelos do arquivo?",
+    );
+    expect(replaceMessage(file(0, 0, 1))).toBe(
+      "Substituir 0 baralhos, 0 cartões e 1 revisão pelos do arquivo?",
+    );
   });
 });

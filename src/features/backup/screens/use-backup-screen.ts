@@ -10,6 +10,7 @@ import {
 } from "@/domain/backup";
 
 import { shareBackupFile } from "../files";
+import { useImportFlow } from "./use-import-flow";
 import { useBackupCounts } from "../usecases/use-backup-counts";
 import { useExportBackup, type ExportedBackup } from "../usecases/use-export-backup";
 import { useLastBackup } from "../usecases/use-last-backup";
@@ -29,6 +30,7 @@ export function useBackupScreen() {
   const exportBackup = useExportBackup();
   const markBackedUp = useMarkBackedUp();
   const toast = useToast();
+  const importFlow = useImportFlow();
   const now = new Date();
 
   const showExportError = useCallback(() => toast.show({ message: EXPORT_ERROR }), [toast]);
@@ -47,13 +49,13 @@ export function useBackupScreen() {
     [markBackedUp, showExported, showExportError],
   );
 
+  const { start: startImport } = importFlow;
+  const onImport = useCallback(() => void startImport(), [startImport]);
+
   const onExport = useCallback(
     () => exportBackup.mutate(undefined, { onSuccess: recordExport, onError: showExportError }),
     [exportBackup, recordExport, showExportError],
   );
-
-  // Import arrives with T4; both buttons stay disabled while any operation runs (BKP-22).
-  const onImport = useCallback(() => undefined, []);
 
   return {
     statusLabel: backupStatusLabel(last?.last ?? null, now),
@@ -65,9 +67,10 @@ export function useBackupScreen() {
       { value: formatCount(counts?.reviewLogs ?? 0), label: "revisões" },
     ],
     exportHint: `Gera o arquivo ${backupFileName(now)}`,
-    busy: exportBackup.isPending || markBackedUp.isPending,
+    busy: exportBackup.isPending || markBackedUp.isPending || importFlow.busy,
     onExport,
     onImport,
+    importDialog: importFlow.dialog,
     goBack,
   };
 }

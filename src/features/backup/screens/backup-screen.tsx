@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import type { Edge } from "react-native-safe-area-context";
 
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/button";
 import { Icon } from "@/components/icon";
 import { Screen } from "@/components/screen";
@@ -83,6 +84,13 @@ export function BackupScreen() {
           </Text>
         </View>
       </ScrollView>
+      <ConfirmDialog
+        icon="download"
+        tone="destructive"
+        title="Importar backup?"
+        confirmLabel="Substituir"
+        {...backup.importDialog}
+      />
     </Screen>
   );
 }

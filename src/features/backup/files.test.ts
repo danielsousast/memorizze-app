@@ -1,8 +1,12 @@
 import { Directory, File } from "expo-file-system";
+import * as DocumentPicker from "expo-document-picker";
 import * as Sharing from "expo-sharing";
 
-import { deleteBackupFile, shareBackupFile, writeBackupFile } from "./files";
+import { MAX_BACKUP_BYTES } from "@/domain/backup";
 
+import { deleteBackupFile, pickBackupText, shareBackupFile, writeBackupFile } from "./files";
+
+jest.mock("expo-document-picker", () => ({ getDocumentAsync: jest.fn() }));
 jest.mock("expo-sharing", () => ({ shareAsync: jest.fn().mockResolvedValue(undefined) }));
 jest.mock("expo-file-system", () => {
   const dirs: { exists: boolean; delete: jest.Mock; create: jest.Mock }[] = [];
@@ -24,6 +28,7 @@ jest.mock("expo-file-system", () => {
         create: jest.fn(),
         write: jest.fn(),
         delete: jest.fn(),
+        text: jest.fn().mockResolvedValue("file text"),
       };
       files.push(file);
       return file;
@@ -81,5 +86,39 @@ describe("backup files", () => {
     });
     deleteBackupFile("u");
     expect(files[1].delete).not.toHaveBeenCalled();
+  });
+
+  it("CONTRACT opens the picker for JSON copied to the cache and reads the chosen file", async () => {
+    jest
+      .mocked(DocumentPicker.getDocumentAsync)
+      .mockResolvedValue({ canceled: false, assets: [{ uri: "file:///cache/picked.json", name: "b.json", lastModified: 0, size: 10 }] });
+
+    await expect(pickBackupText()).resolves.toBe("file text");
+    expect(DocumentPicker.getDocumentAsync).toHaveBeenCalledWith({
+      type: "application/json",
+      copyToCacheDirectory: true,
+    });
+    expect(File).toHaveBeenCalledWith("file:///cache/picked.json");
+  });
+
+  it("BKP-14 returns null when the picker is cancelled", async () => {
+    jest.mocked(DocumentPicker.getDocumentAsync).mockResolvedValue({ canceled: true, assets: null });
+    await expect(pickBackupText()).resolves.toBeNull();
+    expect(File).not.toHaveBeenCalled();
+  });
+
+  it("BKP-20 refuses a file over 20 MB without reading it", async () => {
+    jest
+      .mocked(DocumentPicker.getDocumentAsync)
+      .mockResolvedValue({ canceled: false, assets: [{ uri: "u", name: "b.json", lastModified: 0, size: MAX_BACKUP_BYTES + 1 }] });
+    await expect(pickBackupText()).rejects.toMatchObject({ code: "BACKUP_TOO_LARGE" });
+    expect(File).not.toHaveBeenCalled();
+  });
+
+  it("BKP-20 accepts a file of exactly 20 MB", async () => {
+    jest
+      .mocked(DocumentPicker.getDocumentAsync)
+      .mockResolvedValue({ canceled: false, assets: [{ uri: "u", name: "b.json", lastModified: 0, size: MAX_BACKUP_BYTES }] });
+    await expect(pickBackupText()).resolves.toBe("file text");
   });
 });

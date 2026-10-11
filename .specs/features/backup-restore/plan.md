@@ -205,7 +205,8 @@ Discriminação (Verify): ≥ 5 mutações manuais, zero sobreviventes. Alvos: `
   - SPEC BKP-18 · screen — `restore` falha → toast `Não foi possível restaurar. Seus dados não foram alterados.` e banco intacto
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
+- **Note**: o seletor e a validação ficam em `use-import-flow.ts` (função assíncrona, sem React Query, pois não chamam o repositório); só `use-restore-backup` é um hook de caso de uso (ARC-02).
 
 ### T5 — Importar a partir da Boas-vindas
 
