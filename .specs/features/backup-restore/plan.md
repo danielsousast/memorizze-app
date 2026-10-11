@@ -144,8 +144,8 @@ Discriminação (Verify): ≥ 5 mutações manuais, zero sobreviventes. Alvos: `
 - **Covers**: BKP-03, BKP-13, BKP-18, BKP-23, BKP-27, INV-01, INV-03, INV-05
 - **Depends on**: T1
 - **Risk**: inherit
-- **Touches**: `src/db/schemas/profile.ts`, `src/db/realm.ts`, `src/db/realm.test.ts`, `src/features/backup/interfaces.ts`, `src/features/backup/repository.ts`, `src/features/backup/repository.test.ts`, `src/features/backup/adapters.ts`
-- **Change**: `Profile` ganha `lastBackupAt` e `previousBackupAt`, schema 5; o repositório lê o snapshot completo, conta registros, marca a data de backup e restaura apagando e recriando perfil, baralhos, cartões e revisões numa só `realm.write`.
+- **Touches**: `src/db/schemas/profile.ts`, `src/db/realm.ts`, `src/db/realm.test.ts`, `src/features/backup/interfaces.ts`, `src/features/backup/repository.ts`, `src/features/backup/repository.test.ts`, `src/features/backup/adapters.ts`, `src/features/backup/index.ts`, `src/features/backup/usecases/` (`keys.ts`, `use-backup-counts.ts`, `use-last-backup.ts`, `backup.test.tsx`), `src/db/schemas/schemas.test.ts`
+- **Change**: `Profile` ganha `lastBackupAt` e `previousBackupAt`, schema 5; os dois hooks de leitura (ARC-02 exige ao menos um hook por feature; `markBackedUp` fica para a T3); o repositório lê o snapshot completo, conta registros, marca a data de backup e restaura apagando e recriando perfil, baralhos, cartões e revisões numa só `realm.write`.
 - **Tests**:
   - SPEC BKP-03 · integration — banco com dados completos → `snapshot()` traz todos os campos e nenhuma data de backup
   - SPEC BKP-13 · integration — `restore` de um arquivo → `lastBackup()` devolve `{ last: null, previous: null }`
@@ -159,7 +159,7 @@ Discriminação (Verify): ≥ 5 mutações manuais, zero sobreviventes. Alvos: `
   - REGRESSION · integration — suítes existentes de `profile`, `decks`, `cards` e `study` seguem verdes
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Exportar backup pela tela Backup
 

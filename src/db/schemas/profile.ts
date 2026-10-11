@@ -9,6 +9,8 @@ export class Profile extends Realm.Object<Profile> {
   themePreference!: string;
   /** 0 = no limit. */
   newCardsPerDay!: number;
+  lastBackupAt?: Date;
+  previousBackupAt?: Date;
 
   static schema: Realm.ObjectSchema = {
     name: "Profile",
@@ -21,6 +23,8 @@ export class Profile extends Realm.Object<Profile> {
       studyTutorialSeen: { type: "bool", default: false },
       themePreference: { type: "string", default: "system" },
       newCardsPerDay: { type: "int", default: 10 },
+      lastBackupAt: "date?",
+      previousBackupAt: "date?",
     },
   };
 }

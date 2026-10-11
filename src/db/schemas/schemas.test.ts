@@ -63,13 +63,13 @@ describe("realm schemas", () => {
     expect(byName.ReviewLog.properties.reviewedAt.indexed).toBe(true);
   });
 
-  it("SCH-04 makes Deck.description the only optional field and rejects missing required fields", () => {
+  it("SCH-04 makes only Deck.description and the two Profile backup dates optional, and rejects missing required fields", () => {
     const optional = realm.schema.flatMap((s) =>
       Object.values(s.properties)
         .filter((p) => p.optional)
         .map((p) => `${s.name}.${p.name}`),
     );
-    expect(optional).toEqual(["Deck.description"]);
+    expect(optional).toEqual(["Deck.description", "Profile.lastBackupAt", "Profile.previousBackupAt"]);
 
     expect(() =>
       realm.write(() => {
