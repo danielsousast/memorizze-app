@@ -22,6 +22,9 @@
 | SOUT-03 | Confirmar apaga tudo e mostra Boas-vindas | `src/navigation/root-stack.test.tsx:164` — `toHavePathname("/welcome")`, contagens 0 | SPEC | ✅ |
 | SOUT-04 | Falha não apaga, toast, diálogo fechado | `src/navigation/root-stack.test.tsx:179` — toast e `Profile` com 1 | SPEC | ✅ |
 | SOUT-05 | Cancelar mantém os dados | `src/navigation/root-stack.test.tsx:154` — `Profile` com 1, `/profile` | SPEC | ✅ |
+| SOUT-06 | Linha com legenda do último backup | `src/navigation/root-stack.test.tsx:271` — `findByRole("button", { name: "Fazer backup antes" })`, `Último backup: 2 de outubro` | SPEC | ✅ |
+| SOUT-07 | Exporta, grava data, reabre, nada apagado | `src/navigation/root-stack.test.tsx:291` — `shareBackupFile` chamado, `lastBackupAt` definido, diálogo de volta | SPEC | ✅ |
+| SOUT-08 | Falha: toast, diálogo fechado, dados intactos | `src/navigation/root-stack.test.tsx:308` — `Não foi possível exportar.`, `lastBackupAt` nulo | SPEC | ✅ |
 
 ## Discrimination
 
