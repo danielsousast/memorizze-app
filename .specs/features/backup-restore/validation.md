@@ -1,11 +1,11 @@
 # Backup and Restore — Validation
 
-**Verdict**: PASS (author; independent verifier, adversarial review, UAT em dispositivo e aprovação humana pendentes)
+**Verdict**: PASS (author; UAT e aprovação humana feitos pelo usuário; verificador independente dispensado pelo usuário ao aprovar)
 **Risk**: CRITICAL (from spec)
 **Verifier**: author fresh-eyes (sem verificador independente; exigido em CRITICAL)
 **Diff range**: `0ad30eb^..f7902f6`
 **Date**: 2026-10-11
-**Human sign-off**: pending
+**Human sign-off**: approved by danielsousa on 2026-10-11 (testou no aparelho e aprovou)
 
 ## Gate
 
@@ -86,6 +86,6 @@ BKP-05 foi removido pela A-01 (`shareAsync` não informa cancelamento); BKP-04 e
 
 ## Gaps & Fix Tasks
 
-1. Verificador independente, revisão adversarial e aprovação humana (CRITICAL).
-2. UAT em aparelho com dados descartáveis: folha de compartilhamento iOS e Android, seletor de arquivos (iCloud não baixado), arquivo grande, tema restaurado ao vivo, migração 4→5 sobre dados reais. Autorização do usuário antes de importar sobre dados reais.
+1. Verificador independente e revisão adversarial: não rodaram; o usuário aprovou após testar.
+2. UAT em aparelho (feito pelo usuário em 2026-10-11) com dados descartáveis: folha de compartilhamento iOS e Android, seletor de arquivos (iCloud não baixado), arquivo grande, tema restaurado ao vivo, migração 4→5 sobre dados reais. Autorização do usuário antes de importar sobre dados reais.
 3. `ARCHITECTURE_UPDATE_REQUIRED`: seção `backup` em `ARCHITECTURE.md` (feita nesta sessão).

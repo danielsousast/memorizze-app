@@ -79,11 +79,11 @@
 
 
 ## Handoff
-- **Feature**: backup-restore (F6, CRITICAL) T1..T5 feitas e commitadas; `npm run ci` sai 0 (693 testes), lint e `tsc` limpos, 12 mutações mortas. Verificação pelo autor (`validation.md`, `ARCHITECTURE.md` atualizado); faltam verificador independente, revisão adversarial, aprovação humana (`**Human sign-off**`) e UAT em dispositivo. settings-and-preferences segue só com verificação do autor
+- **Feature**: backup-restore (F6, CRITICAL) T1..T5 feitas e commitadas; `npm run ci` sai 0 (693 testes), lint e `tsc` limpos, 12 mutações mortas. Verificação pelo autor (`validation.md`, `ARCHITECTURE.md` atualizado); UAT e aprovação humana feitos pelo usuário em 2026-10-11; verificador independente não rodou. settings-and-preferences segue só com verificação do autor
 - **Where**: `src/domain/backup.ts`, `src/features/backup/` (`files.ts`, `repository.ts`, `usecases/`, `screens/`), `src/app/backup.tsx`, `src/db/` (Realm 5), `src/features/profile/screens/welcome-screen.tsx`, `.specs/features/backup-restore/`
-- **Next step**: verificador independente de backup-restore e de settings-and-preferences (peça para eu acionar um subagente), UAT em aparelho com dados descartáveis, depois `daily-reminder` (HIGH) e o fechamento de F7 `sign-out-wipe` ("Fazer backup antes" agora é possível). Rodar o skill `adaptive-spec-driven` primeiro. UAT pendente: F2, F4, F5, F6, F7, F8
+- **Next step**: verificador independente de settings-and-preferences (opcional, peça para eu acionar um subagente), depois `daily-reminder` (HIGH) e o fechamento de F7 `sign-out-wipe` ("Fazer backup antes" agora é possível). Rodar o skill `adaptive-spec-driven` primeiro. UAT pendente: F2, F4, F5, F7, F8
 - **Roteiro**: F1..F6, F8, F9 feitas (ver commits). F7 `sign-out-wipe` (HIGH, PARCIAL): o Sair apaga preferências e devolve o tema ao sistema; falta "Fazer backup antes", verificador independente e UAT. `daily-reminder` (HIGH, nova): lembrete, horário, `Switch`, `expo-notifications`
-- **Decisões pendentes do usuário**: aprovação humana de backup-restore (CRITICAL); autorizar importar sobre dados reais no UAT
+- **Decisões pendentes do usuário**: nenhuma
 - **Notas**: `design/` tem PNGs novos e alterados sem commit. Toast de exportação diz `Backup exportado` (A-01), não `Backup salvo em Arquivos` como no design 10. `git push` exige go-ahead
 - **Open amendments**: none
 - **Blockers**: none
