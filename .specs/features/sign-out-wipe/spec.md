@@ -48,7 +48,7 @@ O app não tem conta. Quem quer recomeçar ou entregar o aparelho não tem como 
 - **SOUT-01** — WHEN o usuário toca em `Sair` no Perfil THEN o app SHALL abrir o `ConfirmDialog` destrutivo, ícone `sign-out`, título `Sair e apagar dados?`, botões `Apagar e sair` e `Cancelar`.
 - **SOUT-02** — A mensagem SHALL ser `O Memorizze não tem conta. Sair apaga seus N baralhos, M cartões e todo o histórico deste aparelho.` com as contagens reais (singular quando 1).
 - **SOUT-03** — WHEN o usuário confirma THEN o app SHALL apagar Profile, Deck, Card e ReviewLog e mostrar a Boas-vindas.
-- **SOUT-06** *(A-01)* — O diálogo SHALL mostrar, entre a mensagem e os botões, a linha `Fazer backup antes` com a legenda `Último backup: D de mês` ou `Nenhum backup ainda` (design 7b).
+- **SOUT-06** *(A-01, A-02)* — O diálogo SHALL mostrar, entre a mensagem e os botões, um link discreto `Fazer backup antes`, sem legenda (design 7b mostrava um cartão com a data do último backup).
 - **SOUT-07** *(A-01)* — WHEN o usuário toca em `Fazer backup antes` THEN o app SHALL fechar o diálogo, exportar o backup como em BKP-01/BKP-04 e, ao terminar, reabrir o diálogo com a legenda atualizada; nada é apagado.
 - **SOUT-05** — WHEN o usuário cancela THEN nada é apagado e o Perfil continua aberto.
 
@@ -78,4 +78,13 @@ Other dimensions: input bounds N/A; idempotency N/A porque apagar o vazio é ino
 - **Reason**: pedido do usuário ("resume F7"); F6 entregou o export; o design 7b já mostra a linha. O diálogo fecha durante o export porque `Modal` cobre a folha de compartilhamento e o toast (AD-007), e reabre ao terminar para o usuário confirmar com a legenda nova.
 - **Affected**: SOUT-06..08 (new)
 - **Risk impact**: none (HIGH mantido; só reaproveita export já verificado)
+- **Status**: approved
+
+### A-02 — Link discreto, sem legenda
+- **Type**: behavior-change
+- **Discovered in**: UAT do usuário
+- **Change**: SOUT-06 vira um link sem fundo e sem a legenda do último backup.
+- **Reason**: pedido do usuário: o botão não precisa da legenda e pesava no diálogo.
+- **Affected**: SOUT-06 (modified)
+- **Risk impact**: none
 - **Status**: approved

@@ -3,9 +3,8 @@ import { useCallback, useRef, useState } from "react";
 
 import { useToast } from "@/components/toast-provider";
 import { canStep, stepGoal } from "@/domain/goal";
-import { settingsBackupSubtitle } from "@/domain/backup";
 import { signOutMessage } from "@/domain/labels";
-import { useExportBackup, useLastBackup, useMarkBackedUp } from "@/features/backup";
+import { useExportBackup, useMarkBackedUp } from "@/features/backup";
 
 import { useDataCounts } from "../usecases/use-data-counts";
 import { useProfile } from "../usecases/use-profile";
@@ -40,7 +39,6 @@ export function useProfileScreen() {
   const signOut = useSignOut();
   const toast = useToast();
   const [signOutOpen, setSignOutOpen] = useState(false);
-  const lastBackup = useLastBackup().data;
   const exportBackup = useExportBackup();
   const markBackedUp = useMarkBackedUp();
   const update = useUpdateProfile();
@@ -109,7 +107,6 @@ export function useProfileScreen() {
     openSettings,
     signOutOpen,
     signOutMessage: signOutMessage(countsQuery.data?.decks ?? 0, countsQuery.data?.cards ?? 0),
-    backupSubtitle: settingsBackupSubtitle(lastBackup?.last ?? null),
     backupFirst,
     requestSignOut,
     cancelSignOut,

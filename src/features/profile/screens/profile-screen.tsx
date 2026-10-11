@@ -87,7 +87,6 @@ export function ProfileScreen() {
     openSettings,
     signOutOpen,
     signOutMessage,
-    backupSubtitle,
     backupFirst,
     requestSignOut,
     cancelSignOut,
@@ -232,7 +231,7 @@ export function ProfileScreen() {
           onConfirm={confirmSignOut}
           onCancel={cancelSignOut}
         >
-          <BackupBeforeSignOut subtitle={backupSubtitle} onPress={backupFirst} />
+          <BackupBeforeSignOut onPress={backupFirst} />
         </ConfirmDialog>
       </ScrollView>
     </Screen>

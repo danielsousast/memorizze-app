@@ -109,7 +109,7 @@ Repositório (SOUT-02..04), domínio (SOUT-02), fluxo completo pelo `RootStack` 
 - **Touches**: `src/components/confirm-dialog.tsx` (slot `children`), `src/features/profile/screens/{use-profile-screen.ts,profile-screen.tsx,backup-before-sign-out.tsx}`, `src/navigation/root-stack.test.tsx`
 - **Change**: `ConfirmDialog` aceita `children` entre mensagem e botões; `useProfileScreen` compõe `useExportBackup` + `useMarkBackedUp` + `useLastBackup`; linha com `settingsBackupSubtitle`.
 - **Tests**:
-  - SPEC SOUT-06 · screen — linha e legenda
+  - SPEC SOUT-06 · screen — link (sem legenda, A-02)
   - SPEC SOUT-07 · screen — exporta, marca data, reabre com legenda nova, dados intactos
   - SPEC SOUT-08 · screen — falha: toast, diálogo fechado, dados intactos
 - **Done when**: tests above pass; `npm run ci` green; lint limpo

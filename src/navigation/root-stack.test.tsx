@@ -268,23 +268,11 @@ describe("RootStack", () => {
         jest.mocked(deleteBackupFile).mockReturnValue(undefined);
       });
 
-      it("SOUT-06 shows the backup row with the last backup date", async () => {
-        realm.write(() => {
-          realm.create(Profile, { name: "Ana", createdAt: new Date(), lastBackupAt: new Date(2026, 9, 2) });
-        });
-        const rendered = await open("/profile");
-        await fireEvent.press(await signOutButton());
-        expect(await backupRow()).toBeTruthy();
-        expect(screen.getByText("Último backup: 2 de outubro")).toBeTruthy();
-        await rendered.unmount();
-      });
-
-      it("SOUT-06 says no backup yet when there is none", async () => {
+      it("SOUT-06 shows the backup row", async () => {
         addProfile();
         const rendered = await open("/profile");
         await fireEvent.press(await signOutButton());
-        await backupRow();
-        expect(screen.getByText("Nenhum backup ainda")).toBeTruthy();
+        expect(await backupRow()).toBeTruthy();
         await rendered.unmount();
       });
 
@@ -299,7 +287,6 @@ describe("RootStack", () => {
         await waitFor(() => expect(jest.mocked(shareBackupFile)).toHaveBeenCalledWith(URI));
         await waitFor(() => expect(realm.objects(Profile)[0].lastBackupAt).toBeTruthy());
         expect(await screen.findByText("Sair e apagar dados?")).toBeTruthy();
-        expect(screen.queryByText("Nenhum backup ainda")).toBeNull();
         expect(realm.objects(Profile)).toHaveLength(1);
         expect(realm.objects(Deck)).toHaveLength(1);
         await rendered.unmount();
