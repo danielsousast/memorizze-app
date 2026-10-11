@@ -16,6 +16,8 @@ import { useUpdateProfile } from "../usecases/use-update-profile";
 import { GENERIC_ERROR } from "./name-errors";
 
 const SIGN_OUT_ERROR = "Não foi possível apagar os dados.";
+// iOS ignores a share sheet presented while the Modal is still dismissing.
+const MODAL_CLOSE_MS = 500;
 const EXPORT_ERROR = "Não foi possível exportar.";
 
 function editName() {
@@ -87,7 +89,10 @@ export function useProfileScreen() {
     const fail = () => toast.show({ message: EXPORT_ERROR });
     const reopen = () => setSignOutOpen(true);
     const record = ({ at }: { at: Date }) => markBackedUp.mutate(at, { onSuccess: reopen, onError: fail });
-    exportBackup.mutate(undefined, { onSuccess: record, onError: fail });
+    setTimeout(
+      () => exportBackup.mutate(undefined, { onSuccess: record, onError: fail }),
+      MODAL_CLOSE_MS,
+    );
   }, [exportBackup, markBackedUp, toast]);
 
   return {
