@@ -79,21 +79,21 @@
 
 
 ### AD-009
-- **Decision**: i18n usa `i18n-js` com `expo-localization`; idiomas pt-BR (padrão e fallback) e en; o idioma segue o aparelho, sem seletor em Ajustes.
+- **Decision**: i18n usa `i18n-js` com `expo-localization`; idiomas pt-BR (padrão e fallback), en e es (todo `es-*` usa `es`; emenda de 2026-10-12); o idioma segue o aparelho, sem seletor em Ajustes.
 - **Reason**: Guia oficial do Expo; leve; pedido do usuário.
 - **Trade-off**: Plugin muda o binário (novo development build); troca de lib exige reescrever `src/lib/i18n/`.
 - **Scope**: `src/lib/i18n/`, `src/domain/locale.ts`, todas as telas (próxima feature)
-- **Source**: `.specs/features/i18n-setup/spec.md`
+- **Source**: `.specs/features/i18n-setup/spec.md`, `.specs/features/i18n-strings/spec.md`
 - **Date**: 2026-10-12
 - **Status**: active
 
 ## Handoff
-- **Feature**: i18n-setup (MEDIUM) implementada (T1 a T3, `npm run ci` verde, 774 testes). Falta o passe de verificação. daily-reminder e sign-out-wipe já verificadas
-- **Where**: `src/domain/locale.ts`, `src/lib/i18n/`, `.specs/features/i18n-setup/`
-- **Next step**: verificar i18n-setup (fresh-eyes) e commitar; depois a feature de extrair e traduzir as strings das telas
+- **Feature**: i18n-strings (HIGH) implementada e verificada (T1 a T7, `npm run ci` verde, 838 testes; validação independente PASS). Textos em pt-BR, en e es
+- **Where**: `src/lib/i18n/`, `src/domain/`, `.specs/features/i18n-strings/`
+- **Next step**: UAT no aparelho (mudar o idioma para en e es, voltar ao app, ver telas, lembrete e canal Android); revisão das traduções en e es por falante nativo; `git push` só com go-ahead
 - **Roteiro**: F1..F10 feitas (ver commits)
 - **Decisões pendentes do usuário**: nenhuma
-- **Notas**: `app.json` ganhou o plugin `expo-localization`: o development build novo foi feito pelo usuário e passou (2026-10-12); a troca de idioma no aparelho ainda não foi testada, e nenhuma tela usa `t`. `jest.setup.ts` mocka `expo-localization`. `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
+- **Notas**: o lembrete fica no idioma de quando foi agendado (reagendar ao mudar idioma ficou fora). Trocar o idioma remonta a árvore de telas (`key={locale}`). Nome do app e textos de permissão do SO não são traduzidos. `app.json` ganhou `es` no plugin `expo-localization`: precisa de novo development build. `design/` tem PNGs novos sem commit
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-12
