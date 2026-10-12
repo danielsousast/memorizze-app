@@ -5,18 +5,27 @@ import { Appearance, Text } from "react-native";
 import Realm from "realm";
 
 import { Card, Deck, Profile, ReviewLog } from "@/db";
+import { buildBackup } from "@/domain/backup";
+import { resetFakeScheduler } from "@/testing/notifications";
 import { openTestRealm } from "@/testing/realm";
 import { renderRouterWithProviders } from "@/testing/router";
 
 import HomeRoute from "../app/(tabs)/index";
 import TabsLayout from "../app/(tabs)/_layout";
 import ProfileRoute from "../app/(tabs)/profile";
+import BackupRoute from "../app/backup";
 import SettingsRoute from "../app/settings";
 import WelcomeRoute from "../app/welcome";
-import { deleteBackupFile, shareBackupFile, writeBackupFile } from "../features/backup/files";
+import {
+  deleteBackupFile,
+  pickBackupText,
+  shareBackupFile,
+  writeBackupFile,
+} from "../features/backup/files";
 import { RootStack } from "./root-stack";
 
 jest.mock("../features/backup/files");
+jest.mock("@/lib/notifications", () => jest.requireActual("@/testing/notifications").notificationsModuleMock);
 
 const models = [Profile, Deck, Card, ReviewLog] as unknown as Realm.ObjectClass[];
 
@@ -42,6 +51,7 @@ const routes = {
   "cards/[cardId]/edit": stub("Editar cartão"),
   "edit-name": stub("Editar nome"),
   settings: SettingsRoute,
+  backup: BackupRoute,
   study: stub("Estudo"),
   "decks/[deckId]/index": stub("Baralho"),
   "decks/[deckId]/study": stub("Estudo do baralho"),
@@ -49,8 +59,10 @@ const routes = {
 
 describe("RootStack", () => {
   let realm: Realm;
+  let fake: ReturnType<typeof resetFakeScheduler>;
   beforeEach(() => {
     realm = openTestRealm(models);
+    fake = resetFakeScheduler({ permission: "granted" });
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -304,6 +316,74 @@ describe("RootStack", () => {
         expect(realm.objects(Profile)).toHaveLength(1);
         await rendered.unmount();
       });
+    });
+  });
+
+  describe("reminder", () => {
+    const addReminderProfile = (reminderHour = 19) =>
+      realm.write(() => {
+        realm.create(Profile, { name: "Ana", createdAt: new Date(), reminderEnabled: true, reminderHour });
+      });
+
+    it("REM-11 reschedules at the saved hour when the app opens and the OS lost it", async () => {
+      addReminderProfile(8);
+      const rendered = await open();
+      await screen.findByTestId("home-screen");
+      await waitFor(() => expect(fake.state.scheduledHour).toBe(8));
+      await rendered.unmount();
+    });
+
+    it("REM-12 switches the reminder off silently when the permission was revoked", async () => {
+      addReminderProfile();
+      fake.setPermission("blocked");
+      await fake.scheduler.schedule(19);
+      const rendered = await open();
+      await screen.findByTestId("home-screen");
+      await waitFor(() => expect(realm.objects(Profile)[0].reminderEnabled).toBe(false));
+      expect(fake.state.scheduledHour).toBeNull();
+      expect(screen.queryByText("Não foi possível salvar.")).toBeNull();
+      await rendered.unmount();
+    });
+
+    it("REM-13 Sair cancels the scheduled reminder", async () => {
+      addReminderProfile();
+      const rendered = await open("/profile");
+      await waitFor(() => expect(fake.state.scheduledHour).toBe(19));
+      await fireEvent.press(await screen.findByRole("button", { name: "Sair" }));
+      await fireEvent.press(await screen.findByRole("button", { name: "Apagar e sair" }));
+      expect(await screen.findByText("Começar")).toBeTruthy();
+      await waitFor(() => expect(fake.state.scheduledHour).toBeNull());
+      await rendered.unmount();
+    });
+
+    it("REM-14 restoring a backup leaves the reminder off and cancelled", async () => {
+      addReminderProfile();
+      const backup = buildBackup(
+        {
+          profile: {
+            id: "000000000000000000000001",
+            name: "Bia",
+            dailyGoal: 12,
+            createdAt: "2026-01-01T00:00:00.000Z",
+            studyTutorialSeen: true,
+            themePreference: "system",
+            newCardsPerDay: 10,
+          },
+          decks: [],
+          cards: [],
+          reviewLogs: [],
+        },
+        new Date(2026, 9, 10),
+      );
+      jest.mocked(pickBackupText).mockResolvedValue(JSON.stringify(backup));
+      const rendered = await open("/backup");
+      await waitFor(() => expect(fake.state.scheduledHour).toBe(19));
+      await fireEvent.press(await screen.findByRole("button", { name: "Importar backup" }));
+      await fireEvent.press(await screen.findByRole("button", { name: "Substituir" }));
+      await waitFor(() => expect(realm.objects(Profile)[0].name).toBe("Bia"));
+      await waitFor(() => expect(fake.state.scheduledHour).toBeNull());
+      expect(realm.objects(Profile)[0].reminderEnabled).toBe(false);
+      await rendered.unmount();
     });
   });
 });

@@ -210,7 +210,7 @@ INVARIANT (teste com `createRandom`): após qualquer sequência aleatória de `a
   - REGRESSION — guarda do `RootStack` (AD-004) continua igual
 - **Done when**: testes passam; quick verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T7 — Linhas em Ajustes
 

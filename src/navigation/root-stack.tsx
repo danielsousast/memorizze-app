@@ -4,6 +4,7 @@ import { useProfile } from "@/features/profile";
 import { useTheme } from "@/theme";
 
 import { useApplyTheme } from "./use-apply-theme";
+import { useReminderSync } from "./use-reminder-sync";
 
 /**
  * Root navigator. Without a profile only the welcome route exists; with one the rest of
@@ -13,6 +14,7 @@ export function RootStack() {
   const { colors } = useTheme();
   const { data: profile, isPending } = useProfile();
   useApplyTheme(profile?.themePreference);
+  useReminderSync();
 
   if (isPending) return null;
 
