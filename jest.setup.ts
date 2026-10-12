@@ -16,3 +16,7 @@ jest.mock("expo-notifications", () => ({
 afterAll(() => {
   Realm.shutdown();
 });
+
+jest.mock("expo-localization", () => ({
+  getLocales: jest.fn(() => [{ languageTag: "pt-BR" }]),
+}));

@@ -78,13 +78,22 @@
 
 
 
+### AD-009
+- **Decision**: i18n usa `i18n-js` com `expo-localization`; idiomas pt-BR (padrão e fallback) e en; o idioma segue o aparelho, sem seletor em Ajustes.
+- **Reason**: Guia oficial do Expo; leve; pedido do usuário.
+- **Trade-off**: Plugin muda o binário (novo development build); troca de lib exige reescrever `src/lib/i18n/`.
+- **Scope**: `src/lib/i18n/`, `src/domain/locale.ts`, todas as telas (próxima feature)
+- **Source**: `.specs/features/i18n-setup/spec.md`
+- **Date**: 2026-10-12
+- **Status**: active
+
 ## Handoff
-- **Feature**: daily-reminder (F10, HIGH) verificada: verificador independente PASS (758 testes, 8 mutações mortas) e UAT aprovado pelo usuário (F2, F4, F5, F7, F8, F10). `ARCHITECTURE.md` e `PROJECT.md` atualizados. sign-out-wipe também verificada (verificador independente PASS, UAT 1 a 4 e 6 aprovados, 5 pulado, emenda A-03)
-- **Where**: `src/domain/reminder.ts`, `src/lib/notifications.ts`, `src/features/reminder/`, `src/navigation/use-reminder-sync.ts`, `.specs/features/daily-reminder/`
-- **Next step**: nenhuma verificação pendente; escolher a próxima feature (ou rodar o Discover do template de nova feature). Gaps menores abertos: SOUT-04 sem teste de rollback no meio da transação; `sync` não recria o canal Android (minor, UAT F10 passou)
+- **Feature**: i18n-setup (MEDIUM) implementada (T1 a T3, `npm run ci` verde, 774 testes). Falta o passe de verificação. daily-reminder e sign-out-wipe já verificadas
+- **Where**: `src/domain/locale.ts`, `src/lib/i18n/`, `.specs/features/i18n-setup/`
+- **Next step**: verificar i18n-setup (fresh-eyes) e commitar; depois a feature de extrair e traduzir as strings das telas
 - **Roteiro**: F1..F10 feitas (ver commits)
 - **Decisões pendentes do usuário**: nenhuma
-- **Notas**: `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
+- **Notas**: `app.json` ganhou o plugin `expo-localization`: precisa de novo development build (nenhum `expo run` foi feito). `jest.setup.ts` mocka `expo-localization`. `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-12

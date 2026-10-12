@@ -13,6 +13,7 @@ import { Text } from "react-native";
 
 import { ToastProvider } from "@/components/toast-provider";
 import { RealmErrorBoundary, realmConfig } from "@/db";
+import { useLocaleSync } from "@/lib/i18n/use-locale-sync";
 import { configureNotificationHandler } from "@/lib/notifications";
 import { createQueryClient } from "@/lib/query-client";
 import { RootStack } from "@/navigation/root-stack";
@@ -29,6 +30,7 @@ function DatabaseLoading() {
 }
 
 export default function RootLayout() {
+  useLocaleSync();
   const [fontsLoaded, fontError] = useFonts({
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
