@@ -9,15 +9,14 @@ import {
   previousBackupLabel,
 } from "@/domain/backup";
 
+import { t } from "@/lib/i18n";
+
 import { shareBackupFile } from "../files";
 import { useImportFlow } from "./use-import-flow";
 import { useBackupCounts } from "../usecases/use-backup-counts";
 import { useExportBackup, type ExportedBackup } from "../usecases/use-export-backup";
 import { useLastBackup } from "../usecases/use-last-backup";
 import { useMarkBackedUp } from "../usecases/use-mark-backed-up";
-
-const EXPORT_ERROR = "Não foi possível exportar.";
-const EXPORTED = "Backup exportado";
 
 function goBack() {
   if (router.canGoBack()) router.back();
@@ -33,12 +32,15 @@ export function useBackupScreen() {
   const importFlow = useImportFlow();
   const now = new Date();
 
-  const showExportError = useCallback(() => toast.show({ message: EXPORT_ERROR }), [toast]);
+  const showExportError = useCallback(() => toast.show({ message: t("backupScreen.exportError") }), [toast]);
 
   const showExported = useCallback(
     (uri: string) => {
       const share = () => void shareBackupFile(uri).catch(showExportError);
-      toast.show({ message: EXPORTED, action: { label: "Compartilhar", onPress: share } });
+      toast.show({
+        message: t("backupScreen.exported"),
+        action: { label: t("backupScreen.share"), onPress: share },
+      });
     },
     [toast, showExportError],
   );
@@ -62,11 +64,11 @@ export function useBackupScreen() {
     previousLabel: previousBackupLabel(last?.previous ?? null),
     hasBackup: !!last?.last,
     stats: [
-      { value: formatCount(counts?.decks ?? 0), label: "baralhos" },
-      { value: formatCount(counts?.cards ?? 0), label: "cartões" },
-      { value: formatCount(counts?.reviewLogs ?? 0), label: "revisões" },
+      { value: formatCount(counts?.decks ?? 0), label: t("backupScreen.statDecks") },
+      { value: formatCount(counts?.cards ?? 0), label: t("backupScreen.statCards") },
+      { value: formatCount(counts?.reviewLogs ?? 0), label: t("backupScreen.statReviews") },
     ],
-    exportHint: `Gera o arquivo ${backupFileName(now)}`,
+    exportHint: t("backupScreen.exportHint", { name: backupFileName(now) }),
     busy: exportBackup.isPending || markBackedUp.isPending || importFlow.busy,
     onExport,
     onImport,

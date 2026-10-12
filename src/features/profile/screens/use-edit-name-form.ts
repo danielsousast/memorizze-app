@@ -3,7 +3,7 @@ import { useCallback, useRef, useState } from "react";
 
 import { useProfile } from "../usecases/use-profile";
 import { useUpdateProfile } from "../usecases/use-update-profile";
-import { GENERIC_ERROR, nameErrorMessage } from "./name-errors";
+import { genericError, nameErrorMessage } from "./name-errors";
 
 function leave() {
   if (router.canGoBack()) router.back();
@@ -29,7 +29,7 @@ export function useEditNameForm() {
     } catch (error) {
       const message = nameErrorMessage(error);
       if (message) setNameError(message);
-      else setFormError(GENERIC_ERROR);
+      else setFormError(genericError());
     } finally {
       busy.current = false;
     }

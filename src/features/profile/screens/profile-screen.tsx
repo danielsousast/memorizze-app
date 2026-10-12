@@ -7,6 +7,7 @@ import { GoalProgress } from "@/components/goal-progress";
 import { Icon } from "@/components/icon";
 import { Screen } from "@/components/screen";
 import { formatMonthYear } from "@/domain/dates";
+import { i18n, t } from "@/lib/i18n";
 import {
   radii,
   screenMargin,
@@ -66,7 +67,7 @@ function StatsBlock({
   if (!failed) return null;
   return (
     <Text style={[typography.body, { color: colors.text2 }]}>
-      Não foi possível carregar as estatísticas.
+      {t("profile.statsError")}
     </Text>
   );
 }
@@ -101,11 +102,11 @@ export function ProfileScreen() {
             accessibilityRole="header"
             style={[typography.title, { color: colors.text }]}
           >
-            Perfil
+            {t("profile.title")}
           </Text>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Configurações"
+            accessibilityLabel={t("profile.settings")}
             onPress={openSettings}
             style={[styles.gear, { backgroundColor: colors.surface }]}
           >
@@ -116,13 +117,13 @@ export function ProfileScreen() {
           <>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`Editar nome, ${profile.name}`}
+              accessibilityLabel={t("profile.editNameA11y", { name: profile.name })}
               onPress={editName}
               style={styles.identity}
             >
               <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
                 <Text style={[typography.title, { color: colors.onAccent }]}>
-                  {profile.name.charAt(0).toLocaleUpperCase("pt-BR")}
+                  {profile.name.charAt(0).toLocaleUpperCase(i18n.locale)}
                 </Text>
               </View>
               <View style={styles.identityText}>
@@ -133,7 +134,7 @@ export function ProfileScreen() {
                   {profile.name}
                 </Text>
                 <Text style={[typography.body, { color: colors.text2 }]}>
-                  {`Estudando desde ${formatMonthYear(profile.createdAt)}`}
+                  {t("profile.since", { date: formatMonthYear(profile.createdAt) })}
                 </Text>
               </View>
             </Pressable>
@@ -146,21 +147,21 @@ export function ProfileScreen() {
               <View style={styles.goalTop}>
                 <View>
                   <Text style={[typography.button, { color: colors.text }]}>
-                    Meta diária
+                    {t("common.goalTitle")}
                   </Text>
                   <Text style={[typography.caption, { color: colors.text2 }]}>
-                    revisões por dia
+                    {t("profile.goalCaption")}
                   </Text>
                 </View>
                 <View style={styles.stepper}>
                   <StepButton
-                    label="Diminuir meta"
+                    label={t("profile.decrease")}
                     icon="minus"
                     disabled={!canDecrease}
                     onPress={decrease}
                   />
                   <Text
-                    accessibilityLabel={`Meta diária, ${profile.dailyGoal} revisões por dia`}
+                    accessibilityLabel={t("profile.goalA11y", { goal: profile.dailyGoal })}
                     style={[
                       typography.section,
                       styles.value,
@@ -170,7 +171,7 @@ export function ProfileScreen() {
                     {profile.dailyGoal}
                   </Text>
                   <StepButton
-                    label="Aumentar meta"
+                    label={t("profile.increase")}
                     icon="plus"
                     disabled={!canIncrease}
                     onPress={increase}
@@ -191,7 +192,7 @@ export function ProfileScreen() {
               <GoalProgress
                 done={reviewsToday}
                 goal={profile.dailyGoal}
-                label="Revisões hoje"
+                label={t("profile.reviewsToday")}
                 suffix=""
               />
             </View>
@@ -203,7 +204,7 @@ export function ProfileScreen() {
             <View style={styles.signOut}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Sair"
+                accessibilityLabel={t("profile.signOut")}
                 onPress={requestSignOut}
                 style={[
                   styles.signOutButton,
@@ -212,11 +213,11 @@ export function ProfileScreen() {
               >
                 <Icon name="sign-out" color={colors.grade.again.text} />
                 <Text style={[typography.button, { color: colors.grade.again.text }]}>
-                  Sair
+                  {t("profile.signOut")}
                 </Text>
               </Pressable>
               <Text style={[typography.caption, styles.signOutNote, { color: colors.text2 }]}>
-                Apaga seus baralhos e progresso deste aparelho.
+                {t("profile.signOutNote")}
               </Text>
             </View>
           </>
@@ -225,9 +226,9 @@ export function ProfileScreen() {
           visible={signOutOpen}
           icon="sign-out"
           tone="destructive"
-          title="Sair e apagar dados?"
+          title={t("profile.signOutTitle")}
           message={signOutMessage}
-          confirmLabel="Apagar e sair"
+          confirmLabel={t("profile.signOutConfirm")}
           onConfirm={confirmSignOut}
           onCancel={cancelSignOut}
         >

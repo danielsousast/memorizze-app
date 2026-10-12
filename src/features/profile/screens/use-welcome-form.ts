@@ -3,7 +3,7 @@ import { useCallback, useRef, useState } from "react";
 import { useImportFlow } from "@/features/backup";
 
 import { useCreateProfile } from "../usecases/use-create-profile";
-import { GENERIC_ERROR, nameErrorMessage } from "./name-errors";
+import { genericError, nameErrorMessage } from "./name-errors";
 
 export function useWelcomeForm() {
   const create = useCreateProfile();
@@ -24,7 +24,7 @@ export function useWelcomeForm() {
     } catch (error) {
       const message = nameErrorMessage(error);
       if (message) setNameError(message);
-      else setFormError(GENERIC_ERROR);
+      else setFormError(genericError());
     } finally {
       busy.current = false;
     }

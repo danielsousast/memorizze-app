@@ -7,6 +7,7 @@ import { Screen } from "@/components/screen";
 import { SegmentedControl } from "@/components/segmented-control";
 import { SettingsRow } from "@/components/settings-row";
 import { SettingsSwitchRow } from "@/components/settings-switch-row";
+import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useSettingsScreen } from "./use-settings-screen";
@@ -23,55 +24,55 @@ export function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.body}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Perfil"
+          accessibilityLabel={t("profile.title")}
           onPress={settings.goBack}
           style={styles.back}
         >
           <Icon name="chevron-left" size={20} color={colors.accentInk} />
        </Pressable>
         <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
-          Ajustes
+          {t("settings.title")}
         </Text>
 
         <View style={styles.section}>
           <Text style={[typography.label, styles.sectionLabel, { color: colors.text2 }]}>
-            Aparência
+            {t("settings.appearance")}
           </Text>
           <View style={[styles.card, styles.themeCard, card]}>
-            <Text style={[typography.button, { color: colors.text }]}>Tema</Text>
+            <Text style={[typography.button, { color: colors.text }]}>{t("settings.theme")}</Text>
             <SegmentedControl
-              label="Tema"
+              label={t("settings.theme")}
               options={settings.themeSegments}
               value={settings.theme}
               onChange={settings.selectTheme}
             />
             <Text style={[typography.body, { color: colors.text2 }]}>
-              Automático acompanha o tema do sistema.
+              {t("settings.themeHint")}
             </Text>
           </View>
         </View>
 
         <View style={styles.section}>
           <Text style={[typography.label, styles.sectionLabel, { color: colors.text2 }]}>
-            Estudo
+            {t("settings.study")}
           </Text>
           <View style={[styles.card, card]}>
             <SettingsSwitchRow
-              title="Lembrete diário"
-              subtitle="Notificação local, funciona offline"
+              title={t("settings.reminder")}
+              subtitle={t("settings.reminderHint")}
               value={settings.reminderEnabled}
               onValueChange={settings.toggleReminder}
             />
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <SettingsRow
-              title="Horário"
+              title={t("settings.hour")}
               value={settings.reminderHourLabel}
               disabled={!settings.reminderEnabled}
               onPress={settings.openHour}
             />
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <SettingsRow
-              title="Cartões novos por dia"
+              title={t("settings.newPerDay")}
               value={settings.newCardsValue}
               onPress={settings.openLimit}
             />
@@ -80,11 +81,11 @@ export function SettingsScreen() {
 
         <View style={styles.section}>
           <Text style={[typography.label, styles.sectionLabel, { color: colors.text2 }]}>
-            Dados
+            {t("settings.data")}
           </Text>
           <View style={[styles.card, card]}>
             <SettingsRow
-              title="Backup e restauração"
+              title={t("settings.backup")}
               subtitle={settings.backupSubtitle}
               onPress={settings.openBackup}
             />
@@ -93,21 +94,21 @@ export function SettingsScreen() {
 
         {settings.version ? (
           <Text style={[typography.caption, styles.version, { color: colors.text2 }]}>
-            {`Memorizze ${settings.version}`}
+            {t("settings.version", { version: settings.version })}
           </Text>
         ) : null}
       </ScrollView>
       <BottomSheet
         visible={settings.hourOpen}
-        title="Horário do lembrete"
-        subtitle="Hora em que a notificação chega todos os dias."
+        title={t("settings.hourSheetTitle")}
+        subtitle={t("settings.hourSheetSubtitle")}
         actions={settings.hourActions}
         onClose={settings.closeHour}
       />
       <BottomSheet
         visible={settings.limitOpen}
-        title="Cartões novos por dia"
-        subtitle="Limite de cartões novos que entram na fila a cada dia."
+        title={t("settings.newPerDay")}
+        subtitle={t("settings.limitSheetSubtitle")}
         actions={settings.limitActions}
         onClose={settings.closeLimit}
       />

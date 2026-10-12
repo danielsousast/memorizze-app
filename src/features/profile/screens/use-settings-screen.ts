@@ -7,6 +7,7 @@ import type { SheetAction } from "@/components/bottom-sheet";
 import { settingsBackupSubtitle } from "@/domain/backup";
 import { useLastBackup } from "@/features/backup";
 import { useUpdateReminder, type ReminderOutcome } from "@/features/reminder";
+import { t } from "@/lib/i18n";
 import { openSystemSettings } from "@/lib/notifications";
 import { useToast } from "@/components/toast-provider";
 import {
@@ -22,16 +23,15 @@ import { DEFAULT_REMINDER_HOUR, REMINDER_HOURS, hourLabel } from "@/domain/remin
 import { useProfile } from "../usecases/use-profile";
 import { useUpdateProfile } from "../usecases/use-update-profile";
 
-const SAVE_ERROR = "Não foi possível salvar.";
-const NOTIFICATIONS_DENIED = "Ative as notificações nas configurações do aparelho.";
-
 const THEME_ICONS = { light: "sun", dark: "moon" } as const;
 
-const themeSegments: SegmentOption<ThemePreference>[] = THEME_OPTIONS.map((value) => ({
-  value,
-  label: themeLabel[value],
-  icon: value === "system" ? undefined : THEME_ICONS[value],
-}));
+function themeSegments(): SegmentOption<ThemePreference>[] {
+  return THEME_OPTIONS.map((value) => ({
+    value,
+    label: themeLabel[value],
+    icon: value === "system" ? undefined : THEME_ICONS[value],
+  }));
+}
 
 function openBackup() {
   router.push("/backup");
@@ -51,7 +51,7 @@ export function useSettingsScreen() {
   const [limitOpen, setLimitOpen] = useState(false);
   const [hourOpen, setHourOpen] = useState(false);
 
-  const showError = useCallback(() => toast.show({ message: SAVE_ERROR }), [toast]);
+  const showError = useCallback(() => toast.show({ message: t("settings.saveError") }), [toast]);
 
   const reminderEnabled = profile?.reminderEnabled ?? false;
   const reminderHour = profile?.reminderHour;
@@ -61,8 +61,8 @@ export function useSettingsScreen() {
     (outcome: ReminderOutcome) => {
       if (outcome !== "denied") return;
       toast.show({
-        message: NOTIFICATIONS_DENIED,
-        action: { label: "Abrir ajustes", onPress: openSystemSettings },
+        message: t("settings.notificationsDenied"),
+        action: { label: t("settings.openSettings"), onPress: openSystemSettings },
       });
     },
     [toast],
@@ -111,7 +111,7 @@ export function useSettingsScreen() {
   );
 
   return {
-    themeSegments,
+    themeSegments: themeSegments(),
     theme: profile?.themePreference ?? "system",
     reminderEnabled,
     reminderHourLabel: hourLabel(reminderHour ?? DEFAULT_REMINDER_HOUR),

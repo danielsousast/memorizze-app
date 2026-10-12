@@ -1,4 +1,5 @@
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { t } from "@/lib/i18n";
 
 import type { useImportFlow } from "./use-import-flow";
 
@@ -9,8 +10,8 @@ export function ImportConfirmDialog({ dialog }: Props) {
     <ConfirmDialog
       icon="download"
       tone="destructive"
-      title="Importar backup?"
-      confirmLabel="Substituir"
+      title={t("backupScreen.dialogTitle")}
+      confirmLabel={t("backupScreen.dialogConfirm")}
       {...dialog}
     />
   );

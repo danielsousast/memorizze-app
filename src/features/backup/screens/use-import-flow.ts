@@ -2,14 +2,14 @@ import { useCallback, useRef, useState } from "react";
 
 import { useToast } from "@/components/toast-provider";
 import { parseBackup, replaceMessage, type BackupFile } from "@/domain/backup";
+import { t } from "@/lib/i18n";
 
 import { pickBackupText } from "../files";
 import { useRestoreBackup } from "../usecases/use-restore-backup";
 
-const INVALID_FILE = "Arquivo inválido. Escolha um backup do Memorizze.";
-const NEWER_FILE = "Este backup é de uma versão mais nova do app.";
-const RESTORE_FAILED = "Não foi possível restaurar. Seus dados não foram alterados.";
-const RESTORED = "Backup restaurado";
+function invalidMessage(reason: string): string {
+  return reason === "newer" ? t("backupScreen.newerFile") : t("backupScreen.invalidFile");
+}
 
 /**
  * Pick → validate → confirm → restore. The file is read and validated in full before the
@@ -32,9 +32,9 @@ export function useImportFlow() {
       if (text === null) return;
       const parsed = parseBackup(text);
       if (parsed.ok) setPending(parsed.backup);
-      else toast.show({ message: parsed.reason === "newer" ? NEWER_FILE : INVALID_FILE });
+      else toast.show({ message: invalidMessage(parsed.reason) });
     } catch {
-      toast.show({ message: INVALID_FILE });
+      toast.show({ message: t("backupScreen.invalidFile") });
     } finally {
       busy.current = false;
       setPicking(false);
@@ -48,8 +48,8 @@ export function useImportFlow() {
     if (!pending) return;
     setPending(undefined);
     restore.mutate(pending, {
-      onSuccess: () => toast.show({ message: RESTORED }),
-      onError: () => toast.show({ message: RESTORE_FAILED }),
+      onSuccess: () => toast.show({ message: t("backupScreen.restored") }),
+      onError: () => toast.show({ message: t("backupScreen.restoreFailed") }),
     });
   }, [pending, restore, toast]);
 

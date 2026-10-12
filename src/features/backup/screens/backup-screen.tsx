@@ -4,6 +4,7 @@ import type { Edge } from "react-native-safe-area-context";
 import { Button } from "@/components/button";
 import { Icon } from "@/components/icon";
 import { Screen } from "@/components/screen";
+import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { ImportConfirmDialog } from "./import-confirm-dialog";
@@ -22,20 +23,19 @@ export function BackupScreen() {
       <ScrollView contentContainerStyle={styles.body}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Ajustes"
+          accessibilityLabel={t("settings.title")}
           onPress={backup.goBack}
           style={styles.back}
         >
           <Icon name="chevron-left" size={20} color={colors.accentInk} />
-          <Text style={[typography.button, { color: colors.accentInk }]}>Ajustes</Text>
+          <Text style={[typography.button, { color: colors.accentInk }]}>{t("settings.title")}</Text>
         </Pressable>
         <View style={styles.heading}>
           <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
-            Backup
+            {t("backupScreen.title")}
           </Text>
           <Text style={[typography.body, { color: colors.text2 }]}>
-            Seus dados ficam só neste aparelho. Exporte um arquivo para guardar ou levar para outro
-            celular.
+            {t("backupScreen.intro")}
           </Text>
         </View>
 
@@ -66,21 +66,21 @@ export function BackupScreen() {
         </View>
 
         <View style={styles.action}>
-          <Button label="Exportar backup" icon="upload" disabled={backup.busy} onPress={backup.onExport} />
+          <Button label={t("backupScreen.export")} icon="upload" disabled={backup.busy} onPress={backup.onExport} />
           <Text style={[typography.caption, styles.hint, { color: colors.text2 }]}>
             {backup.exportHint}
           </Text>
         </View>
         <View style={styles.action}>
           <Button
-            label="Importar backup"
+            label={t("backupScreen.import")}
             icon="download"
             variant="secondary"
             disabled={backup.busy}
             onPress={backup.onImport}
           />
           <Text style={[typography.caption, styles.hint, { color: colors.text2 }]}>
-            Substitui os dados atuais pelos do arquivo.
+            {t("backupScreen.importHint")}
           </Text>
         </View>
       </ScrollView>

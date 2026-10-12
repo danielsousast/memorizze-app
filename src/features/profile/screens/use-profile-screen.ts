@@ -5,6 +5,7 @@ import { useToast } from "@/components/toast-provider";
 import { canStep, stepGoal } from "@/domain/goal";
 import { signOutMessage } from "@/domain/labels";
 import { useExportBackup, useMarkBackedUp } from "@/features/backup";
+import { t } from "@/lib/i18n";
 
 import { useDataCounts } from "../usecases/use-data-counts";
 import { useProfile } from "../usecases/use-profile";
@@ -12,12 +13,10 @@ import { useReviewsToday } from "../usecases/use-reviews-today";
 import { useSignOut } from "../usecases/use-sign-out";
 import { useStats } from "../usecases/use-stats";
 import { useUpdateProfile } from "../usecases/use-update-profile";
-import { GENERIC_ERROR } from "./name-errors";
+import { genericError } from "./name-errors";
 
-const SIGN_OUT_ERROR = "Não foi possível apagar os dados.";
 // iOS ignores a share sheet presented while the Modal is still dismissing.
 const MODAL_CLOSE_MS = 500;
-const EXPORT_ERROR = "Não foi possível exportar.";
 
 function editName() {
   router.push("/edit-name");
@@ -62,7 +61,7 @@ export function useProfileScreen() {
       try {
         await update.mutateAsync({ dailyGoal: stepGoal(profile.dailyGoal, direction) });
       } catch {
-        setError(GENERIC_ERROR);
+        setError(genericError());
       } finally {
         busy.current = false;
       }
@@ -78,13 +77,13 @@ export function useProfileScreen() {
   // The dialog is a Modal and covers the toast, so it closes before the wipe starts.
   const confirmSignOut = useCallback(() => {
     setSignOutOpen(false);
-    signOut.mutate(undefined, { onError: () => toast.show({ message: SIGN_OUT_ERROR }) });
+    signOut.mutate(undefined, { onError: () => toast.show({ message: t("profile.signOutError") }) });
   }, [signOut, toast]);
 
   // SOUT-07: the share sheet also sits under the Modal, so the dialog closes and comes back after the export.
   const backupFirst = useCallback(() => {
     setSignOutOpen(false);
-    const fail = () => toast.show({ message: EXPORT_ERROR });
+    const fail = () => toast.show({ message: t("backupScreen.exportError") });
     const reopen = () => setSignOutOpen(true);
     const record = ({ at }: { at: Date }) => markBackedUp.mutate(at, { onSuccess: reopen, onError: fail });
     setTimeout(

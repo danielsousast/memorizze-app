@@ -184,7 +184,7 @@ Verificado em `i18n-js@4.5.4`: `t("c", { count })` escolhe `one`/`other` (0 vai 
   - REGRESSION · unit — formato do arquivo de backup inalterado (testes de `backup.ts` atuais)
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T7 — Idioma reativo e teste-guarda
 

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 import { reviewsLabel, weekLabels } from "@/domain/labels";
+import { t } from "@/lib/i18n";
 import { radii, spacing, tabularNums, typography, useTheme } from "@/theme";
 
 const CHART_HEIGHT = 120;
@@ -20,14 +21,14 @@ export function WeekChart({ week, dailyGoal, now = new Date() }: Props) {
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <View style={styles.header}>
-        <Text style={[typography.section, { color: colors.text }]}>Últimos 7 dias</Text>
+        <Text style={[typography.section, { color: colors.text }]}>{t("profile.last7")}</Text>
         <Text style={[typography.caption, { color: colors.text2 }]}>
           {reviewsLabel(total)}
         </Text>
       </View>
       <View
         accessible
-        accessibilityLabel={`Últimos 7 dias: ${summary}`}
+        accessibilityLabel={t("profile.last7A11y", { summary })}
         style={styles.chart}
       >
         <View style={styles.bars} importantForAccessibility="no-hide-descendants">
@@ -62,7 +63,7 @@ export function WeekChart({ week, dailyGoal, now = new Date() }: Props) {
           })}
           <View pointerEvents="none" style={[styles.goal, { bottom: goalBottom + LABEL_BLOCK }]}>
             <View style={[styles.goalLine, { borderColor: colors.border }]} />
-            <Text style={[typography.caption, { color: colors.text2 }]}>{`meta ${dailyGoal}`}</Text>
+            <Text style={[typography.caption, { color: colors.text2 }]}>{t("profile.goalLine", { goal: dailyGoal })}</Text>
           </View>
         </View>
       </View>

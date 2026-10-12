@@ -1,14 +1,19 @@
+import { t } from "@/lib/i18n";
+
 import type { ProfileErrorCode } from "../interfaces";
 
-export const NAME_ERRORS: Partial<Record<ProfileErrorCode, string>> = {
-  PROFILE_NAME_EMPTY: "Digite seu nome.",
-  PROFILE_NAME_TOO_LONG: "Use no máximo 30 caracteres.",
+const NAME_ERROR_KEYS: Partial<Record<ProfileErrorCode, string>> = {
+  PROFILE_NAME_EMPTY: "profile.nameEmpty",
+  PROFILE_NAME_TOO_LONG: "profile.nameTooLong",
 };
 
-export const GENERIC_ERROR = "Não foi possível salvar. Tente de novo.";
+export function genericError(): string {
+  return t("common.saveFailed");
+}
 
 /** Maps a thrown error to a field message, or `undefined` when it is not a name error. */
 export function nameErrorMessage(error: unknown): string | undefined {
   const code = (error as { code?: ProfileErrorCode } | null)?.code;
-  return code ? NAME_ERRORS[code] : undefined;
+  const key = code ? NAME_ERROR_KEYS[code] : undefined;
+  return key ? t(key) : undefined;
 }

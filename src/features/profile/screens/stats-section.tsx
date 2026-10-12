@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { Icon } from "@/components/icon";
 import { daysLabel as days } from "@/domain/labels";
+import { t } from "@/lib/i18n";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
 import type { ProfileStats } from "../interfaces";
@@ -50,13 +51,19 @@ export function StatsSection({ stats, dailyGoal }: { stats: ProfileStats; dailyG
         <Tile
           highlighted
           value={days(stats.currentStreak)}
-          label="Sequência atual"
-          accessibilityLabel={`Sequência atual, ${days(stats.currentStreak)}`}
+          label={t("profile.currentStreak")}
+          accessibilityLabel={t("profile.labelA11y", {
+            label: t("profile.currentStreak"),
+            value: days(stats.currentStreak),
+          })}
         />
         <Tile
           value={days(stats.longestStreak)}
-          label="Maior sequência"
-          accessibilityLabel={`Maior sequência, ${days(stats.longestStreak)}`}
+          label={t("profile.longestStreak")}
+          accessibilityLabel={t("profile.labelA11y", {
+            label: t("profile.longestStreak"),
+            value: days(stats.longestStreak),
+          })}
         />
       </View>
       <WeekChart week={stats.week} dailyGoal={dailyGoal} />
