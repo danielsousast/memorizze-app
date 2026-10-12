@@ -79,12 +79,12 @@
 
 
 ## Handoff
-- **Feature**: sign-out-wipe (F7, HIGH) emenda A-01 feita: linha "Fazer backup antes" no diálogo do Sair (SOUT-06..08, T3). `npm run ci` sai 0 (697 testes), lint e `tsc` limpos, 4 mutações mortas. Verificação pelo autor; verificador independente e UAT pendentes. backup-restore: UAT e sign-off feitos em 2026-10-11
-- **Where**: `src/features/profile/screens/{use-profile-screen.ts,backup-before-sign-out.tsx,profile-screen.tsx}`, `src/components/confirm-dialog.tsx` (slot `children`), `src/navigation/root-stack.test.tsx`, `.specs/features/sign-out-wipe/`
-- **Next step**: verificador independente de sign-out-wipe e settings-and-preferences (opcional, peça para eu acionar um subagente), depois `daily-reminder` (HIGH). Rodar o skill `adaptive-spec-driven` primeiro. UAT pendente: F2, F4, F5, F7, F8
-- **Roteiro**: F1..F9 feitas (ver commits). `daily-reminder` (HIGH, nova): lembrete, horário, `Switch`, `expo-notifications`
+- **Feature**: daily-reminder (F10, HIGH) implementada: T1..T7 feitas, `npm run ci` sai 0 (758 testes), 5 mutações mortas. Verificação pelo autor em `validation.md` (veredito PENDENTE: falta verificador independente e UAT em aparelho). sign-out-wipe: verificador independente e UAT pendentes
+- **Where**: `src/domain/reminder.ts`, `src/lib/notifications.ts`, `src/features/reminder/`, `src/navigation/use-reminder-sync.ts`, `src/components/settings-switch-row.tsx`, `src/features/profile/screens/{use-settings-screen.ts,settings-screen.tsx}`, `src/testing/notifications.ts`, `.specs/features/daily-reminder/`
+- **Next step**: acionar o verificador independente de daily-reminder (peça para eu acionar um subagente) e fazer o UAT em development build (iOS e Android, ver `validation.md`). No PASS: atualizar `ARCHITECTURE.md` (ARCHITECTURE_UPDATE_REQUIRED no plano: feature `reminder`, `src/lib/notifications.ts`, `expo-notifications`, `useReminderSync` no `RootStack`) e `PROJECT.md` (stack e "fora do escopo" ainda dizem sem push). UAT pendente: F2, F4, F5, F7, F8, F10
+- **Roteiro**: F1..F10 feitas (ver commits)
 - **Decisões pendentes do usuário**: nenhuma
-- **Notas**: `design/` tem PNGs novos e alterados sem commit. No Sair, o diálogo fecha durante o export e reabre ao fim (A-01, por causa do `Modal`; conferir no UAT). `git push` exige go-ahead
+- **Notas**: `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
 - **Open amendments**: none
 - **Blockers**: none
-- **Updated**: 2026-10-11
+- **Updated**: 2026-10-12
