@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { t } from "@/lib/i18n";
 import { radii, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { Button } from "./button";
@@ -84,7 +85,7 @@ export function BottomSheet({ visible, title, subtitle, actions, onClose }: Prop
               <ActionRow key={action.label} action={action} onClose={onClose} />
             ))}
           </View>
-          <Button label="Cancelar" variant="secondary" onPress={onClose} />
+          <Button label={t("common.cancel")} variant="secondary" onPress={onClose} />
         </Pressable>
       </Pressable>
     </Modal>

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import { t } from "@/lib/i18n";
 import { radii, sizes, spacing, typography, useTheme } from "@/theme";
 
 type Props = {
@@ -15,8 +16,8 @@ type Props = {
 export function GoalProgress({
   done,
   goal,
-  label = "Meta diária",
-  suffix = " revisões",
+  label,
+  suffix,
 }: Props) {
   const { colors } = useTheme();
   const ratio = goal > 0 ? Math.min(done, goal) / goal : 0;
@@ -24,9 +25,9 @@ export function GoalProgress({
   return (
     <View style={styles.root}>
       <View style={styles.row}>
-        <Text style={[typography.button, { color: colors.text }]}>{label}</Text>
+        <Text style={[typography.button, { color: colors.text }]}>{label ?? t("common.goalTitle")}</Text>
         <Text style={[typography.caption, { color: colors.text2 }]}>
-          {`${done} de ${goal}${suffix}`}
+          {t("common.goalProgress", { done, goal, suffix: suffix ?? t("common.goalSuffix") })}
         </Text>
       </View>
       <View style={[styles.track, { backgroundColor: colors.surface2 }]}>

@@ -1,5 +1,17 @@
 {
-  "common": { "appName": "Memorizze" },
+  "common": {
+    "appName": "Memorizze",
+    "cancel": "Cancel",
+    "back": "Back",
+    "goalTitle": "Daily goal",
+    "goalSuffix": " reviews",
+    "goalProgress": "{{done}} of {{goal}}{{suffix}}"
+  },
+  "navigation": {
+    "tabHome": "Home",
+    "tabProfile": "Profile",
+    "loadingDb": "Opening database…"
+  },
   "number": { "thousandsSeparator": "," },
   "date": {
     "weekdays": {

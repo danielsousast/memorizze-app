@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 
+import { t } from "@/lib/i18n";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
 import { Button } from "./button";
@@ -24,7 +25,7 @@ export function ConfirmDialog({
   title,
   message,
   confirmLabel,
-  cancelLabel = "Cancelar",
+  cancelLabel,
   icon,
   tone = "neutral",
   children,
@@ -58,7 +59,7 @@ export function ConfirmDialog({
               variant={destructive ? "destructive" : "primary"}
               onPress={onConfirm}
             />
-            <Button label={cancelLabel} variant="secondary" onPress={onCancel} />
+            <Button label={cancelLabel ?? t("common.cancel")} variant="secondary" onPress={onCancel} />
           </View>
         </Pressable>
       </Pressable>

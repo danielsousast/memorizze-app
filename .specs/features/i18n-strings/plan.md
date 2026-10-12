@@ -135,7 +135,7 @@ Verificado em `i18n-js@4.5.4`: `t("c", { count })` escolhe `one`/`other` (0 vai 
   - REGRESSION · component — testes atuais dos componentes (pt-BR) passam sem edição
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — Decks e cartões
 
