@@ -8,7 +8,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 
 - Portfolio piece: clean, tested, well-documented code outweighs feature count (PROJECT-SPEC §1).
 - MVP scope: local profile, deck/card CRUD, spaced-repetition study session, stats and streak.
-- Out of scope: login, backend, sync, media on cards, import/export, push notifications, multiple profiles.
+- Out of scope: login, backend, sync, media on cards, push notifications (remote), multiple profiles.
 
 ## Stack
 
@@ -21,6 +21,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Package manager | npm | `package-lock.json` |
 | Database | Realm (`realm`, `@realm/react`), local only; requires development build | PROJECT-SPEC §3; `src/db/` |
 | Data fetching | `@tanstack/react-query` ^5, offline config in `src/lib/query-client.ts` | `package.json`; AD-002 |
+| Notifications | `expo-notifications ~57.0.22`, local daily reminder only; requires development build | `package.json`; `src/lib/notifications.ts` |
 | Tests | Jest (`jest-expo`) + React Native Testing Library | `package.json`; see [TESTING.md](TESTING.md) |
 
 ## Repository Structure

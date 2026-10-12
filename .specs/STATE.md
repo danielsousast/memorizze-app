@@ -79,9 +79,9 @@
 
 
 ## Handoff
-- **Feature**: daily-reminder (F10, HIGH) implementada: T1..T7 feitas, `npm run ci` sai 0 (758 testes), 5 mutações mortas. Verificação pelo autor em `validation.md` (veredito PENDENTE: falta verificador independente e UAT em aparelho). sign-out-wipe: verificador independente e UAT pendentes
-- **Where**: `src/domain/reminder.ts`, `src/lib/notifications.ts`, `src/features/reminder/`, `src/navigation/use-reminder-sync.ts`, `src/components/settings-switch-row.tsx`, `src/features/profile/screens/{use-settings-screen.ts,settings-screen.tsx}`, `src/testing/notifications.ts`, `.specs/features/daily-reminder/`
-- **Next step**: acionar o verificador independente de daily-reminder (peça para eu acionar um subagente) e fazer o UAT em development build (iOS e Android, ver `validation.md`). No PASS: atualizar `ARCHITECTURE.md` (ARCHITECTURE_UPDATE_REQUIRED no plano: feature `reminder`, `src/lib/notifications.ts`, `expo-notifications`, `useReminderSync` no `RootStack`) e `PROJECT.md` (stack e "fora do escopo" ainda dizem sem push). UAT pendente: F2, F4, F5, F7, F8, F10
+- **Feature**: daily-reminder (F10, HIGH) verificada: verificador independente PASS (758 testes, 8 mutações mortas) e UAT aprovado pelo usuário (F2, F4, F5, F7, F8, F10). `ARCHITECTURE.md` e `PROJECT.md` atualizados. sign-out-wipe: verificador independente e UAT pendentes
+- **Where**: `src/domain/reminder.ts`, `src/lib/notifications.ts`, `src/features/reminder/`, `src/navigation/use-reminder-sync.ts`, `.specs/features/daily-reminder/`
+- **Next step**: verificador independente e UAT de sign-out-wipe; depois, próxima feature (F-roteiro). Gap aberto: `sync` não recria o canal Android (minor, UAT F10 passou)
 - **Roteiro**: F1..F10 feitas (ver commits)
 - **Decisões pendentes do usuário**: nenhuma
 - **Notas**: `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
