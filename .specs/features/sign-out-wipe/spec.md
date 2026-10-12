@@ -19,7 +19,7 @@ O app não tem conta. Quem quer recomeçar ou entregar o aparelho não tem como 
 | Item | Reason |
 | --- | --- |
 | ~~Linha "Fazer backup antes" do diálogo~~ | Entrou pela emenda A-01 (F6 pronta) |
-| Apagar preferências e tema | Não existem até a F5 |
+| ~~Apagar preferências e tema~~ | Entrou pela emenda A-03: o apagamento remove o perfil e as preferências, e o tema volta ao do sistema (THM-05) |
 
 ## Risk Assessment
 
@@ -86,5 +86,14 @@ Other dimensions: input bounds N/A; idempotency N/A porque apagar o vazio é ino
 - **Change**: SOUT-06 vira um link sem fundo e sem a legenda do último backup.
 - **Reason**: pedido do usuário: o botão não precisa da legenda e pesava no diálogo.
 - **Affected**: SOUT-06 (modified)
+- **Risk impact**: none
+- **Status**: approved
+
+### A-03 — Preferências e tema entram no apagamento
+- **Type**: clarification
+- **Discovered in**: verificação independente (gap 2)
+- **Change**: "Apagar preferências e tema" sai de Out of scope. Hoje o `deleteAll` apaga o `Profile` com as preferências e o tema volta ao do sistema (THM-05, `src/navigation/root-stack.test.tsx:170`).
+- **Reason**: a F5 entregou as preferências; a spec ficou atrás do comportamento já testado.
+- **Affected**: Out of scope (modified); nenhum AC novo
 - **Risk impact**: none
 - **Status**: approved

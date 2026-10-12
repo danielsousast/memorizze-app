@@ -79,9 +79,9 @@
 
 
 ## Handoff
-- **Feature**: daily-reminder (F10, HIGH) verificada: verificador independente PASS (758 testes, 8 mutações mortas) e UAT aprovado pelo usuário (F2, F4, F5, F7, F8, F10). `ARCHITECTURE.md` e `PROJECT.md` atualizados. sign-out-wipe: verificador independente e UAT pendentes
+- **Feature**: daily-reminder (F10, HIGH) verificada: verificador independente PASS (758 testes, 8 mutações mortas) e UAT aprovado pelo usuário (F2, F4, F5, F7, F8, F10). `ARCHITECTURE.md` e `PROJECT.md` atualizados. sign-out-wipe também verificada (verificador independente PASS, UAT 1 a 4 e 6 aprovados, 5 pulado, emenda A-03)
 - **Where**: `src/domain/reminder.ts`, `src/lib/notifications.ts`, `src/features/reminder/`, `src/navigation/use-reminder-sync.ts`, `.specs/features/daily-reminder/`
-- **Next step**: verificador independente e UAT de sign-out-wipe; depois, próxima feature (F-roteiro). Gap aberto: `sync` não recria o canal Android (minor, UAT F10 passou)
+- **Next step**: nenhuma verificação pendente; escolher a próxima feature (ou rodar o Discover do template de nova feature). Gaps menores abertos: SOUT-04 sem teste de rollback no meio da transação; `sync` não recria o canal Android (minor, UAT F10 passou)
 - **Roteiro**: F1..F10 feitas (ver commits)
 - **Decisões pendentes do usuário**: nenhuma
 - **Notas**: `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
