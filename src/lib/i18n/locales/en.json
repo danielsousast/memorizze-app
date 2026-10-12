@@ -5,7 +5,10 @@
     "back": "Back",
     "goalTitle": "Daily goal",
     "goalSuffix": " reviews",
-    "goalProgress": "{{done}} of {{goal}}{{suffix}}"
+    "goalProgress": "{{done}} of {{goal}}{{suffix}}",
+    "save": "Save",
+    "optional": "Optional",
+    "saveFailed": "Could not save. Try again."
   },
   "navigation": {
     "tabHome": "Home",
@@ -104,5 +107,78 @@
     "deleteWithCards": "“{{name}}” and {{cards}} will be erased from this device. This can't be undone.",
     "deleteCards": { "one": "its only card", "other": "its {{count}} cards" },
     "sheetDue": "{{cards}} · {{due}} due today"
+  },
+  "deck": {
+    "notFound": "Deck not found",
+    "backHome": "Back to home",
+    "form": {
+      "titleNew": "New deck",
+      "titleEdit": "Edit deck",
+      "name": "Name",
+      "description": "Description",
+      "nameEmpty": "Give the deck a name.",
+      "nameDuplicate": "A deck with this name already exists."
+    },
+    "list": {
+      "title": "All cards",
+      "searchLabel": "Search cards",
+      "searchPlaceholder": "Search front or back",
+      "back": "Deck",
+      "empty": "No cards yet",
+      "noMatch": "No cards found"
+    },
+    "home": {
+      "greetingNamed": "Hello, {{name}}",
+      "greeting": "Hello",
+      "emptyTitle": "No decks yet",
+      "emptyBody": "Create your first deck and add a few cards. Five minutes a day already makes a difference.",
+      "createFirst": "Create first deck",
+      "studyAll": "Study all",
+      "yourDecks": "Your decks",
+      "create": "Create deck",
+      "dueBadge": "{{count}} today",
+      "upToDateBadge": "Up to date",
+      "dueLabel": "{{count}} due today",
+      "upToDateLabel": "up to date"
+    },
+    "detail": {
+      "dueBadge": "{{count}} due today",
+      "matureBadge": "{{count}} mature",
+      "cards": "Cards",
+      "seeAll": "See all",
+      "back": "Home",
+      "options": "Deck options",
+      "empty": "No cards yet",
+      "study": "Study",
+      "studyDue": "Study · {{cards}}",
+      "addCard": "Add card",
+      "edit": "Edit deck",
+      "reset": "Reset progress",
+      "resetHint": "All cards become new again",
+      "delete": "Delete deck",
+      "deleteTitle": "Delete deck?",
+      "resetDone": "Progress reset",
+      "resetFailed": "Could not reset progress",
+      "deleteDone": "Deck deleted",
+      "deleteFailed": "Could not delete the deck"
+    }
+  },
+  "card": {
+    "notFound": "Card not found",
+    "titleNew": "New card",
+    "titleEdit": "Edit card",
+    "front": "Front",
+    "frontHint": "Question or term",
+    "back": "Back",
+    "backHint": "Answer",
+    "tip": "One idea per card makes review faster.",
+    "saveAnother": "Save and create another",
+    "delete": "Delete card",
+    "deleteTitle": "Delete card?",
+    "deleteMessage": "This action cannot be undone.",
+    "deleteConfirm": "Delete",
+    "deleteFailed": "Could not delete. Try again.",
+    "frontEmpty": "Write the front of the card.",
+    "backEmpty": "Write the back of the card."
   }
 }

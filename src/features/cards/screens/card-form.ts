@@ -1,10 +1,9 @@
 import { router } from "expo-router";
 
 import { AppError } from "@/domain/errors";
+import { t } from "@/lib/i18n";
 
 export type FieldErrors = { front?: string; back?: string };
-
-const GENERIC_ERROR = "Não foi possível salvar. Tente de novo.";
 
 export function closeEditor(fallbackHref: string) {
   if (router.canGoBack()) router.back();
@@ -17,10 +16,10 @@ export function closeToHome() {
 
 export function toFieldErrors(error: unknown): { errors?: FieldErrors; formError?: string } {
   if (error instanceof AppError && error.code === "CARD_FRONT_EMPTY") {
-    return { errors: { front: "Escreva a frente do cartão." } };
+    return { errors: { front: t("card.frontEmpty") } };
   }
   if (error instanceof AppError && error.code === "CARD_BACK_EMPTY") {
-    return { errors: { back: "Escreva o verso do cartão." } };
+    return { errors: { back: t("card.backEmpty") } };
   }
-  return { formError: GENERIC_ERROR };
+  return { formError: t("common.saveFailed") };
 }

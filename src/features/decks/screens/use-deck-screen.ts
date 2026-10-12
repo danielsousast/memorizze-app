@@ -4,20 +4,20 @@ import { useCallback, useMemo, useState } from "react";
 import type { SheetAction } from "@/components/bottom-sheet";
 import { useToast } from "@/components/toast-provider";
 import { PREVIEW_LIMIT, newestFirst, previewCards } from "@/domain/cards-list";
-import { plural } from "@/domain/text";
 import { cardStage } from "@/domain/stage";
+import { t } from "@/lib/i18n";
 import { useCards } from "@/features/cards";
 import { useResetDeckProgress, type Deck, type useDeleteDeck } from "@/features/decks";
 
 import { deckSheetSubtitle, deleteDeckMessage } from "./deck-messages";
 
-const RESET_DONE = "Progresso redefinido";
-const RESET_ERROR = "Não foi possível redefinir o progresso";
-const DELETE_DONE = "Baralho excluído";
-const DELETE_ERROR = "Não foi possível excluir o baralho";
-
 export function goHome() {
   router.dismissTo("/");
+}
+
+function studyButtonLabel(dueCount: number): string {
+  if (dueCount <= 0) return t("deck.detail.study");
+  return t("deck.detail.studyDue", { cards: t("plurals.card", { count: dueCount }) });
 }
 
 export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDeck>) {
@@ -30,8 +30,7 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
   const rows = cards ? previewCards(cards) : [];
   const showAll = (cards?.length ?? 0) > PREVIEW_LIMIT;
   const matureCount = cards ? cards.filter((c) => cardStage(c) === "mature").length : 0;
-  const studyLabel =
-    deck.dueCount > 0 ? `Estudar · ${plural(deck.dueCount, "cartão", "cartões")}` : "Estudar";
+  const studyLabel = studyButtonLabel(deck.dueCount);
 
   const openMenu = useCallback(() => setMenuOpen(true), []);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
@@ -47,8 +46,8 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
 
   const resetProgress = useCallback(() => {
     reset.mutate(deck.id, {
-      onSuccess: () => toast.show({ message: RESET_DONE }),
-      onError: () => toast.show({ message: RESET_ERROR }),
+      onSuccess: () => toast.show({ message: t("deck.detail.resetDone") }),
+      onError: () => toast.show({ message: t("deck.detail.resetFailed") }),
     });
   }, [reset, deck.id, toast]);
 
@@ -59,24 +58,24 @@ export function useDeckScreen(deck: Deck, remove: ReturnType<typeof useDeleteDec
     setDeleteOpen(false);
     remove.mutate(deck.id, {
       onSuccess: () => {
-        toast.show({ message: DELETE_DONE });
+        toast.show({ message: t("deck.detail.deleteDone") });
         goHome();
       },
-      onError: () => toast.show({ message: DELETE_ERROR }),
+      onError: () => toast.show({ message: t("deck.detail.deleteFailed") }),
     });
   }, [remove, deck.id, toast]);
 
   const sheetActions = useMemo<SheetAction[]>(
     () => [
-      { label: "Adicionar cartão", icon: "plus", onPress: addCard },
-      { label: "Editar baralho", icon: "pencil", onPress: editDeck },
+      { label: t("deck.detail.addCard"), icon: "plus", onPress: addCard },
+      { label: t("deck.detail.edit"), icon: "pencil", onPress: editDeck },
       {
-        label: "Redefinir progresso",
-        subtitle: "Todos os cartões voltam a ser novos",
+        label: t("deck.detail.reset"),
+        subtitle: t("deck.detail.resetHint"),
         icon: "reset",
         onPress: resetProgress,
       },
-      { label: "Excluir baralho", icon: "trash", destructive: true, onPress: askDelete },
+      { label: t("deck.detail.delete"), icon: "trash", destructive: true, onPress: askDelete },
     ],
     [addCard, editDeck, resetProgress, askDelete],
   );

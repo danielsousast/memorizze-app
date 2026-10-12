@@ -4,8 +4,8 @@ import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
-import { plural } from "@/domain/text";
 import type { Card } from "@/features/cards";
+import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useDeck, type Deck } from "@/features/decks";
@@ -22,11 +22,16 @@ export function DeckCardsScreen({ deckId }: Props) {
   if (!deck) {
     return (
       <Screen testID="deck-cards-screen">
-        <NotFound title="Baralho não encontrado" actionLabel="Voltar ao início" onAction={goHome} />
+        <NotFound title={t("deck.notFound")} actionLabel={t("deck.backHome")} onAction={goHome} />
       </Screen>
     );
   }
   return <DeckCards deck={deck} />;
+}
+
+function emptyText(total: number): string {
+  if (total === 0) return t("deck.list.empty");
+  return t("deck.list.noMatch");
 }
 
 function cardKey(card: Card): string {
@@ -46,16 +51,16 @@ function DeckCards({ deck }: { deck: Deck }) {
     <View style={styles.headerContent}>
       <View style={styles.titleBlock}>
         <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
-          Todos os cartões
+          {t("deck.list.title")}
         </Text>
         <Text style={[typography.body, { color: colors.text2 }]}>
-          {`${deck.name} · ${plural(deck.cardCount, "cartão", "cartões")}`}
+          {`${deck.name} · ${t("plurals.card", { count: deck.cardCount })}`}
         </Text>
       </View>
       {all && all.length > 0 ? (
         <TextField
-          label="Buscar cartões"
-          placeholder="Buscar na frente ou no verso"
+          label={t("deck.list.searchLabel")}
+          placeholder={t("deck.list.searchPlaceholder")}
           value={screen.query}
           onChangeText={screen.setQuery}
         />
@@ -68,17 +73,19 @@ function DeckCards({ deck }: { deck: Deck }) {
       <View style={styles.topBar}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Baralho"
+          accessibilityLabel={t("deck.list.back")}
           onPress={screen.goBack}
           hitSlop={8}
           style={styles.back}
         >
           <Icon name="chevron-left" size={20} color={colors.accentInk} />
-          <Text style={[typography.button, { color: colors.accentInk }]}>Baralho</Text>
+          <Text style={[typography.button, { color: colors.accentInk }]}>
+            {t("deck.list.back")}
+          </Text>
         </Pressable>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Adicionar cartão"
+          accessibilityLabel={t("deck.detail.addCard")}
           onPress={screen.addCard}
           hitSlop={8}
           style={[styles.add, { backgroundColor: colors.accentSoft }]}
@@ -95,7 +102,7 @@ function DeckCards({ deck }: { deck: Deck }) {
         ListEmptyComponent={
           all ? (
             <Text style={[typography.body, styles.empty, { color: colors.text2 }]}>
-              {all.length === 0 ? "Nenhum cartão ainda" : "Nenhum cartão encontrado"}
+              {emptyText(all.length)}
             </Text>
           ) : null
         }

@@ -8,8 +8,8 @@ import { Fab } from "@/components/fab";
 import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
-import { plural } from "@/domain/text";
 import type { Card } from "@/features/cards";
+import { t } from "@/lib/i18n";
 import { screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useDeck, useDeleteDeck, type Deck } from "@/features/decks";
@@ -28,7 +28,7 @@ export function DeckScreen({ deckId }: Props) {
     if (remove.isPending || remove.isSuccess) return <Screen testID="deck-screen">{null}</Screen>;
     return (
       <Screen testID="deck-screen">
-        <NotFound title="Baralho não encontrado" actionLabel="Voltar ao início" onAction={goHome} />
+        <NotFound title={t("deck.notFound")} actionLabel={t("deck.backHome")} onAction={goHome} />
       </Screen>
     );
   }
@@ -61,26 +61,28 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
         ) : null}
       </View>
       <View style={styles.badges}>
-        <Badge tone="outline" text={plural(deck.cardCount, "cartão", "cartões")} />
-        {deck.dueCount > 0 ? <Badge tone="accent" text={`${deck.dueCount} para hoje`} /> : null}
-        {matureCount > 0 ? <Badge tone="outline" text={`${matureCount} maduros`} /> : null}
+        <Badge tone="outline" text={t("plurals.card", { count: deck.cardCount })} />
+        {deck.dueCount > 0 ? <Badge tone="accent" text={t("deck.detail.dueBadge", { count: deck.dueCount })} /> : null}
+        {matureCount > 0 ? <Badge tone="outline" text={t("deck.detail.matureBadge", { count: matureCount })} /> : null}
       </View>
       <Button label={screen.studyLabel} onPress={screen.study} />
       {all && all.length > 0 ? (
         <>
           <View style={styles.sectionRow}>
             <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
-              Cartões
+              {t("deck.detail.cards")}
             </Text>
             {screen.showAll ? (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Ver todos"
+                accessibilityLabel={t("deck.detail.seeAll")}
                 onPress={screen.seeAll}
                 hitSlop={8}
                 style={styles.seeAll}
               >
-                <Text style={[typography.button, { color: colors.accentInk }]}>Ver todos</Text>
+                <Text style={[typography.button, { color: colors.accentInk }]}>
+                  {t("deck.detail.seeAll")}
+                </Text>
                 <Icon name="chevron-right" size={16} color={colors.accentInk} />
               </Pressable>
             ) : null}
@@ -95,17 +97,19 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
       <View style={styles.topBar}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Início"
+          accessibilityLabel={t("deck.detail.back")}
           onPress={screen.goHome}
           hitSlop={8}
           style={styles.back}
         >
           <Icon name="chevron-left" size={20} color={colors.accentInk} />
-          <Text style={[typography.button, { color: colors.accentInk }]}>Início</Text>
+          <Text style={[typography.button, { color: colors.accentInk }]}>
+            {t("deck.detail.back")}
+          </Text>
         </Pressable>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Opções do baralho"
+          accessibilityLabel={t("deck.detail.options")}
           onPress={screen.openMenu}
           hitSlop={8}
           style={styles.more}
@@ -122,14 +126,14 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
         ListEmptyComponent={
           all ? (
             <Text style={[typography.body, styles.empty, { color: colors.text2 }]}>
-              Nenhum cartão ainda
+              {t("deck.detail.empty")}
             </Text>
           ) : null
         }
         contentContainerStyle={styles.list}
       />
       <View style={styles.fab}>
-        <Fab label="Adicionar cartão" onPress={screen.addCard} />
+        <Fab label={t("deck.detail.addCard")} onPress={screen.addCard} />
       </View>
       <BottomSheet
         visible={screen.menuOpen}
@@ -142,9 +146,9 @@ function DeckDetail({ deck, remove }: { deck: Deck; remove: ReturnType<typeof us
         visible={screen.deleteOpen}
         icon="trash"
         tone="destructive"
-        title="Excluir baralho?"
+        title={t("deck.detail.deleteTitle")}
         message={screen.deleteMessage}
-        confirmLabel="Excluir baralho"
+        confirmLabel={t("deck.detail.delete")}
         onConfirm={screen.confirmDelete}
         onCancel={screen.cancelDelete}
       />

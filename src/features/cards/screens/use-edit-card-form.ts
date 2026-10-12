@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 
+import { t } from "@/lib/i18n";
 import { useUpdateCard, type Card, type useDeleteCard } from "@/features/cards";
 
 import { closeToHome, toFieldErrors, type FieldErrors } from "./card-form";
@@ -41,7 +42,7 @@ export function useEditCardForm(card: Card, remove: ReturnType<typeof useDeleteC
     setFormError(undefined);
     remove.mutate(card.id, {
       onSuccess: closeToHome,
-      onError: () => setFormError("Não foi possível excluir. Tente de novo."),
+      onError: () => setFormError(t("card.deleteFailed")),
       onSettled: () => {
         busy.current = false;
       },

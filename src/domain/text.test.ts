@@ -1,4 +1,4 @@
-import { initials, matches, plural, searchKey } from "./text";
+import { initials, matches, searchKey } from "./text";
 
 describe("initials", () => {
   it.each([
@@ -14,14 +14,6 @@ describe("initials", () => {
   it("falls back to # for empty or symbol-only names", () => {
     expect(initials("")).toBe("#");
     expect(initials("— !")).toBe("#");
-  });
-});
-
-describe("plural", () => {
-  it("picks singular only for exactly 1", () => {
-    expect(plural(1, "cartão", "cartões")).toBe("1 cartão");
-    expect(plural(0, "cartão", "cartões")).toBe("0 cartões");
-    expect(plural(2, "cartão", "cartões")).toBe("2 cartões");
   });
 });
 

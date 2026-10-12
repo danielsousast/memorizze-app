@@ -5,7 +5,10 @@
     "back": "Voltar",
     "goalTitle": "Meta diária",
     "goalSuffix": " revisões",
-    "goalProgress": "{{done}} de {{goal}}{{suffix}}"
+    "goalProgress": "{{done}} de {{goal}}{{suffix}}",
+    "save": "Salvar",
+    "optional": "Opcional",
+    "saveFailed": "Não foi possível salvar. Tente de novo."
   },
   "navigation": {
     "tabHome": "Início",
@@ -104,5 +107,78 @@
     "deleteWithCards": "“{{name}}” e {{cards}} serão apagados deste aparelho. Não dá para desfazer.",
     "deleteCards": { "one": "seu único cartão", "other": "seus {{count}} cartões" },
     "sheetDue": "{{cards}} · {{due}} para hoje"
+  },
+  "deck": {
+    "notFound": "Baralho não encontrado",
+    "backHome": "Voltar ao início",
+    "form": {
+      "titleNew": "Novo baralho",
+      "titleEdit": "Editar baralho",
+      "name": "Nome",
+      "description": "Descrição",
+      "nameEmpty": "Dê um nome ao baralho.",
+      "nameDuplicate": "Já existe um baralho com esse nome."
+    },
+    "list": {
+      "title": "Todos os cartões",
+      "searchLabel": "Buscar cartões",
+      "searchPlaceholder": "Buscar na frente ou no verso",
+      "back": "Baralho",
+      "empty": "Nenhum cartão ainda",
+      "noMatch": "Nenhum cartão encontrado"
+    },
+    "home": {
+      "greetingNamed": "Olá, {{name}}",
+      "greeting": "Olá",
+      "emptyTitle": "Nenhum baralho ainda",
+      "emptyBody": "Crie seu primeiro baralho e adicione alguns cartões. Cinco minutos por dia já fazem diferença.",
+      "createFirst": "Criar primeiro baralho",
+      "studyAll": "Estudar tudo",
+      "yourDecks": "Seus baralhos",
+      "create": "Criar baralho",
+      "dueBadge": "{{count}} hoje",
+      "upToDateBadge": "Em dia",
+      "dueLabel": "{{count}} para hoje",
+      "upToDateLabel": "em dia"
+    },
+    "detail": {
+      "dueBadge": "{{count}} para hoje",
+      "matureBadge": "{{count}} maduros",
+      "cards": "Cartões",
+      "seeAll": "Ver todos",
+      "back": "Início",
+      "options": "Opções do baralho",
+      "empty": "Nenhum cartão ainda",
+      "study": "Estudar",
+      "studyDue": "Estudar · {{cards}}",
+      "addCard": "Adicionar cartão",
+      "edit": "Editar baralho",
+      "reset": "Redefinir progresso",
+      "resetHint": "Todos os cartões voltam a ser novos",
+      "delete": "Excluir baralho",
+      "deleteTitle": "Excluir baralho?",
+      "resetDone": "Progresso redefinido",
+      "resetFailed": "Não foi possível redefinir o progresso",
+      "deleteDone": "Baralho excluído",
+      "deleteFailed": "Não foi possível excluir o baralho"
+    }
+  },
+  "card": {
+    "notFound": "Cartão não encontrado",
+    "titleNew": "Novo cartão",
+    "titleEdit": "Editar cartão",
+    "front": "Frente",
+    "frontHint": "Pergunta ou termo",
+    "back": "Verso",
+    "backHint": "Resposta",
+    "tip": "Uma ideia por cartão deixa a revisão mais rápida.",
+    "saveAnother": "Salvar e criar outro",
+    "delete": "Excluir cartão",
+    "deleteTitle": "Excluir cartão?",
+    "deleteMessage": "Esta ação não pode ser desfeita.",
+    "deleteConfirm": "Excluir",
+    "deleteFailed": "Não foi possível excluir. Tente de novo.",
+    "frontEmpty": "Escreva a frente do cartão.",
+    "backEmpty": "Escreva o verso do cartão."
   }
 }

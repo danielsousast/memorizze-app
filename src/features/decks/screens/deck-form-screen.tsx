@@ -4,6 +4,7 @@ import { Button } from "@/components/button";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
+import { t } from "@/lib/i18n";
 import { screenMargin, spacing, typography, useTheme } from "@/theme";
 
 import { useDeck, type Deck } from "@/features/decks";
@@ -23,7 +24,7 @@ function EditDeck({ deckId }: { deckId: string }) {
   if (!data) {
     return (
       <Screen>
-        <NotFound title="Baralho não encontrado" actionLabel="Voltar" onAction={leaveDeckForm} />
+        <NotFound title={t("deck.notFound")} actionLabel={t("common.back")} onAction={leaveDeckForm} />
       </Screen>
     );
   }
@@ -37,15 +38,15 @@ function DeckForm({ deck }: { deck?: Deck }) {
   return (
     <Screen keyboardAvoiding>
       <View style={styles.header}>
-        <Button label="Cancelar" variant="text" onPress={form.cancel} />
+        <Button label={t("common.cancel")} variant="text" onPress={form.cancel} />
         <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
-          {deck ? "Editar baralho" : "Novo baralho"}
+          {deck ? t("deck.form.titleEdit") : t("deck.form.titleNew")}
         </Text>
-        <Button label="Salvar" disabled={form.pending} onPress={form.submit} />
+        <Button label={t("common.save")} disabled={form.pending} onPress={form.submit} />
       </View>
       <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
-        <TextField label="Nome" value={form.name} onChangeText={form.setName} error={form.nameError} autoFocus={!deck} />
-        <TextField label="Descrição" value={form.description} onChangeText={form.setDescription} multiline hint="Opcional" />
+        <TextField label={t("deck.form.name")} value={form.name} onChangeText={form.setName} error={form.nameError} autoFocus={!deck} />
+        <TextField label={t("deck.form.description")} value={form.description} onChangeText={form.setDescription} multiline hint={t("common.optional")} />
         {form.formError ? (
           <Text accessibilityRole="alert" style={[typography.caption, { color: colors.grade.again.text }]}>
             {form.formError}

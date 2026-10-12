@@ -8,7 +8,7 @@ import { DeckIcon } from "@/components/deck-icon";
 import { Fab } from "@/components/fab";
 import { Screen } from "@/components/screen";
 import { formatLongDate } from "@/domain/dates";
-import { plural } from "@/domain/text";
+import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useProfile } from "@/features/profile";
@@ -21,10 +21,15 @@ function openCreate() {
 }
 
 function accessibilityLabel(deck: Deck): string {
-  const parts = [deck.name, plural(deck.cardCount, "cartão", "cartões")];
-  if (deck.dueCount > 0) parts.push(`${deck.dueCount} para hoje`);
-  else if (deck.cardCount > 0) parts.push("em dia");
+  const parts = [deck.name, t("plurals.card", { count: deck.cardCount })];
+  if (deck.dueCount > 0) parts.push(t("deck.home.dueLabel", { count: deck.dueCount }));
+  else if (deck.cardCount > 0) parts.push(t("deck.home.upToDateLabel"));
   return parts.join(", ");
+}
+
+function greeting(name?: string): string {
+  if (name) return t("deck.home.greetingNamed", { name });
+  return t("deck.home.greeting");
 }
 
 function openStudyAll() {
@@ -36,8 +41,8 @@ function deckKey(deck: Deck): string {
 }
 
 function DeckBadge({ deck }: { deck: Deck }) {
-  if (deck.dueCount > 0) return <Badge tone="accent" text={`${deck.dueCount} hoje`} />;
-  if (deck.cardCount > 0) return <Badge tone="neutral" icon="check" text="Em dia" />;
+  if (deck.dueCount > 0) return <Badge tone="accent" text={t("deck.home.dueBadge", { count: deck.dueCount })} />;
+  if (deck.cardCount > 0) return <Badge tone="neutral" icon="check" text={t("deck.home.upToDateBadge")} />;
   return null;
 }
 
@@ -59,7 +64,7 @@ function DeckItem({ deck }: { deck: Deck }) {
           {deck.name}
         </Text>
         <Text style={[typography.caption, { color: colors.text2 }]}>
-          {plural(deck.cardCount, "cartão", "cartões")}
+          {t("plurals.card", { count: deck.cardCount })}
         </Text>
       </View>
       <DeckBadge deck={deck} />
@@ -82,7 +87,7 @@ export function HomeScreen() {
         {formatLongDate(new Date())}
       </Text>
       <Text accessibilityRole="header" style={[typography.display, { color: colors.text }]}>
-        {name ? `Olá, ${name}` : "Olá"}
+        {greeting(name)}
       </Text>
     </View>
   );
@@ -97,12 +102,11 @@ export function HomeScreen() {
         {header}
         <StreakCard />
         <View style={styles.empty}>
-          <Text style={[typography.title, { color: colors.text }]}>Nenhum baralho ainda</Text>
+          <Text style={[typography.title, { color: colors.text }]}>{t("deck.home.emptyTitle")}</Text>
           <Text style={[typography.body, styles.emptyText, { color: colors.text2 }]}>
-            Crie seu primeiro baralho e adicione alguns cartões. Cinco minutos por dia já fazem
-            diferença.
+            {t("deck.home.emptyBody")}
           </Text>
-          <Button label="Criar primeiro baralho" icon="plus" onPress={openCreate} />
+          <Button label={t("deck.home.createFirst")} icon="plus" onPress={openCreate} />
         </View>
       </Screen>
     );
@@ -121,16 +125,16 @@ export function HomeScreen() {
             {header}
             <StreakCard>
               <View style={styles.study}>
-                <Button label="Estudar tudo" onPress={openStudyAll} />
+                <Button label={t("deck.home.studyAll")} onPress={openStudyAll} />
                 {totalDue > 0 ? (
-                  <Badge tone="accent" text={plural(totalDue, "cartão", "cartões")} />
+                  <Badge tone="accent" text={t("plurals.card", { count: totalDue })} />
                 ) : null}
               </View>
             </StreakCard>
             <View style={styles.sectionRow}>
-              <Text style={[typography.section, { color: colors.text }]}>Seus baralhos</Text>
+              <Text style={[typography.section, { color: colors.text }]}>{t("deck.home.yourDecks")}</Text>
               <Text style={[typography.caption, { color: colors.text2 }]}>
-                {plural(data.length, "baralho", "baralhos")}
+                {t("plurals.deck", { count: data.length })}
               </Text>
             </View>
           </>
@@ -139,7 +143,7 @@ export function HomeScreen() {
         ItemSeparatorComponent={Separator}
       />
       <View style={styles.fab}>
-        <Fab label="Criar baralho" onPress={openCreate} />
+        <Fab label={t("deck.home.create")} onPress={openCreate} />
       </View>
     </Screen>
   );

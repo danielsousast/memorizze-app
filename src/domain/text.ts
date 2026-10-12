@@ -6,10 +6,6 @@ export function initials(name: string): string {
   return "#";
 }
 
-export function plural(n: number, one: string, many: string): string {
-  return `${n} ${n === 1 ? one : many}`;
-}
-
 export function searchKey(text: string): string {
   return text
     .normalize("NFD")

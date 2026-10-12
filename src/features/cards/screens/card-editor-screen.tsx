@@ -7,6 +7,7 @@ import { Icon } from "@/components/icon";
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
 import { TextField } from "@/components/text-field";
+import { t } from "@/lib/i18n";
 import { useDeck } from "@/features/decks";
 import { radii, screenMargin, spacing, typography, useTheme } from "@/theme";
 
@@ -34,8 +35,8 @@ function CreateCard({ deckId }: { deckId: string }) {
     return (
       <Screen>
         <NotFound
-          title="Baralho não encontrado"
-          actionLabel="Voltar"
+          title={t("deck.notFound")}
+          actionLabel={t("common.back")}
           onAction={closeToHome}
         />
       </Screen>
@@ -58,8 +59,8 @@ function EditCard({ cardId }: { cardId: string }) {
     return (
       <Screen>
         <NotFound
-          title="Cartão não encontrado"
-          actionLabel="Voltar"
+          title={t("card.notFound")}
+          actionLabel={t("common.back")}
           onAction={closeToHome}
         />
       </Screen>
@@ -78,7 +79,7 @@ function EditCardForm({
   const form = useEditCardForm(card, remove);
   return (
     <CardEditorForm
-      title="Editar cartão"
+      title={t("card.titleEdit")}
       front={form.front}
       back={form.back}
       onFrontChange={form.setFront}
@@ -100,7 +101,7 @@ function CreateCardForm({ deckId, deckName }: { deckId: string; deckName: string
   const form = useCreateCardForm(deckId);
   return (
     <CardEditorForm
-      title="Novo cartão"
+      title={t("card.titleNew")}
       deckName={deckName}
       front={form.front}
       back={form.back}
@@ -145,7 +146,7 @@ function CardEditorForm(props: FormProps) {
   return (
     <Screen keyboardAvoiding>
       <View style={styles.header}>
-        <Button label="Cancelar" variant="text" onPress={props.onCancel} />
+        <Button label={t("common.cancel")} variant="text" onPress={props.onCancel} />
         <Text accessibilityRole="header" style={[typography.section, { color: colors.text }]}>
           {props.title}
         </Text>
@@ -162,8 +163,8 @@ function CardEditorForm(props: FormProps) {
           </View>
         ) : null}
         <TextField
-          label="Frente"
-          hint="Pergunta ou termo"
+          label={t("card.front")}
+          hint={t("card.frontHint")}
           multiline
           inputRef={props.frontRef}
           value={props.front}
@@ -171,8 +172,8 @@ function CardEditorForm(props: FormProps) {
           error={props.errors.front}
         />
         <TextField
-          label="Verso"
-          hint="Resposta"
+          label={t("card.back")}
+          hint={t("card.backHint")}
           multiline
           value={props.back}
           onChangeText={props.onBackChange}
@@ -181,7 +182,7 @@ function CardEditorForm(props: FormProps) {
         <View style={styles.tip}>
           <Icon name="bulb" color={colors.text2} />
           <Text style={[typography.body, styles.tipText, { color: colors.text2 }]}>
-            Uma ideia por cartão deixa a revisão mais rápida.
+            {t("card.tip")}
           </Text>
         </View>
         {props.formError ? (
@@ -192,10 +193,10 @@ function CardEditorForm(props: FormProps) {
             {props.formError}
           </Text>
         ) : null}
-        <Button label="Salvar" onPress={props.onSave} disabled={props.pending} />
+        <Button label={t("common.save")} onPress={props.onSave} disabled={props.pending} />
         {props.onSaveAnother ? (
           <Button
-            label="Salvar e criar outro"
+            label={t("card.saveAnother")}
             variant="text"
             onPress={props.onSaveAnother}
             disabled={props.pending}
@@ -203,7 +204,7 @@ function CardEditorForm(props: FormProps) {
         ) : null}
         {props.onDelete ? (
           <Button
-            label="Excluir cartão"
+            label={t("card.delete")}
             variant="danger"
             onPress={props.onDelete}
             disabled={props.pending}
@@ -215,9 +216,9 @@ function CardEditorForm(props: FormProps) {
           visible={props.confirmingDelete ?? false}
           icon="trash"
           tone="destructive"
-          title="Excluir cartão?"
-          message="Esta ação não pode ser desfeita."
-          confirmLabel="Excluir"
+          title={t("card.deleteTitle")}
+          message={t("card.deleteMessage")}
+          confirmLabel={t("card.deleteConfirm")}
           onConfirm={props.onConfirmDelete}
           onCancel={props.onCancelDelete}
         />

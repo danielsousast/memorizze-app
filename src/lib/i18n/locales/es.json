@@ -5,7 +5,10 @@
     "back": "Volver",
     "goalTitle": "Meta diaria",
     "goalSuffix": " repasos",
-    "goalProgress": "{{done}} de {{goal}}{{suffix}}"
+    "goalProgress": "{{done}} de {{goal}}{{suffix}}",
+    "save": "Guardar",
+    "optional": "Opcional",
+    "saveFailed": "No se pudo guardar. Inténtalo de nuevo."
   },
   "navigation": {
     "tabHome": "Inicio",
@@ -104,5 +107,78 @@
     "deleteWithCards": "«{{name}}» y {{cards}} se borrarán de este dispositivo. No se puede deshacer.",
     "deleteCards": { "one": "su única tarjeta", "other": "sus {{count}} tarjetas" },
     "sheetDue": "{{cards}} · {{due}} para hoy"
+  },
+  "deck": {
+    "notFound": "Mazo no encontrado",
+    "backHome": "Volver al inicio",
+    "form": {
+      "titleNew": "Nuevo mazo",
+      "titleEdit": "Editar mazo",
+      "name": "Nombre",
+      "description": "Descripción",
+      "nameEmpty": "Ponle un nombre al mazo.",
+      "nameDuplicate": "Ya existe un mazo con ese nombre."
+    },
+    "list": {
+      "title": "Todas las tarjetas",
+      "searchLabel": "Buscar tarjetas",
+      "searchPlaceholder": "Buscar en el anverso o el reverso",
+      "back": "Mazo",
+      "empty": "Aún no hay tarjetas",
+      "noMatch": "No se encontraron tarjetas"
+    },
+    "home": {
+      "greetingNamed": "Hola, {{name}}",
+      "greeting": "Hola",
+      "emptyTitle": "Aún no hay mazos",
+      "emptyBody": "Crea tu primer mazo y agrega algunas tarjetas. Cinco minutos al día ya marcan la diferencia.",
+      "createFirst": "Crear primer mazo",
+      "studyAll": "Estudiar todo",
+      "yourDecks": "Tus mazos",
+      "create": "Crear mazo",
+      "dueBadge": "{{count}} hoy",
+      "upToDateBadge": "Al día",
+      "dueLabel": "{{count}} para hoy",
+      "upToDateLabel": "al día"
+    },
+    "detail": {
+      "dueBadge": "{{count}} para hoy",
+      "matureBadge": "{{count}} maduras",
+      "cards": "Tarjetas",
+      "seeAll": "Ver todas",
+      "back": "Inicio",
+      "options": "Opciones del mazo",
+      "empty": "Aún no hay tarjetas",
+      "study": "Estudiar",
+      "studyDue": "Estudiar · {{cards}}",
+      "addCard": "Agregar tarjeta",
+      "edit": "Editar mazo",
+      "reset": "Restablecer progreso",
+      "resetHint": "Todas las tarjetas vuelven a ser nuevas",
+      "delete": "Eliminar mazo",
+      "deleteTitle": "¿Eliminar mazo?",
+      "resetDone": "Progreso restablecido",
+      "resetFailed": "No se pudo restablecer el progreso",
+      "deleteDone": "Mazo eliminado",
+      "deleteFailed": "No se pudo eliminar el mazo"
+    }
+  },
+  "card": {
+    "notFound": "Tarjeta no encontrada",
+    "titleNew": "Nueva tarjeta",
+    "titleEdit": "Editar tarjeta",
+    "front": "Anverso",
+    "frontHint": "Pregunta o término",
+    "back": "Reverso",
+    "backHint": "Respuesta",
+    "tip": "Una idea por tarjeta hace el repaso más rápido.",
+    "saveAnother": "Guardar y crear otra",
+    "delete": "Eliminar tarjeta",
+    "deleteTitle": "¿Eliminar tarjeta?",
+    "deleteMessage": "Esta acción no se puede deshacer.",
+    "deleteConfirm": "Eliminar",
+    "deleteFailed": "No se pudo eliminar. Inténtalo de nuevo.",
+    "frontEmpty": "Escribe el anverso de la tarjeta.",
+    "backEmpty": "Escribe el reverso de la tarjeta."
   }
 }
