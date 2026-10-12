@@ -167,7 +167,7 @@ Verificado em `i18n-js@4.5.4`: `t("c", { count })` escolhe `one`/`other` (0 vai 
   - REGRESSION · component — testes atuais do estudo sem edição
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T6 — Perfil, ajustes, boas-vindas e backup
 

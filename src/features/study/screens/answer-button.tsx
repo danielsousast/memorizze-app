@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
+import { t } from "@/lib/i18n";
 import { radii, sizes, typography, useTheme } from "@/theme";
 
 import type { AnswerOption } from "./use-study-session";
@@ -20,7 +21,7 @@ export function AnswerButton({ option, disabled, onAnswer }: Props) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${option.name}, ${option.interval}`}
+      accessibilityLabel={t("study.answerA11y", { name: option.name, interval: option.interval })}
       disabled={disabled}
       onPress={press}
       style={[styles.answer, { backgroundColor: tone.background }]}

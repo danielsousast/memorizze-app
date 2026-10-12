@@ -5,6 +5,7 @@ import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { FlipCard } from "@/components/flip-card";
 import { Icon } from "@/components/icon";
+import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, tabularNums, typography, useTheme } from "@/theme";
 
 import type { StudyCard } from "../interfaces";
@@ -51,7 +52,7 @@ export function SessionView({ cards, deckId }: Props) {
       <View style={styles.top}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Sair da sessão"
+          accessibilityLabel={t("study.exitSession")}
           hitSlop={8}
           onPress={requestExit}
           style={styles.close}
@@ -61,7 +62,7 @@ export function SessionView({ cards, deckId }: Props) {
         <View
           accessible
           accessibilityRole="progressbar"
-          accessibilityLabel={`Cartão ${position} de ${state.total}`}
+          accessibilityLabel={t("study.cardProgressA11y", { position, total: state.total })}
           accessibilityValue={{ now: state.completed, min: 0, max: state.total }}
           style={[styles.track, { backgroundColor: colors.surface2 }]}
         >
@@ -73,7 +74,7 @@ export function SessionView({ cards, deckId }: Props) {
           />
         </View>
         <Text style={[typography.button, tabularNums, { color: colors.text }]}>
-          {`${position} de ${state.total}`}
+          {t("study.progress", { position, total: state.total })}
         </Text>
       </View>
 
@@ -83,32 +84,32 @@ export function SessionView({ cards, deckId }: Props) {
 
       <FlipCard
         testID="study-card"
-        accessibilityLabel="Virar cartão"
+        accessibilityLabel={t("study.flipCard")}
         flipped={revealed}
         disabled={revealed}
         onPress={reveal}
         style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
         front={
           <>
-            <Text style={[typography.label, { color: colors.text2 }]}>FRENTE</Text>
+            <Text style={[typography.label, { color: colors.text2 }]}>{t("study.front")}</Text>
             <View style={styles.middle}>
               <Text style={[typography.card, styles.center, { color: colors.text }]}>
                 {card.front}
               </Text>
             </View>
             <Text style={[typography.button, { color: colors.accentInk }]}>
-              Toque para ver a resposta
+              {t("study.tapToReveal")}
             </Text>
           </>
         }
         back={
           <>
-            <Text style={[typography.label, { color: colors.text2 }]}>FRENTE</Text>
+            <Text style={[typography.label, { color: colors.text2 }]}>{t("study.front")}</Text>
             <Text style={[typography.section, styles.center, { color: colors.text2 }]}>
               {card.front}
             </Text>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
-            <Text style={[typography.label, { color: colors.accentInk }]}>VERSO</Text>
+            <Text style={[typography.label, { color: colors.accentInk }]}>{t("study.back")}</Text>
             <Text style={[typography.title, styles.center, { color: colors.text }]}>{card.back}</Text>
           </>
         }
@@ -118,7 +119,7 @@ export function SessionView({ cards, deckId }: Props) {
         {revealed ? (
           <>
             <Text style={[typography.button, styles.center, { color: colors.text2 }]}>
-              Como foi lembrar?
+              {t("study.howWasIt")}
             </Text>
             {error ? (
               <Text accessibilityRole="alert" style={[typography.button, styles.center, { color: colors.grade.again.text }]}>
@@ -132,7 +133,7 @@ export function SessionView({ cards, deckId }: Props) {
             </View>
           </>
         ) : (
-          <Button label="Mostrar resposta" onPress={reveal} variant="secondary" />
+          <Button label={t("study.showAnswer")} onPress={reveal} variant="secondary" />
         )}
       </View>
 
@@ -140,10 +141,10 @@ export function SessionView({ cards, deckId }: Props) {
       <ConfirmDialog
         visible={exitOpen}
         icon="sign-out"
-        title="Sair da sessão?"
-        message="Seu progresso já foi salvo."
-        confirmLabel="Sair"
-        cancelLabel="Continuar"
+        title={t("study.exitTitle")}
+        message={t("study.exitMessage")}
+        confirmLabel={t("study.exitConfirm")}
+        cancelLabel={t("study.exitCancel")}
         onConfirm={leave}
         onCancel={cancelExit}
       />

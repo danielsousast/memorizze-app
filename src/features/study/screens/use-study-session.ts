@@ -5,12 +5,11 @@ import { BackHandler } from "react-native";
 import { gradeLabel, intervalLabel, schedule, type Grade } from "@/domain/schedule";
 import { answerSession, skipCurrent, startSession, type SessionState } from "@/domain/session";
 import { useCard } from "@/features/cards";
+import { t } from "@/lib/i18n";
 import { useProfile, useUpdateProfile } from "@/features/profile";
 
 import type { StudyCard } from "../interfaces";
 import { useAnswerCard } from "../usecases/use-answer-card";
-
-const SAVE_ERROR = "Não foi possível salvar a resposta. Tente de novo.";
 
 const grades: Grade[] = [0, 1, 2, 3];
 
@@ -118,7 +117,7 @@ export function useStudySession(cards: StudyCard[]) {
     position,
     revealed,
     answers,
-    error: error ? SAVE_ERROR : undefined,
+    error: error ? t("study.saveError") : undefined,
     pending: mutation.isPending,
     reveal,
     answer,

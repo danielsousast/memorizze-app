@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { NotFound } from "@/components/not-found";
 import { Screen } from "@/components/screen";
+import { t } from "@/lib/i18n";
 
 import { useStudyQueue } from "../index";
 import { EmptyView } from "./empty-view";
@@ -24,7 +25,7 @@ export function StudyScreen({ deckId }: Props) {
   if (queue === null || queue === undefined) {
     return (
       <Screen testID="study-screen">
-        <NotFound title="Baralho não encontrado" actionLabel="Voltar ao início" onAction={goHome} />
+        <NotFound title={t("deck.notFound")} actionLabel={t("deck.backHome")} onAction={goHome} />
       </Screen>
     );
   }

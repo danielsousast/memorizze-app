@@ -6,6 +6,7 @@ import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Icon } from "@/components/icon";
 import { tomorrowLabel } from "@/domain/labels";
+import { t } from "@/lib/i18n";
 import { screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useDueTomorrow } from "../index";
@@ -32,7 +33,7 @@ export function EmptyView({ deckId }: Props) {
     <View style={styles.root}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Sair da sessão"
+        accessibilityLabel={t("study.exitSession")}
         hitSlop={8}
         onPress={goBack}
         style={styles.close}
@@ -45,19 +46,19 @@ export function EmptyView({ deckId }: Props) {
           <Icon name="check" size={48} color={colors.accentInk} />
         </View>
         <Text accessibilityRole="header" style={[typography.title, styles.center, { color: colors.text }]}>
-          Nada para revisar hoje
+          {t("study.emptyTitle")}
         </Text>
         <Text style={[typography.body, styles.center, { color: colors.text2 }]}>
-          Você está em dia! A memória também se fortalece no descanso.
+          {t("study.emptyMessage")}
         </Text>
         {label ? <Badge text={label} tone="outline" icon="calendar" /> : null}
       </View>
 
       <View style={styles.bottom}>
-        <Button label="Voltar ao início" onPress={goHome} />
+        <Button label={t("study.backHome")} onPress={goHome} />
         {deckId ? (
           <Button
-            label="Adicionar novos cartões"
+            label={t("study.addCards")}
             variant="text"
             onPress={addCards}
           />

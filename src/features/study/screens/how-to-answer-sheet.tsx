@@ -3,16 +3,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/button";
 import { gradeLabel, type Grade } from "@/domain/schedule";
+import { t } from "@/lib/i18n";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
 const tones = ["again", "hard", "good", "easy"] as const;
 
-const rows: { grade: Grade; text: string }[] = [
-  { grade: 0, text: "Não lembrei. Volta em instantes." },
-  { grade: 1, text: "Lembrei com esforço. Volta logo." },
-  { grade: 2, text: "Lembrei bem. Intervalo normal." },
-  { grade: 3, text: "Sabia na hora. Demora mais a voltar." },
-];
+const grades: Grade[] = [0, 1, 2, 3];
 
 type Props = { visible: boolean; onDismiss: () => void };
 
@@ -34,34 +30,33 @@ export function HowToAnswerSheet({ visible, onDismiss }: Props) {
         >
           <View style={[styles.handle, { backgroundColor: colors.surface2 }]} />
           <View style={styles.header}>
-            <Text style={[typography.label, { color: colors.accentInk }]}>SUA PRIMEIRA SESSÃO</Text>
+            <Text style={[typography.label, { color: colors.accentInk }]}>{t("study.sheetEyebrow")}</Text>
             <Text accessibilityRole="header" style={[typography.title, { color: colors.text }]}>
-              Como responder
+              {t("study.sheetTitle")}
             </Text>
             <Text style={[typography.body, { color: colors.text2 }]}>
-              Depois de ver a resposta, diga como foi lembrar. O Memorizze usa isso para decidir quando
-              o cartão volta.
+              {t("study.sheetBody")}
             </Text>
           </View>
           <View style={styles.rows}>
-            {rows.map(({ grade, text }) => {
+            {grades.map((grade) => {
               const tone = colors.grade[tones[grade]];
               return (
                 <View key={grade} style={styles.row}>
                   <View style={[styles.pill, { backgroundColor: tone.background }]}>
                     <Text style={[typography.button, { color: tone.text }]}>{gradeLabel[grade]}</Text>
                   </View>
-                  <Text style={[typography.body, styles.rowText, { color: colors.text }]}>{text}</Text>
+                  <Text style={[typography.body, styles.rowText, { color: colors.text }]}>{t(`study.hint.${grade}`)}</Text>
                 </View>
               );
             })}
           </View>
           <View style={[styles.tip, { backgroundColor: colors.surface2 }]}>
             <Text style={[typography.button, { color: colors.text2 }]}>
-              Seja honesto: errar faz parte e ajuda a fixar.
+              {t("study.sheetTip")}
             </Text>
           </View>
-          <Button label="Entendi, vamos lá" onPress={onDismiss} />
+          <Button label={t("study.sheetDismiss")} onPress={onDismiss} />
         </Pressable>
       </Pressable>
     </Modal>

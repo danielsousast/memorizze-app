@@ -11,6 +11,7 @@ import {
   studyTimeLabel,
   tomorrowSummaryLabel,
 } from "@/domain/labels";
+import { t } from "@/lib/i18n";
 import { radii, screenMargin, spacing, tabularNums, typography, useTheme } from "@/theme";
 
 import { useDueTomorrow, useStreak } from "../index";
@@ -63,10 +64,10 @@ export function SummaryView({ state, deckId }: Props) {
           <Icon name="check" size={48} color={colors.onAccent} />
         </View>
         <Text accessibilityRole="header" style={[typography.title, styles.center, { color: colors.text }]}>
-          Sessão concluída
+          {t("study.summaryTitle")}
         </Text>
         <Text style={[typography.body, styles.center, { color: colors.text2 }]}>
-          Bom trabalho! Você revisou tudo o que vencia hoje.
+          {t("study.summaryMessage")}
         </Text>
       </View>
 
@@ -80,7 +81,7 @@ export function SummaryView({ state, deckId }: Props) {
         />
         <Block
           value={`${accuracy(state.counts)}%`}
-          rest="de acerto"
+          rest={t("study.accuracy")}
           background={colors.surface}
           valueColor={colors.text}
           restColor={colors.text2}
@@ -101,7 +102,7 @@ export function SummaryView({ state, deckId }: Props) {
 
       <View style={[styles.answers, { backgroundColor: colors.surface }]}>
         <View style={styles.answersHead}>
-          <Text style={[typography.section, { color: colors.text }]}>Suas respostas</Text>
+          <Text style={[typography.section, { color: colors.text }]}>{t("study.yourAnswers")}</Text>
           <Text style={[typography.button, { color: colors.text2 }]}>{studyText}</Text>
         </View>
         <View testID="grade-bar" style={styles.bar}>
@@ -141,7 +142,7 @@ export function SummaryView({ state, deckId }: Props) {
       ) : null}
 
       <View style={styles.spacer} />
-      <Button label="Concluir" onPress={goBack} />
+      <Button label={t("study.done")} onPress={goBack} />
     </View>
   );
 }
