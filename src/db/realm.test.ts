@@ -5,8 +5,8 @@ import Realm from "realm";
 import { realmConfig } from "./realm";
 
 describe("realmConfig", () => {
-  it("SCH-07 uses schemaVersion 5 and opens a v1 file created with schema []", () => {
-    expect(realmConfig.schemaVersion).toBe(5);
+  it("SCH-07 uses schemaVersion 6 and opens a v1 file created with schema []", () => {
+    expect(realmConfig.schemaVersion).toBe(6);
 
     const path = join(tmpdir(), `memorizze-migration-${randomUUID()}.realm`);
     new Realm({ path, schemaVersion: 1, schema: [] }).close();
@@ -131,6 +131,74 @@ describe("realmConfig", () => {
     );
     expect(profile.lastBackupAt ?? null).toBeNull();
     expect(profile.previousBackupAt ?? null).toBeNull();
+    expect(realm.objects("Deck")).toHaveLength(1);
+    expect(realm.objects("Card")).toHaveLength(1);
+    expect(realm.objects("ReviewLog")).toHaveLength(1);
+    realm.close();
+    Realm.deleteFile({ path });
+  });
+
+  it("MIG-01 migrates a v5 file keeping its data and filling reminder off at 19", () => {
+    const path = join(tmpdir(), `memorizze-migration-${randomUUID()}.realm`);
+    const v5Profile = {
+      name: "Profile",
+      primaryKey: "_id",
+      properties: {
+        _id: "objectId",
+        name: "string",
+        dailyGoal: "int",
+        createdAt: "date",
+        studyTutorialSeen: "bool",
+        themePreference: "string",
+        newCardsPerDay: "int",
+        lastBackupAt: "date?",
+        previousBackupAt: "date?",
+      },
+    };
+    const old = new Realm({
+      path,
+      schemaVersion: 5,
+      schema: [v5Profile, ...realmConfig.schema!.slice(1)],
+    });
+    const cardId = new Realm.BSON.ObjectId();
+    const deckId = new Realm.BSON.ObjectId();
+    old.write(() => {
+      old.create("Profile", {
+        _id: new Realm.BSON.ObjectId(),
+        name: "Ana",
+        dailyGoal: 15,
+        createdAt: new Date(2026, 0, 1),
+        studyTutorialSeen: true,
+        themePreference: "dark",
+        newCardsPerDay: 20,
+      });
+      const deck = old.create("Deck", { _id: deckId, name: "D", createdAt: new Date(2026, 0, 1), cards: [] });
+      (deck as unknown as { cards: unknown[] }).cards.push(
+        old.create("Card", { _id: cardId, front: "f", back: "b", dueDate: new Date(), createdAt: new Date() }),
+      );
+      old.create("ReviewLog", { cardId, deckId, grade: 2, reviewedAt: new Date() });
+    });
+    old.close();
+
+    const realm = new Realm({ ...realmConfig, path });
+    const profile = realm.objects<{
+      name: string;
+      dailyGoal: number;
+      themePreference: string;
+      newCardsPerDay: number;
+      reminderEnabled: boolean;
+      reminderHour: number;
+    }>("Profile")[0];
+    expect(profile).toEqual(
+      expect.objectContaining({
+        name: "Ana",
+        dailyGoal: 15,
+        themePreference: "dark",
+        newCardsPerDay: 20,
+        reminderEnabled: false,
+        reminderHour: 19,
+      }),
+    );
     expect(realm.objects("Deck")).toHaveLength(1);
     expect(realm.objects("Card")).toHaveLength(1);
     expect(realm.objects("ReviewLog")).toHaveLength(1);

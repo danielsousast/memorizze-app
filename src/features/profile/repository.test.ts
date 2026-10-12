@@ -113,6 +113,8 @@ describe("profile repository", () => {
       studyTutorialSeen: false,
       themePreference: "system",
       newCardsPerDay: 10,
+      reminderEnabled: false,
+      reminderHour: 19,
     });
   });
 

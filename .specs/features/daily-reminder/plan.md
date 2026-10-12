@@ -133,7 +133,7 @@ INVARIANT (teste com `createRandom`): após qualquer sequência aleatória de `a
   - REGRESSION — migração 3→4 continua preenchendo tema e limite; `SCH-07` passa a esperar 6
 - **Done when**: testes passam; quick verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Adaptador de notificações
 

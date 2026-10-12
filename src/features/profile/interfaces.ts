@@ -8,6 +8,8 @@ export type Profile = {
   studyTutorialSeen: boolean;
   themePreference: ThemePreference;
   newCardsPerDay: NewCardsLimit;
+  reminderEnabled: boolean;
+  reminderHour: number;
 };
 
 export type ProfileErrorCode =

@@ -9,6 +9,8 @@ export class Profile extends Realm.Object<Profile> {
   themePreference!: string;
   /** 0 = no limit. */
   newCardsPerDay!: number;
+  reminderEnabled!: boolean;
+  reminderHour!: number;
   lastBackupAt?: Date;
   previousBackupAt?: Date;
 
@@ -23,6 +25,8 @@ export class Profile extends Realm.Object<Profile> {
       studyTutorialSeen: { type: "bool", default: false },
       themePreference: { type: "string", default: "system" },
       newCardsPerDay: { type: "int", default: 10 },
+      reminderEnabled: { type: "bool", default: false },
+      reminderHour: { type: "int", default: 19 },
       lastBackupAt: "date?",
       previousBackupAt: "date?",
     },
