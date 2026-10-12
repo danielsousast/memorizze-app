@@ -1,13 +1,13 @@
 import { FlatList, type ListRenderItemInfo, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Badge } from "@/components/badge";
-import { BottomSheet } from "@/components/bottom-sheet";
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { Fab } from "@/components/fab";
-import { Icon } from "@/components/icon";
-import { NotFound } from "@/components/not-found";
-import { Screen } from "@/components/screen";
+import { Badge } from "@/components/badge/badge";
+import { BottomSheet } from "@/components/bottom-sheet/bottom-sheet";
+import { Button } from "@/components/button/button";
+import { ConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { Fab } from "@/components/fab/fab";
+import { Icon } from "@/components/icon/icon";
+import { NotFound } from "@/components/not-found/not-found";
+import { Screen } from "@/components/screen/screen";
 import type { Card } from "@/features/cards";
 import { t } from "@/lib/i18n";
 import { screenMargin, sizes, spacing, typography, useTheme } from "@/theme";

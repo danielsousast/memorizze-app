@@ -1,12 +1,12 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import type { Edge } from "react-native-safe-area-context";
 
-import { BottomSheet } from "@/components/bottom-sheet";
-import { Icon } from "@/components/icon";
-import { Screen } from "@/components/screen";
-import { SegmentedControl } from "@/components/segmented-control";
-import { SettingsRow } from "@/components/settings-row";
-import { SettingsSwitchRow } from "@/components/settings-switch-row";
+import { BottomSheet } from "@/components/bottom-sheet/bottom-sheet";
+import { Icon } from "@/components/icon/icon";
+import { Screen } from "@/components/screen/screen";
+import { SegmentedControl } from "@/components/segmented-control/segmented-control";
+import { SettingsRow } from "@/components/settings-row/settings-row";
+import { SettingsSwitchRow } from "@/components/settings-switch-row/settings-switch-row";
 import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 

@@ -2,9 +2,9 @@ import { router } from "expo-router";
 import { useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Badge } from "@/components/badge";
-import { Button } from "@/components/button";
-import { Icon } from "@/components/icon";
+import { Badge } from "@/components/badge/badge";
+import { Button } from "@/components/button/button";
+import { Icon } from "@/components/icon/icon";
 import { tomorrowLabel } from "@/domain/labels";
 import { t } from "@/lib/i18n";
 import { screenMargin, sizes, spacing, typography, useTheme } from "@/theme";

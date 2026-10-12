@@ -1,9 +1,9 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import type { Edge } from "react-native-safe-area-context";
 
-import { Button } from "@/components/button";
-import { Icon } from "@/components/icon";
-import { Screen } from "@/components/screen";
+import { Button } from "@/components/button/button";
+import { Icon } from "@/components/icon/icon";
+import { Screen } from "@/components/screen/screen";
 import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 

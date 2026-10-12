@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { darkColors, radii, sizes, spacing, typography } from "@/theme";
 
-import { Icon } from "./icon";
+import { Icon } from "../icon/icon";
 import type { ToastOptions } from "./use-toast-state";
 
 type Props = ToastOptions & { onHide: () => void };

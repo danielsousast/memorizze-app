@@ -2,11 +2,11 @@ import { router } from "expo-router";
 import { useCallback } from "react";
 import { FlatList, type ListRenderItemInfo, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Badge } from "@/components/badge";
-import { Button } from "@/components/button";
-import { DeckIcon } from "@/components/deck-icon";
-import { Fab } from "@/components/fab";
-import { Screen } from "@/components/screen";
+import { Badge } from "@/components/badge/badge";
+import { Button } from "@/components/button/button";
+import { DeckIcon } from "@/components/deck-icon/deck-icon";
+import { Fab } from "@/components/fab/fab";
+import { Screen } from "@/components/screen/screen";
 import { formatLongDate } from "@/domain/dates";
 import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";

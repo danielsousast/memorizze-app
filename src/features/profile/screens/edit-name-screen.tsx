@@ -1,8 +1,8 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { Button } from "@/components/button";
-import { Screen } from "@/components/screen";
-import { TextField } from "@/components/text-field";
+import { Button } from "@/components/button/button";
+import { Screen } from "@/components/screen/screen";
+import { TextField } from "@/components/text-field/text-field";
 import { t } from "@/lib/i18n";
 import { screenMargin, spacing, typography, useTheme } from "@/theme";
 

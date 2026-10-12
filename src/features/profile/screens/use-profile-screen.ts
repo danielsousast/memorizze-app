@@ -1,7 +1,7 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 
-import { useToast } from "@/components/toast-provider";
+import { useToast } from "@/components/toast-provider/toast-provider";
 import { canStep, stepGoal } from "@/domain/goal";
 import { signOutMessage } from "@/domain/labels";
 import { useExportBackup, useMarkBackedUp } from "@/features/backup";

@@ -1,7 +1,7 @@
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Button } from "@/components/button";
+import { Button } from "@/components/button/button";
 import { gradeLabel, type Grade } from "@/domain/schedule";
 import { t } from "@/lib/i18n";
 import { radii, spacing, typography, useTheme } from "@/theme";

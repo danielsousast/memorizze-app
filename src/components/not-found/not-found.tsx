@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { t } from "@/lib/i18n";
 import { screenMargin, spacing, typography, useTheme } from "@/theme";
 
-import { Button } from "./button";
+import { Button } from "../button/button";
 
 type Props = { title: string; actionLabel?: string; onAction: () => void };
 

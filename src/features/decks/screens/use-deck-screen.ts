@@ -1,8 +1,8 @@
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 
-import type { SheetAction } from "@/components/bottom-sheet";
-import { useToast } from "@/components/toast-provider";
+import type { SheetAction } from "@/components/bottom-sheet/bottom-sheet";
+import { useToast } from "@/components/toast-provider/toast-provider";
 import { PREVIEW_LIMIT, newestFirst, previewCards } from "@/domain/cards-list";
 import { cardStage } from "@/domain/stage";
 import { t } from "@/lib/i18n";

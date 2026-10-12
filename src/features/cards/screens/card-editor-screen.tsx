@@ -1,12 +1,12 @@
 import { ScrollView, StyleSheet, Text, View, type TextInput } from "react-native";
 
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { DeckIcon } from "@/components/deck-icon";
-import { Icon } from "@/components/icon";
-import { NotFound } from "@/components/not-found";
-import { Screen } from "@/components/screen";
-import { TextField } from "@/components/text-field";
+import { Button } from "@/components/button/button";
+import { ConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { DeckIcon } from "@/components/deck-icon/deck-icon";
+import { Icon } from "@/components/icon/icon";
+import { NotFound } from "@/components/not-found/not-found";
+import { Screen } from "@/components/screen/screen";
+import { TextField } from "@/components/text-field/text-field";
 import { t } from "@/lib/i18n";
 import { useDeck } from "@/features/decks";
 import { radii, screenMargin, spacing, typography, useTheme } from "@/theme";

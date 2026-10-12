@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "@/lib/i18n";
 import { radii, sizes, spacing, typography, useTheme } from "@/theme";
 
-import { Button } from "./button";
-import { Icon, type IconName } from "./icon";
+import { Button } from "../button/button";
+import { Icon, type IconName } from "../icon/icon";
 
 export type SheetAction = {
   label: string;

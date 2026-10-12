@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router/js-tabs";
 
-import { Icon } from "@/components/icon";
+import { Icon } from "@/components/icon/icon";
 import { t } from "@/lib/i18n";
 import { fontFamily, useTheme } from "@/theme";
 

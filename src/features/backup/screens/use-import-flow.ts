@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 
-import { useToast } from "@/components/toast-provider";
+import { useToast } from "@/components/toast-provider/toast-provider";
 import { parseBackup, replaceMessage, type BackupFile } from "@/domain/backup";
 import { t } from "@/lib/i18n";
 

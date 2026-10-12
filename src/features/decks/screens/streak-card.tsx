@@ -2,8 +2,8 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, type ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { GoalProgress } from "@/components/goal-progress";
-import { Icon } from "@/components/icon";
+import { GoalProgress } from "@/components/goal-progress/goal-progress";
+import { Icon } from "@/components/icon/icon";
 import { streakSubtitle, streakTitle } from "@/domain/labels";
 import { useReviewsToday, useProfile } from "@/features/profile";
 import { useStreak } from "@/features/study";

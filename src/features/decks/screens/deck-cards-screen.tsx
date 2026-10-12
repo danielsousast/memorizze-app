@@ -1,9 +1,9 @@
 import { FlatList, type ListRenderItemInfo, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Icon } from "@/components/icon";
-import { NotFound } from "@/components/not-found";
-import { Screen } from "@/components/screen";
-import { TextField } from "@/components/text-field";
+import { Icon } from "@/components/icon/icon";
+import { NotFound } from "@/components/not-found/not-found";
+import { Screen } from "@/components/screen/screen";
+import { TextField } from "@/components/text-field/text-field";
 import type { Card } from "@/features/cards";
 import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";

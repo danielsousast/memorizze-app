@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import { Icon } from "@/components/icon";
+import { Icon } from "@/components/icon/icon";
 import { daysLabel as days } from "@/domain/labels";
 import { t } from "@/lib/i18n";
 import { radii, spacing, typography, useTheme } from "@/theme";

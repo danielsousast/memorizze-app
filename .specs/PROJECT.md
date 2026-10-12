@@ -29,7 +29,7 @@ Offline mobile flashcard app with spaced repetition. The user creates decks and 
 | Path | Contents |
 | --- | --- |
 | `src/app/` | Expo Router routes (`_layout.tsx`, `index.tsx`) |
-| `src/components/` | Shared accessible UI (`Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon`, `Screen`, `NotFound`, `SegmentedControl`, `SettingsRow`, `ConfirmDialog`, `BottomSheet`, `Toast`/`ToastProvider`), one file per component, theme tokens only |
+| `src/components/` | Shared accessible UI (`Button`, `Fab`, `Badge`, `TextField`, `DeckIcon`, `Icon`, `Screen`, `NotFound`, `SegmentedControl`, `SettingsRow`, `ConfirmDialog`, `BottomSheet`, `Toast`/`ToastProvider`), one folder per component (`<name>/<name>.tsx` + `<name>.test.tsx`), theme tokens only |
 | `src/db/` | Realm schemas, config and error boundary |
 | `src/domain/` | Pure logic (`schedule`, `streak`, `stats`, `preferences`, `new-cards`, ...); see [ARCHITECTURE.md](../ARCHITECTURE.md) |
 | `src/features/` | Feature modules (`decks`, `cards`): repository + React Query hooks, and `screens/` with one screen per file ([layout](../ARCHITECTURE.md#feature-modules)) |

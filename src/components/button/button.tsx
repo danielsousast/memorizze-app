@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text } from "react-native";
 
 import { radii, sizes, spacing, typography, useTheme } from "@/theme";
 
-import { Icon, type IconName } from "./icon";
+import { Icon, type IconName } from "../icon/icon";
 
 export type ButtonVariant = "primary" | "secondary" | "text" | "danger" | "destructive";
 

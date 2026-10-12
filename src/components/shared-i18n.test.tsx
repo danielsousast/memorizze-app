@@ -2,9 +2,9 @@ import { render, screen } from "@testing-library/react-native";
 
 import { i18n } from "@/lib/i18n";
 
-import { ConfirmDialog } from "./confirm-dialog";
-import { GoalProgress } from "./goal-progress";
-import { NotFound } from "./not-found";
+import { ConfirmDialog } from "./confirm-dialog/confirm-dialog";
+import { GoalProgress } from "./goal-progress/goal-progress";
+import { NotFound } from "./not-found/not-found";
 
 afterEach(() => {
   i18n.locale = "pt-BR";

@@ -4,8 +4,8 @@ import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { t } from "@/lib/i18n";
 import { radii, spacing, typography, useTheme } from "@/theme";
 
-import { Button } from "./button";
-import { Icon, type IconName } from "./icon";
+import { Button } from "../button/button";
+import { Icon, type IconName } from "../icon/icon";
 
 type Props = {
   visible: boolean;

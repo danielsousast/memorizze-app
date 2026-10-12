@@ -11,7 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Text } from "react-native";
 
-import { ToastProvider } from "@/components/toast-provider";
+import { ToastProvider } from "@/components/toast-provider/toast-provider";
 import { RealmErrorBoundary, realmConfig } from "@/db";
 import { t } from "@/lib/i18n";
 import { useLocaleSync } from "@/lib/i18n/use-locale-sync";

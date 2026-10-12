@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useCallback } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Badge } from "@/components/badge";
+import { Badge } from "@/components/badge/badge";
 import { cardStage, stageLabel } from "@/domain/stage";
 import type { Card } from "@/features/cards";
 import { radii, sizes, spacing, typography, useTheme } from "@/theme";

@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 
-import { Icon } from "@/components/icon";
+import { Icon } from "@/components/icon/icon";
 import { t } from "@/lib/i18n";
 import { spacing, typography, useTheme } from "@/theme";
 

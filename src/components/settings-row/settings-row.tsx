@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { sizes, spacing, typography, useTheme } from "@/theme";
 
-import { Icon } from "./icon";
+import { Icon } from "../icon/icon";
 
 type Props = {
   title: string;

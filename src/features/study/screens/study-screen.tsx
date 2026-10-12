@@ -1,8 +1,8 @@
 import { router } from "expo-router";
 import { useState } from "react";
 
-import { NotFound } from "@/components/not-found";
-import { Screen } from "@/components/screen";
+import { NotFound } from "@/components/not-found/not-found";
+import { Screen } from "@/components/screen/screen";
 import { t } from "@/lib/i18n";
 
 import { useStudyQueue } from "../index";

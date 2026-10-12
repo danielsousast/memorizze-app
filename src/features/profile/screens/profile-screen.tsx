@@ -2,10 +2,10 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import type { Edge } from "react-native-safe-area-context";
 
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { GoalProgress } from "@/components/goal-progress";
-import { Icon } from "@/components/icon";
-import { Screen } from "@/components/screen";
+import { ConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { GoalProgress } from "@/components/goal-progress/goal-progress";
+import { Icon } from "@/components/icon/icon";
+import { Screen } from "@/components/screen/screen";
 import { formatMonthYear } from "@/domain/dates";
 import { i18n, t } from "@/lib/i18n";
 import {

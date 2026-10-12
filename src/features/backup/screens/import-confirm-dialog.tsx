@@ -1,4 +1,4 @@
-import { ConfirmDialog } from "@/components/confirm-dialog";
+import { ConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
 import { t } from "@/lib/i18n";
 
 import type { useImportFlow } from "./use-import-flow";

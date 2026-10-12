@@ -2,14 +2,14 @@ import Constants from "expo-constants";
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 
-import type { SegmentOption } from "@/components/segmented-control";
-import type { SheetAction } from "@/components/bottom-sheet";
+import type { SegmentOption } from "@/components/segmented-control/segmented-control";
+import type { SheetAction } from "@/components/bottom-sheet/bottom-sheet";
 import { settingsBackupSubtitle } from "@/domain/backup";
 import { useLastBackup } from "@/features/backup";
 import { useUpdateReminder, type ReminderOutcome } from "@/features/reminder";
 import { t } from "@/lib/i18n";
 import { openSystemSettings } from "@/lib/notifications";
-import { useToast } from "@/components/toast-provider";
+import { useToast } from "@/components/toast-provider/toast-provider";
 import {
   NEW_CARDS_OPTIONS,
   THEME_OPTIONS,

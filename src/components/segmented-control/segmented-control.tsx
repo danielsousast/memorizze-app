@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { radii, sizes, spacing, typography, useTheme } from "@/theme";
 
-import { Icon, type IconName } from "./icon";
+import { Icon, type IconName } from "../icon/icon";
 
 export type SegmentOption<T extends string> = { value: T; label: string; icon?: IconName };
 

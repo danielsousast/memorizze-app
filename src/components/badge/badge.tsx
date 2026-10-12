@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { radii, spacing, typography, useTheme } from "@/theme";
 
-import { Icon, type IconName } from "./icon";
+import { Icon, type IconName } from "../icon/icon";
 
 export type BadgeTone = "accent" | "neutral" | "outline";
 

@@ -22,7 +22,7 @@ jest.mock("expo-splash-screen", () => ({
 jest.mock("@realm/react", () => ({
   RealmProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
-jest.mock("@/components/toast-provider", () => ({
+jest.mock("@/components/toast-provider/toast-provider", () => ({
   ToastProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 jest.mock("@/db", () => ({

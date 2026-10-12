@@ -1,10 +1,10 @@
 import { Stack } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { FlipCard } from "@/components/flip-card";
-import { Icon } from "@/components/icon";
+import { Button } from "@/components/button/button";
+import { ConfirmDialog } from "@/components/confirm-dialog/confirm-dialog";
+import { FlipCard } from "@/components/flip-card/flip-card";
+import { Icon } from "@/components/icon/icon";
 import { t } from "@/lib/i18n";
 import { radii, screenMargin, sizes, spacing, tabularNums, typography, useTheme } from "@/theme";
 

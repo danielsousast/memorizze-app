@@ -1,8 +1,8 @@
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
-import { Button } from "@/components/button";
-import { Icon } from "@/components/icon";
+import { Button } from "@/components/button/button";
+import { Icon } from "@/components/icon/icon";
 import { gradeLabel, type Grade } from "@/domain/schedule";
 import { accuracy, studyMinutes, type SessionState } from "@/domain/session";
 import {
