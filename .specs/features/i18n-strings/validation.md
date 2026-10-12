@@ -1,6 +1,6 @@
 # i18n Strings — Validation
 
-**Verdict**: PASS (G1 closed by `src/app/root-layout.test.tsx`; mutation 3 re-run and killed; device UAT pending)
+**Verdict**: PASS (G1 closed by `src/navigation/root-layout.test.tsx`; mutation 3 re-run and killed; device UAT pending)
 **Risk**: HIGH (from spec)
 **Verifier**: independent sub-agent
 **Diff range**: `9dd48a5..8ac8431`
@@ -25,7 +25,7 @@
 | I18NS-06 | 1 singular; 0 and >=2 plural | `src/domain/domain-i18n.test.ts:62-110` — `"0 cards","1 card","2 cards"`, `"0 tarjetas","1 tarjeta","2 tarjetas"`, `"1 cartão","2 cartões"`; `deckSheetSubtitle` at `:96`; study summary `study-i18n.test.tsx:65`; backup summary `profile-i18n.test.tsx:151,163`; mutation 4 killed | SPEC | ✅ |
 | I18NS-07 | date table for 12/10/2026 in 3 locales | `src/domain/domain-i18n.test.ts:29-60` — `it.each(Object.keys(table))("formats %s")` over the four functions + short weekdays Sun..Sat; catalog values checked by hand against spec table (match); mutation 1 killed | SPEC | ✅ |
 | I18NS-08 | reminder title/body + Android channel in active locale at schedule time | `src/lib/notifications.test.ts:130` (title/body "Time to review"...), `:142` (channel "Daily reminder"), `:155` (locale switch between schedules); `src/domain/reminder.ts:5-15` functions call `t` at use; mutation 5 killed | CONTRACT/SPEC | ✅ |
-| I18NS-09 | mounted screens switch language on foreground, no restart | `src/lib/i18n/use-locale-sync.test.tsx:51` — "Cancelar" -> background keeps -> active shows "Cancel"; mutation 6 killed. Production wiring `src/app/_layout.tsx:34,57` (`key={locale}`) is NOT covered by any test (mutation 3 survived) | SPEC | ✅ G1 closed: `src/app/root-layout.test.tsx` renders `RootLayout` and asserts the stack remounts in English |
+| I18NS-09 | mounted screens switch language on foreground, no restart | `src/lib/i18n/use-locale-sync.test.tsx:51` — "Cancelar" -> background keeps -> active shows "Cancel"; mutation 6 killed. Production wiring `src/app/_layout.tsx:34,57` (`key={locale}`) is NOT covered by any test (mutation 3 survived) | SPEC | ✅ G1 closed: `src/navigation/root-layout.test.tsx` renders `RootLayout` and asserts the stack remounts in English |
 | I18NS-10 | missing key in en/es falls back to pt-BR | `src/lib/i18n/i18n.test.ts:30` (en) and `:44` (es) — `i18n.t("x")` toBe `"texto"` | SPEC | ✅ |
 | I18NS-11 | resolved at use time, not module load | `src/domain/domain-i18n.test.ts:148` — same function differs after `i18n.locale="en"`, `gradeLabel[0]` "Again"/"Fallé"; `decks-i18n.test.tsx:71` deck form validation follows a switch; `profile-i18n.test.tsx:139` invalid-file error; `notifications.test.ts:155`. Static grep: no module-level text consts remain (guard `const-message` check too) | SPEC | ✅ |
 
@@ -36,7 +36,7 @@
 | --- | --- | --- | --- |
 | 1 | `src/lib/i18n/locales/en.json` date.months | swapped October/November | ✅ `dates per locale (I18NS-07) › formats en` |
 | 2 | `src/domain/locale.ts:7` | removed the `es` branch | ✅ 4 locale tests + `uses es when the device is es-MX` |
-| 3 | `src/app/_layout.tsx:57` | `<RootStack key={locale} />` -> `<RootStack />` | ✅ killed after fix: `src/app/root-layout.test.tsx` fails without `key={locale}` (re-run by the author) |
+| 3 | `src/app/_layout.tsx:57` | `<RootStack key={locale} />` -> `<RootStack />` | ✅ killed after fix: `src/navigation/root-layout.test.tsx` fails without `key={locale}` (re-run by the author) |
 | 4 | `src/lib/i18n/locales/es.json` plurals.card.one | `"{{count}} tarjeta"` -> `"{{count}} tarjetas"` | ✅ `deckSheetSubtitle in the three languages` |
 | 5 | `src/lib/notifications.ts:41` | title forced to `pt-BR` | ✅ 2 tests (I18NS-08, I18NS-11) |
 | 6 | `src/lib/i18n/use-locale-sync.ts` | removed `setLocale(i18n.locale)` | ✅ `re-renders a mounted screen ... (I18NS-09)` |

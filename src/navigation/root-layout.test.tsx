@@ -4,7 +4,7 @@ import { AppState } from "react-native";
 
 import { i18n } from "@/lib/i18n";
 
-import RootLayout from "./_layout";
+import RootLayout from "@/app/_layout";
 
 const mockMounts = jest.fn();
 
