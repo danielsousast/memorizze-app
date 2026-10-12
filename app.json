@@ -40,7 +40,8 @@
           "resizeMode": "contain"
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,
