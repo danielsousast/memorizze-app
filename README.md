@@ -1,64 +1,114 @@
-# Welcome to your Expo app 👋
+# Memorizze
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Offline flashcards with spaced repetition. Create decks, study what is due today and track your progress, with no account, no server and no cloud.
 
-## Get started
+Built with Expo, React Native and TypeScript.
 
-1. Install dependencies
+> The screenshots below are the app's design mockups (see [design/](design/)), shown in Portuguese. The app itself ships in **Portuguese (pt-BR), English and Spanish** and follows the device language.
 
-   ```bash
-   npm install
-   ```
+<p align="center">
+  <img src="docs/screenshots/home.png" width="22%" alt="Home" />
+  <img src="docs/screenshots/study-front.png" width="22%" alt="Study session, card front" />
+  <img src="docs/screenshots/study-back.png" width="22%" alt="Study session, card back" />
+  <img src="docs/screenshots/profile.png" width="22%" alt="Profile and statistics" />
+</p>
 
-2. Start the app
+## Features
 
-   ```bash
-   npx expo start
-   ```
+- **Decks and cards**: full CRUD, with search and a card editor.
+- **Spaced repetition**: an SM-2 scheduler. Each card is graded *Again*, *Hard*, *Good* or *Easy* and comes back when it is due.
+- **Daily study queue**: only due cards are shown, plus a configurable budget of new cards per day.
+- **Progress tracking**: current and longest streak, daily goal, 7-day and 30-day accuracy, a weekly activity chart and a breakdown of new, learning and mature cards.
+- **Local profile**: no login. Everything lives on the device.
+- **Preferences**: light, dark or system theme, new cards per day and an optional daily reminder (a local notification).
+- **Backup and restore**: export and import a JSON file from the app itself.
+- **Offline first**: data is stored locally with Realm.
 
-In the output, you'll find options to open the app in a
+## Screenshots
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Light
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+| Welcome | Home | Deck | Card editor |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/welcome.png" width="200" /> | <img src="docs/screenshots/home.png" width="200" /> | <img src="docs/screenshots/deck.png" width="200" /> | <img src="docs/screenshots/card-editor.png" width="200" /> |
 
-## Quality
+| Study (front) | Study (back) | Session summary | Settings | Backup |
+| :---: | :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/study-front.png" width="160" /> | <img src="docs/screenshots/study-back.png" width="160" /> | <img src="docs/screenshots/summary.png" width="160" /> | <img src="docs/screenshots/settings.png" width="160" /> | <img src="docs/screenshots/backup.png" width="160" /> |
+
+### Dark
+
+| Home | Deck | Study | Summary |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/screenshots/home-dark.png" width="200" /> | <img src="docs/screenshots/deck-dark.png" width="200" /> | <img src="docs/screenshots/study-front-dark.png" width="200" /> | <img src="docs/screenshots/summary-dark.png" width="200" /> |
+
+## Tech stack
+
+| Layer | Choice |
+| --- | --- |
+| App | Expo SDK 57, React Native 0.86, React 19, TypeScript (strict) |
+| Navigation | Expo Router (file-based routes in `src/app/`) |
+| Database | Realm (`realm` + `@realm/react`), local only |
+| Data fetching | TanStack React Query over Realm repositories |
+| i18n | `i18n-js` + `expo-localization` (pt-BR, en, es) |
+| Animation | React Native Reanimated, Gesture Handler |
+| Tests | Jest, React Native Testing Library |
+| Quality | ESLint, `tsc --noEmit`, GitHub Actions |
+
+## Getting started
+
+Realm and several other modules contain native code, so the app does **not** run in Expo Go. Use a development build.
 
 ```bash
-npm run ci
+# install dependencies
+yarn install
+
+# run on a simulator or device (generates a dev build)
+yarn ios
+yarn android
+
+# or start the dev server for an existing dev build
+yarn start
 ```
 
-Runs lint, typecheck and tests with a 90% coverage gate on `src/domain/`. The GitHub Actions workflow (`.github/workflows/ci.yml`) runs the same command on every push to `main` and on pull requests.
+Requirements: Node.js, Xcode (iOS) and/or Android Studio (Android).
 
-## Get a fresh project
+## Scripts
 
-When you're ready, run:
+| Command | Description |
+| --- | --- |
+| `yarn start` | Start the Expo dev server |
+| `yarn ios` / `yarn android` | Build and run the native app |
+| `yarn lint` | Lint the project |
+| `yarn test` | Run the test suite |
+| `yarn ci` | Lint, typecheck and tests with a 90% coverage gate on `src/domain/` |
 
-```bash
-npm run reset-project
+The same `ci` command runs on every push to `main` and on pull requests (`.github/workflows/ci.yml`).
+
+## Project structure
+
+```
+src/
+  app/          Expo Router routes (thin files that render a screen)
+  features/     decks, cards, study, profile, backup, reminder
+                (repositories, React Query hooks, screens)
+  domain/       Pure functions: SM-2 scheduling, streaks, stats, backup, dates
+  components/   Shared UI components
+  db/           Realm schemas and configuration
+  lib/          i18n, notifications, query client
+  navigation/   Root stack, tabs, theme and reminder sync
+  theme/        Colors, typography, layout tokens
+design/         Screen designs (light and dark) and style guide
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Business logic lives in hooks and in pure `src/domain/` functions, not in screens or components. Only repositories touch Realm, and ESLint plus architecture tests enforce this. See [ARCHITECTURE.md](ARCHITECTURE.md) for details.
 
-### Other setup steps
+## Documentation
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+- [PROJECT-SPEC.md](PROJECT-SPEC.md): product scope, requirements and milestones
+- [ARCHITECTURE.md](ARCHITECTURE.md): modules, data flow and persistence
+- [design/](design/): screen designs and style guide
 
-## Learn more
+## License
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+[MIT](LICENSE)
