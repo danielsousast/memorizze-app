@@ -4,6 +4,7 @@ import { I18n, type Dict } from "i18n-js";
 import { DEFAULT_LOCALE, resolveLocale } from "@/domain/locale";
 
 import en from "./locales/en.json";
+import es from "./locales/es.json";
 import ptBR from "./locales/pt-BR.json";
 
 function deviceLocale() {
@@ -18,7 +19,7 @@ export function createI18n(translations: Dict) {
   });
 }
 
-export const i18n = createI18n({ "pt-BR": ptBR, en });
+export const i18n = createI18n({ "pt-BR": ptBR, en, es });
 
 export function syncLocale() {
   i18n.locale = deviceLocale();

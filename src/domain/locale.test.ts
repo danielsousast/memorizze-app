@@ -9,7 +9,11 @@ describe("resolveLocale", () => {
     expect(resolveLocale(tag)).toBe("en");
   });
 
-  it.each(["es-ES", "", undefined])("falls back to pt-BR for %p", (tag) => {
+  it.each(["es", "es-ES", "es-MX", "es_AR"])("maps %s to es", (tag) => {
+    expect(resolveLocale(tag)).toBe("es");
+  });
+
+  it.each(["fr", "", undefined])("falls back to pt-BR for %p", (tag) => {
     expect(resolveLocale(tag)).toBe("pt-BR");
   });
 });
