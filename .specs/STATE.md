@@ -93,7 +93,7 @@
 - **Next step**: verificar i18n-setup (fresh-eyes) e commitar; depois a feature de extrair e traduzir as strings das telas
 - **Roteiro**: F1..F10 feitas (ver commits)
 - **Decisões pendentes do usuário**: nenhuma
-- **Notas**: `app.json` ganhou o plugin `expo-localization`: precisa de novo development build (nenhum `expo run` foi feito). `jest.setup.ts` mocka `expo-localization`. `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
+- **Notas**: `app.json` ganhou o plugin `expo-localization`: o development build novo foi feito pelo usuário e passou (2026-10-12); a troca de idioma no aparelho ainda não foi testada, e nenhuma tela usa `t`. `jest.setup.ts` mocka `expo-localization`. `app.json` ganhou o plugin `expo-notifications`: precisa de novo development build. `jest.setup.ts` mocka `expo-notifications`; testes de tela e hook usam `notificationsModuleMock` de `src/testing/notifications.ts`. T3 a T5 saíram num commit só. SOUT-02 (spec e teste) foi alinhado ao texto curto do Sair. `design/` tem PNGs novos e alterados sem commit. `git push` exige go-ahead
 - **Open amendments**: none
 - **Blockers**: none
 - **Updated**: 2026-10-12
