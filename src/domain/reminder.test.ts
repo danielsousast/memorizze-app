@@ -5,6 +5,7 @@ import {
   REMINDER_TITLE,
   hourLabel,
   isReminderHour,
+  reminderHourOrDefault,
 } from "./reminder";
 
 describe("reminder hours", () => {
@@ -22,6 +23,11 @@ describe("reminder hours", () => {
     expect(isReminderHour(23)).toBe(false);
     expect(isReminderHour(7.5)).toBe(false);
     expect(isReminderHour("7")).toBe(false);
+  });
+
+  it("REM-02 keeps a valid stored hour and falls back to 19 otherwise", () => {
+    expect(reminderHourOrDefault(8)).toBe(8);
+    expect(reminderHourOrDefault(4)).toBe(19);
   });
 });
 

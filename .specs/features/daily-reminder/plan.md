@@ -152,7 +152,7 @@ INVARIANT (teste com `createRandom`): após qualquer sequência aleatória de `a
   - CONTRACT · unit — iOS `PROVISIONAL` conta como concedida; `DENIED` e `NOT_DETERMINED` sem `canAskAgain` não
 - **Done when**: testes passam; `tsc` limpo contra os tipos reais; quick verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T4 — Ligar, desligar e mudar o horário (repositório e hook)
 
@@ -175,7 +175,7 @@ INVARIANT (teste com `createRandom`): após qualquer sequência aleatória de `a
   - SPEC REM-17 · hook — devolve dados simples, invalida `profileKeys.all`, funciona offline e propaga o erro
 - **Done when**: testes passam; `architecture.test.ts` passa para `reminder`; quick verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T5 — Reconciliar agendado e salvo (`sync`)
 
@@ -193,7 +193,7 @@ INVARIANT (teste com `createRandom`): após qualquer sequência aleatória de `a
   - SPEC REM-11 · hook — dados simples, invalida só quando o `sync` mudou o salvo, offline
 - **Done when**: testes passam; quick verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T6 — Reconciliar ao abrir, sair e restaurar
 

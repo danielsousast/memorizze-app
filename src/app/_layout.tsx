@@ -13,12 +13,14 @@ import { Text } from "react-native";
 
 import { ToastProvider } from "@/components/toast-provider";
 import { RealmErrorBoundary, realmConfig } from "@/db";
+import { configureNotificationHandler } from "@/lib/notifications";
 import { createQueryClient } from "@/lib/query-client";
 import { RootStack } from "@/navigation/root-stack";
 
 export const unstable_settings = { anchor: "(tabs)" };
 
 SplashScreen.preventAutoHideAsync();
+configureNotificationHandler();
 
 const queryClient = createQueryClient();
 
