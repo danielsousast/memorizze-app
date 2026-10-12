@@ -231,7 +231,7 @@ INVARIANT (teste com `createRandom`): após qualquer sequência aleatória de `a
   - CONTRACT · componente — `SettingsSwitchRow` expõe `role switch`, rótulo e estado
 - **Done when**: testes passam; lint sem erro de AD-005; quick verde
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 

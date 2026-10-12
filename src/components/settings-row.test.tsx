@@ -16,6 +16,14 @@ describe("SettingsRow", () => {
     expect(screen.getByRole("button", { name: "Backup" })).toBeTruthy();
   });
 
+  it("REM-03 a disabled row is announced as disabled and ignores presses", async () => {
+    const onPress = jest.fn();
+    await render(<SettingsRow title="Horário" value="19:00" disabled onPress={onPress} />);
+    const row = screen.getByRole("button", { name: "Horário, 19:00", disabled: true });
+    await fireEvent.press(row);
+    expect(onPress).not.toHaveBeenCalled();
+  });
+
   it("calls onPress when pressed", async () => {
     const onPress = jest.fn();
     await render(<SettingsRow title="Horário" onPress={onPress} />);

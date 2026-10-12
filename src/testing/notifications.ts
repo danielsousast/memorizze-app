@@ -8,6 +8,7 @@ export function createFakeScheduler(initial: { permission?: FakePermission } = {
   let permission: FakePermission = initial.permission ?? "undetermined";
   let answerToPrompt: "granted" | "denied" = "granted";
   const failures = new Set<Method>();
+  const gates = new Map<Method, Promise<void>>();
   const state = { scheduledHour: null as number | null, prompts: 0 };
 
   function maybeFail(method: Method) {
@@ -15,8 +16,15 @@ export function createFakeScheduler(initial: { permission?: FakePermission } = {
     throw new Error(`fake ${method} failed`);
   }
 
+  async function passGate(method: Method) {
+    const gate = gates.get(method);
+    gates.delete(method);
+    await gate;
+  }
+
   const scheduler: ReminderScheduler = {
     async ensurePermission() {
+      await passGate("ensurePermission");
       maybeFail("ensurePermission");
       if (permission === "undetermined") {
         state.prompts += 1;
@@ -25,16 +33,19 @@ export function createFakeScheduler(initial: { permission?: FakePermission } = {
       return permission === "granted";
     },
     async hasPermission() {
+      await passGate("hasPermission");
       maybeFail("hasPermission");
       return permission === "granted";
     },
     async schedule(hour) {
+      await passGate("schedule");
       // Like the real adapter: the old reminder is cancelled before the new one is scheduled.
       state.scheduledHour = null;
       maybeFail("schedule");
       state.scheduledHour = hour;
     },
     async cancel() {
+      await passGate("cancel");
       maybeFail("cancel");
       state.scheduledHour = null;
     },
@@ -53,6 +64,12 @@ export function createFakeScheduler(initial: { permission?: FakePermission } = {
     /** Makes the next call to `method` throw once. */
     failNext(method: Method) {
       failures.add(method);
+    },
+    /** Holds the next call to `method` until the returned function is called. */
+    holdNext(method: Method): () => void {
+      let release!: () => void;
+      gates.set(method, new Promise<void>((resolve) => (release = resolve)));
+      return release;
     },
     clearFailures() {
       failures.clear();

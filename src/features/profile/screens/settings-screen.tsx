@@ -6,6 +6,7 @@ import { Icon } from "@/components/icon";
 import { Screen } from "@/components/screen";
 import { SegmentedControl } from "@/components/segmented-control";
 import { SettingsRow } from "@/components/settings-row";
+import { SettingsSwitchRow } from "@/components/settings-switch-row";
 import { radii, screenMargin, sizes, spacing, typography, useTheme } from "@/theme";
 
 import { useSettingsScreen } from "./use-settings-screen";
@@ -55,6 +56,20 @@ export function SettingsScreen() {
             Estudo
           </Text>
           <View style={[styles.card, card]}>
+            <SettingsSwitchRow
+              title="Lembrete diário"
+              subtitle="Notificação local, funciona offline"
+              value={settings.reminderEnabled}
+              onValueChange={settings.toggleReminder}
+            />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+            <SettingsRow
+              title="Horário"
+              value={settings.reminderHourLabel}
+              disabled={!settings.reminderEnabled}
+              onPress={settings.openHour}
+            />
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <SettingsRow
               title="Cartões novos por dia"
               value={settings.newCardsValue}
@@ -83,6 +98,13 @@ export function SettingsScreen() {
         ) : null}
       </ScrollView>
       <BottomSheet
+        visible={settings.hourOpen}
+        title="Horário do lembrete"
+        subtitle="Hora em que a notificação chega todos os dias."
+        actions={settings.hourActions}
+        onClose={settings.closeHour}
+      />
+      <BottomSheet
         visible={settings.limitOpen}
         title="Cartões novos por dia"
         subtitle="Limite de cartões novos que entram na fila a cada dia."
@@ -105,6 +127,7 @@ const styles = StyleSheet.create({
   section: { gap: spacing.sm },
   sectionLabel: { paddingHorizontal: spacing.xs },
   card: { borderRadius: radii.studyCard, borderWidth: 1, overflow: "hidden" },
+  divider: { height: StyleSheet.hairlineWidth },
   themeCard: { padding: spacing.lg, gap: spacing.md },
   version: { textAlign: "center" },
 });

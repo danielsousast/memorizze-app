@@ -8,10 +8,11 @@ type Props = {
   title: string;
   subtitle?: string;
   value?: string;
+  disabled?: boolean;
   onPress: () => void;
 };
 
-export function SettingsRow({ title, subtitle, value, onPress }: Props) {
+export function SettingsRow({ title, subtitle, value, disabled = false, onPress }: Props) {
   const { colors } = useTheme();
   const accessibilityLabel = value ? `${title}, ${value}` : title;
 
@@ -19,8 +20,10 @@ export function SettingsRow({ title, subtitle, value, onPress }: Props) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
       onPress={onPress}
-      style={styles.row}
+      style={[styles.row, disabled && styles.disabled]}
     >
       <View style={styles.text}>
         <Text style={[typography.button, { color: colors.text }]}>{title}</Text>
@@ -44,4 +47,5 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
   },
   text: { flex: 1 },
+  disabled: { opacity: 0.4 },
 });

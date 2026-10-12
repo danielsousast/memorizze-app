@@ -6,6 +6,8 @@ import type { SegmentOption } from "@/components/segmented-control";
 import type { SheetAction } from "@/components/bottom-sheet";
 import { settingsBackupSubtitle } from "@/domain/backup";
 import { useLastBackup } from "@/features/backup";
+import { useUpdateReminder, type ReminderOutcome } from "@/features/reminder";
+import { openSystemSettings } from "@/lib/notifications";
 import { useToast } from "@/components/toast-provider";
 import {
   NEW_CARDS_OPTIONS,
@@ -15,11 +17,13 @@ import {
   type NewCardsLimit,
   type ThemePreference,
 } from "@/domain/preferences";
+import { DEFAULT_REMINDER_HOUR, REMINDER_HOURS, hourLabel } from "@/domain/reminder";
 
 import { useProfile } from "../usecases/use-profile";
 import { useUpdateProfile } from "../usecases/use-update-profile";
 
 const SAVE_ERROR = "Não foi possível salvar.";
+const NOTIFICATIONS_DENIED = "Ative as notificações nas configurações do aparelho.";
 
 const THEME_ICONS = { light: "sun", dark: "moon" } as const;
 
@@ -42,10 +46,50 @@ export function useSettingsScreen() {
   const profile = useProfile().data;
   const lastBackup = useLastBackup().data;
   const update = useUpdateProfile();
+  const reminder = useUpdateReminder();
   const toast = useToast();
   const [limitOpen, setLimitOpen] = useState(false);
+  const [hourOpen, setHourOpen] = useState(false);
 
   const showError = useCallback(() => toast.show({ message: SAVE_ERROR }), [toast]);
+
+  const reminderEnabled = profile?.reminderEnabled ?? false;
+  const reminderHour = profile?.reminderHour;
+  const busy = update.isPending || reminder.isPending;
+
+  const showOutcome = useCallback(
+    (outcome: ReminderOutcome) => {
+      if (outcome !== "denied") return;
+      toast.show({
+        message: NOTIFICATIONS_DENIED,
+        action: { label: "Abrir ajustes", onPress: openSystemSettings },
+      });
+    },
+    [toast],
+  );
+
+  const toggleReminder = useCallback(
+    (enabled: boolean) => {
+      if (busy) return;
+      reminder.mutate({ enabled }, { onSuccess: showOutcome, onError: showError });
+    },
+    [busy, reminder, showOutcome, showError],
+  );
+
+  const openHour = useCallback(() => {
+    if (!busy && reminderEnabled) setHourOpen(true);
+  }, [busy, reminderEnabled]);
+  const closeHour = useCallback(() => setHourOpen(false), []);
+
+  const hourActions = useMemo<SheetAction[]>(
+    () =>
+      REMINDER_HOURS.map((hour) => ({
+        label: hourLabel(hour),
+        selected: hour === reminderHour,
+        onPress: () => reminder.mutate({ hour }, { onError: showError }),
+      })),
+    [reminderHour, reminder, showError],
+  );
 
   const selectTheme = useCallback(
     (themePreference: ThemePreference) => update.mutate({ themePreference }, { onError: showError }),
@@ -69,6 +113,13 @@ export function useSettingsScreen() {
   return {
     themeSegments,
     theme: profile?.themePreference ?? "system",
+    reminderEnabled,
+    reminderHourLabel: hourLabel(reminderHour ?? DEFAULT_REMINDER_HOUR),
+    toggleReminder,
+    hourOpen,
+    hourActions,
+    openHour,
+    closeHour,
     selectTheme,
     newCardsValue: newCardsLabel(selectedLimit ?? null),
     limitOpen,
