@@ -31,7 +31,7 @@ function DatabaseLoading() {
 }
 
 export default function RootLayout() {
-  useLocaleSync();
+  const locale = useLocaleSync();
   const [fontsLoaded, fontError] = useFonts({
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
@@ -54,7 +54,7 @@ export default function RootLayout() {
       >
         <QueryClientProvider client={queryClient}>
           <ToastProvider>
-            <RootStack />
+            <RootStack key={locale} />
           </ToastProvider>
         </QueryClientProvider>
       </RealmProvider>

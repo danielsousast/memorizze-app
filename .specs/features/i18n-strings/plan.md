@@ -2,7 +2,7 @@
 
 **Spec**: [spec.md](spec.md)
 **Risk**: HIGH (from spec)
-**Status**: In progress
+**Status**: Implemented (pending verify)
 
 ## Approach
 
@@ -199,7 +199,7 @@ Verificado em `i18n-js@4.5.4`: `t("c", { count })` escolhe `one`/`other` (0 vai 
   - REGRESSION · full — `npm run ci` verde
 - **Done when**: tests above pass; full gate green
 - **Gate**: full
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ## Execution Waves
 
