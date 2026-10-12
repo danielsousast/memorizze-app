@@ -46,7 +46,7 @@ O app não tem conta. Quem quer recomeçar ou entregar o aparelho não tem como 
 ### P1 — Sair
 
 - **SOUT-01** — WHEN o usuário toca em `Sair` no Perfil THEN o app SHALL abrir o `ConfirmDialog` destrutivo, ícone `sign-out`, título `Sair e apagar dados?`, botões `Apagar e sair` e `Cancelar`.
-- **SOUT-02** — A mensagem SHALL ser `O Memorizze não tem conta. Sair apaga seus N baralhos, M cartões e todo o histórico deste aparelho.` com as contagens reais (singular quando 1).
+- **SOUT-02** — A mensagem SHALL ser `Sair apaga seus N baralhos, M cartões e todo o histórico deste aparelho.` com as contagens reais (singular quando 1).
 - **SOUT-03** — WHEN o usuário confirma THEN o app SHALL apagar Profile, Deck, Card e ReviewLog e mostrar a Boas-vindas.
 - **SOUT-06** *(A-01, A-02)* — O diálogo SHALL mostrar, entre a mensagem e os botões, um link discreto `Fazer backup antes`, sem legenda (design 7b mostrava um cartão com a data do último backup).
 - **SOUT-07** *(A-01)* — WHEN o usuário toca em `Fazer backup antes` THEN o app SHALL fechar o diálogo, exportar o backup como em BKP-01/BKP-04 e, ao terminar, reabrir o diálogo com a legenda atualizada; nada é apagado.

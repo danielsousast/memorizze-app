@@ -71,7 +71,7 @@ describe("weekLabels", () => {
 describe("signOutMessage", () => {
   it("SOUT-02 counts decks and cards with plurals", () => {
     expect(signOutMessage(4, 492)).toBe(
-      "O Memorizze não tem conta. Sair apaga seus 4 baralhos, 492 cartões e todo o histórico deste aparelho.",
+      "Sair apaga seus 4 baralhos, 492 cartões e todo o histórico deste aparelho.",
     );
     expect(signOutMessage(1, 1)).toContain("seus 1 baralho, 1 cartão e");
   });
