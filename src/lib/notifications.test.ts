@@ -1,7 +1,8 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-import { REMINDER_BODY, REMINDER_TITLE } from "@/domain/reminder";
+import { reminderBody, reminderTitle } from "@/domain/reminder";
+import { i18n } from "@/lib/i18n";
 
 import {
   cancel,
@@ -121,13 +122,53 @@ describe("hasPermission", () => {
   });
 });
 
+describe("locale", () => {
+  afterEach(() => {
+    i18n.locale = "pt-BR";
+  });
+
+  it("CONTRACT I18NS-08 schedule sends title and body in the active language", async () => {
+    i18n.locale = "en";
+
+    await schedule(9);
+
+    expect(mocked.scheduleNotificationAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: { title: "Time to review", body: "Your cards are waiting. It only takes a few minutes." },
+      }),
+    );
+  });
+
+  it("SPEC I18NS-08 ensurePermission names the Android channel in the active language", async () => {
+    jest.replaceProperty(Platform, "OS", "android");
+    mocked.getPermissionsAsync.mockResolvedValue(status(true, true));
+    i18n.locale = "en";
+
+    await ensurePermission();
+
+    expect(mocked.setNotificationChannelAsync).toHaveBeenCalledWith(
+      "daily-reminder",
+      expect.objectContaining({ name: "Daily reminder" }),
+    );
+  });
+
+  it("SPEC I18NS-11 follows a locale change between two schedules", async () => {
+    await schedule(9);
+    i18n.locale = "es";
+    await schedule(9);
+
+    const titles = mocked.scheduleNotificationAsync.mock.calls.map((call) => call[0].content.title);
+    expect(titles).toEqual(["Hora de revisar", "Hora de repasar"]);
+  });
+});
+
 describe("schedule", () => {
   it("REM-07 schedules a daily trigger at the hour with the fixed title and body", async () => {
     await schedule(19);
 
     expect(mocked.scheduleNotificationAsync).toHaveBeenCalledWith({
       identifier: "daily-reminder",
-      content: { title: REMINDER_TITLE, body: REMINDER_BODY },
+      content: { title: reminderTitle(), body: reminderBody() },
       trigger: { type: "daily", hour: 19, minute: 0, channelId: "daily-reminder" },
     });
   });

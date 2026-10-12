@@ -1,9 +1,10 @@
 import {
   DEFAULT_REMINDER_HOUR,
-  REMINDER_BODY,
   REMINDER_HOURS,
-  REMINDER_TITLE,
   hourLabel,
+  reminderBody,
+  reminderChannelName,
+  reminderTitle,
   isReminderHour,
   reminderHourOrDefault,
 } from "./reminder";
@@ -33,7 +34,8 @@ describe("reminder hours", () => {
 
 describe("reminder text", () => {
   it("REM-07 uses the fixed title and body", () => {
-    expect(REMINDER_TITLE).toBe("Hora de revisar");
-    expect(REMINDER_BODY).toBe("Seus cartões estão esperando. Leva só alguns minutos.");
+    expect(reminderTitle()).toBe("Hora de revisar");
+    expect(reminderBody()).toBe("Seus cartões estão esperando. Leva só alguns minutos.");
+    expect(reminderChannelName()).toBe("Lembrete diário");
   });
 });

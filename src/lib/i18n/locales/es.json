@@ -1,1 +1,96 @@
-{ "common": { "appName": "Memorizze" } }
+{
+  "common": { "appName": "Memorizze" },
+  "number": { "thousandsSeparator": "." },
+  "date": {
+    "weekdays": {
+      "0": "domingo",
+      "1": "lunes",
+      "2": "martes",
+      "3": "miércoles",
+      "4": "jueves",
+      "5": "viernes",
+      "6": "sábado"
+    },
+    "weekdaysShort": {
+      "0": "dom",
+      "1": "lun",
+      "2": "mar",
+      "3": "mié",
+      "4": "jue",
+      "5": "vie",
+      "6": "sáb"
+    },
+    "months": {
+      "0": "enero",
+      "1": "febrero",
+      "2": "marzo",
+      "3": "abril",
+      "4": "mayo",
+      "5": "junio",
+      "6": "julio",
+      "7": "agosto",
+      "8": "septiembre",
+      "9": "octubre",
+      "10": "noviembre",
+      "11": "diciembre"
+    },
+    "longDate": "{{weekday}}, {{day}} de {{month}}",
+    "dayMonth": "{{day}} de {{month}}",
+    "monthYear": "{{month}} de {{year}}"
+  },
+  "plurals": {
+    "card": { "one": "{{count}} tarjeta", "other": "{{count}} tarjetas" },
+    "deck": { "one": "{{count}} mazo", "other": "{{count}} mazos" },
+    "review": { "one": "{{count}} repaso", "other": "{{count}} repasos" },
+    "day": { "one": "{{count}} día", "other": "{{count}} días" },
+    "streakDay": { "one": "{{count}} día seguido", "other": "{{count}} días seguidos" }
+  },
+  "labels": {
+    "tomorrow": {
+      "zero": "Mañana: ninguna tarjeta",
+      "one": "Mañana: {{count}} tarjeta",
+      "other": "Mañana: {{count}} tarjetas"
+    },
+    "tomorrowSummary": {
+      "zero": "Mañana: ninguna tarjeta para repasar",
+      "one": "Mañana: {{count}} tarjeta para repasar",
+      "other": "Mañana: {{count}} tarjetas para repasar"
+    },
+    "signOut": "Cerrar sesión borra tus {{decks}}, {{cards}} y todo el historial de este dispositivo.",
+    "studyTimeUnderMinute": "< 1 min de estudio",
+    "studyTime": "{{minutes}} min de estudio",
+    "reviewedCards": { "one": "tarjeta repasada", "other": "tarjetas repasadas" },
+    "streakDays": { "one": "día seguido", "other": "días seguidos" },
+    "streakStart": "Tu racha empieza con el primer estudio",
+    "streakReviewedToday": "Ya estudiaste hoy",
+    "streakStudyToday": "Estudia hoy para llegar a {{target}}",
+    "today": "Hoy",
+    "intervalNow": "ahora"
+  },
+  "grade": { "0": "Fallé", "1": "Difícil", "2": "Bien", "3": "Fácil" },
+  "theme": { "system": "Automático", "light": "Claro", "dark": "Oscuro" },
+  "newCards": { "noLimit": "Sin límite" },
+  "stage": { "new": "Nueva", "learning": "Aprendiendo", "mature": "Madura" },
+  "reminder": {
+    "title": "Hora de repasar",
+    "body": "Tus tarjetas te esperan. Solo toma unos minutos.",
+    "channelName": "Recordatorio diario"
+  },
+  "backup": {
+    "none": "Aún no hay copias de seguridad",
+    "doneToday": "Copia hecha hoy, {{time}}",
+    "doneOn": "Copia hecha el {{date}}",
+    "previous": "Anterior: {{date}}",
+    "last": "Última copia: {{date}}",
+    "decks": { "one": "{{formatted}} mazo", "other": "{{formatted}} mazos" },
+    "cards": { "one": "{{formatted}} tarjeta", "other": "{{formatted}} tarjetas" },
+    "reviews": { "one": "{{formatted}} repaso", "other": "{{formatted}} repasos" },
+    "replace": "¿Reemplazar {{decks}}, {{cards}} y {{reviews}} por los del archivo?"
+  },
+  "deckMessages": {
+    "deleteEmpty": "«{{name}}» se borrará de este dispositivo. No se puede deshacer.",
+    "deleteWithCards": "«{{name}}» y {{cards}} se borrarán de este dispositivo. No se puede deshacer.",
+    "deleteCards": { "one": "su única tarjeta", "other": "sus {{count}} tarjetas" },
+    "sheetDue": "{{cards}} · {{due}} para hoy"
+  }
+}

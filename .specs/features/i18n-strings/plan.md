@@ -121,7 +121,7 @@ Verificado em `i18n-js@4.5.4`: `t("c", { count })` escolhe `one`/`other` (0 vai 
   - REGRESSION · unit — suítes de domínio atuais (pt-BR) passam sem edição
 - **Done when**: tests above pass; quick gate green
 - **Gate**: quick
-- **Status**: [ ] pending
+- **Status**: [x] done
 
 ### T3 — Componentes compartilhados e títulos de navegação
 

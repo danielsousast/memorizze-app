@@ -1,5 +1,6 @@
+import { t } from "@/lib/i18n";
+
 import { addLocalDays, startOfLocalDay } from "./dates";
-import { plural } from "./text";
 
 export type Grade = 0 | 1 | 2 | 3;
 
@@ -10,11 +11,20 @@ export type SrsState = {
   lapses: number;
 };
 
+// Getters resolve the text at read time, so a locale change shows on the next read.
 export const gradeLabel: Record<Grade, string> = {
-  0: "Errei",
-  1: "Difícil",
-  2: "Bom",
-  3: "Fácil",
+  get 0() {
+    return t("grade.0");
+  },
+  get 1() {
+    return t("grade.1");
+  },
+  get 2() {
+    return t("grade.2");
+  },
+  get 3() {
+    return t("grade.3");
+  },
 };
 
 const MIN_EASE = 1.3;
@@ -59,5 +69,5 @@ export function schedule(card: SrsState, grade: Grade, now: Date): SrsState & { 
 }
 
 export function intervalLabel(days: number): string {
-  return days === 0 ? "agora" : plural(days, "dia", "dias");
+  return days === 0 ? t("labels.intervalNow") : t("plurals.day", { count: days });
 }

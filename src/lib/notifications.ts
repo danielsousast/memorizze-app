@@ -1,12 +1,11 @@
 import * as Notifications from "expo-notifications";
 import { Linking, Platform } from "react-native";
 
-import { REMINDER_BODY, REMINDER_TITLE } from "@/domain/reminder";
+import { reminderBody, reminderChannelName, reminderTitle } from "@/domain/reminder";
 import type { ReminderScheduler } from "@/features/reminder/interfaces";
 
 // One fixed id keeps at most one reminder scheduled (REM-10). It names the Android channel too.
 const REMINDER_ID = "daily-reminder";
-const CHANNEL_NAME = "Lembrete diário";
 
 function isGranted(permissions: Notifications.NotificationPermissionsStatus): boolean {
   return (
@@ -18,7 +17,7 @@ function isGranted(permissions: Notifications.NotificationPermissionsStatus): bo
 async function ensurePermission(): Promise<boolean> {
   if (Platform.OS === "android") {
     await Notifications.setNotificationChannelAsync(REMINDER_ID, {
-      name: CHANNEL_NAME,
+      name: reminderChannelName(),
       importance: Notifications.AndroidImportance.DEFAULT,
     });
   }
@@ -39,7 +38,7 @@ async function schedule(hour: number): Promise<void> {
   await cancel();
   await Notifications.scheduleNotificationAsync({
     identifier: REMINDER_ID,
-    content: { title: REMINDER_TITLE, body: REMINDER_BODY },
+    content: { title: reminderTitle(), body: reminderBody() },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour,

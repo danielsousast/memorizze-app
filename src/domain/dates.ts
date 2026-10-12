@@ -1,27 +1,4 @@
-const WEEKDAYS = [
-  "Domingo",
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado",
-] as const;
-
-const MONTHS = [
-  "janeiro",
-  "fevereiro",
-  "março",
-  "abril",
-  "maio",
-  "junho",
-  "julho",
-  "agosto",
-  "setembro",
-  "outubro",
-  "novembro",
-  "dezembro",
-] as const;
+import { t } from "@/lib/i18n";
 
 export function endOfLocalDay(now: Date): Date {
   return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
@@ -31,17 +8,25 @@ export function isDue(dueDate: Date, now: Date): boolean {
   return dueDate.getTime() <= endOfLocalDay(now).getTime();
 }
 
-// Hand-written pt-BR names: same result on Hermes and Jest, no Intl/ICU.
+// Names and templates come from the catalog: same result on Hermes and Jest, no Intl/ICU.
+function weekdayName(d: Date): string {
+  return t(`date.weekdays.${d.getDay()}`);
+}
+
+function monthName(d: Date): string {
+  return t(`date.months.${d.getMonth()}`);
+}
+
 export function formatLongDate(d: Date): string {
-  return `${WEEKDAYS[d.getDay()]}, ${d.getDate()} de ${MONTHS[d.getMonth()]}`;
+  return t("date.longDate", { weekday: weekdayName(d), day: d.getDate(), month: monthName(d) });
 }
 
 export function formatDayMonth(d: Date): string {
-  return `${d.getDate()} de ${MONTHS[d.getMonth()]}`;
+  return t("date.dayMonth", { day: d.getDate(), month: monthName(d) });
 }
 
 export function formatMonthYear(d: Date): string {
-  return `${MONTHS[d.getMonth()]} de ${d.getFullYear()}`;
+  return t("date.monthYear", { month: monthName(d), year: d.getFullYear() });
 }
 
 export function startOfLocalDay(d: Date): Date {
@@ -61,8 +46,6 @@ export function addLocalDays(d: Date, n: number): Date {
   );
 }
 
-const WEEKDAYS_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"] as const;
-
 export function formatWeekdayShort(d: Date): string {
-  return WEEKDAYS_SHORT[d.getDay()];
+  return t(`date.weekdaysShort.${d.getDay()}`);
 }

@@ -1,3 +1,5 @@
+import { t } from "@/lib/i18n";
+
 import { formatDayMonth } from "./dates";
 import { isNewCardsLimit, parseTheme, type ThemePreference } from "./preferences";
 
@@ -84,7 +86,9 @@ export function backupFileName(date: Date): string {
   return `memorizze-${date.getFullYear()}-${month}-${day}.json`;
 }
 
-export const NO_BACKUP_LABEL = "Nenhum backup ainda";
+function noBackupLabel(): string {
+  return t("backup.none");
+}
 
 function isSameLocalDay(a: Date, b: Date): boolean {
   return (
@@ -97,33 +101,36 @@ function pad(n: number): string {
 }
 
 export function backupStatusLabel(last: Date | null, now: Date): string {
-  if (!last) return NO_BACKUP_LABEL;
-  if (isSameLocalDay(last, now)) return `Backup feito hoje, ${pad(last.getHours())}:${pad(last.getMinutes())}`;
-  return `Backup feito em ${formatDayMonth(last)}`;
+  if (!last) return noBackupLabel();
+  if (isSameLocalDay(last, now)) {
+    return t("backup.doneToday", { time: `${pad(last.getHours())}:${pad(last.getMinutes())}` });
+  }
+  return t("backup.doneOn", { date: formatDayMonth(last) });
 }
 
 export function previousBackupLabel(previous: Date | null): string | null {
-  return previous ? `Anterior: ${formatDayMonth(previous)}` : null;
+  return previous ? t("backup.previous", { date: formatDayMonth(previous) }) : null;
 }
 
 export function settingsBackupSubtitle(last: Date | null): string {
-  return last ? `Último backup: ${formatDayMonth(last)}` : NO_BACKUP_LABEL;
+  return last ? t("backup.last", { date: formatDayMonth(last) }) : noBackupLabel();
 }
 
 // Thousands separator by hand (pt-BR "3.418"): same result on Hermes and Jest, no Intl.
 export function formatCount(n: number): string {
-  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, t("number.thousandsSeparator"));
 }
 
-function plural(n: number, one: string, many: string): string {
-  return `${formatCount(n)} ${n === 1 ? one : many}`;
+function countText(key: string, n: number): string {
+  return t(key, { count: n, formatted: formatCount(n) });
 }
 
 export function replaceMessage(backup: BackupFile): string {
-  const decks = plural(backup.decks.length, "baralho", "baralhos");
-  const cards = plural(backup.cards.length, "cartão", "cartões");
-  const reviews = plural(backup.reviewLogs.length, "revisão", "revisões");
-  return `Substituir ${decks}, ${cards} e ${reviews} pelos do arquivo?`;
+  return t("backup.replace", {
+    decks: countText("backup.decks", backup.decks.length),
+    cards: countText("backup.cards", backup.cards.length),
+    reviews: countText("backup.reviews", backup.reviewLogs.length),
+  });
 }
 
 type Raw = Record<string, unknown>;
